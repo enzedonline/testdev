@@ -1,0 +1,21 @@
+  .Draftail-Toolbar {
+    position: sticky !important;
+    top: calc(1rem + 51px) !important;
+    z-index: 2 !important;
+  }
+  .text-start, .Draftail-block--left-align .public-DraftStyleDefault-ltr {
+    text-align: start;
+  }
+  .text-center, .Draftail-block--centre-align .public-DraftStyleDefault-ltr {
+    text-align: center;
+  }
+  .text-end, .Draftail-block--right-align .public-DraftStyleDefault-ltr {
+    text-align: end;
+  }
+  .Draftail-ToolbarGroup {
+    /* allow toolbar button groups to wrap */
+    display: contents;
+  }
+  .w-panel.title:first-child input:not(:hover,:focus,[aria-invalid=true]) {
+    border-color: #5555
+  }
