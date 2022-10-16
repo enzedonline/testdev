@@ -61,7 +61,7 @@ def fontawesome_entity_decorator(props):
     Draft.js ContentState to database HTML.
     Converts the ANCHOR entities into <a> tags.
     """
-    return DOM.create_element('span', {
+    return DOM.create_element('fontawesome', {
         'class': props['children'],
     }, props['children'])
 

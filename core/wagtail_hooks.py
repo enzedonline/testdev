@@ -51,40 +51,40 @@ def register_align_right_feature(features):
         icon=RIGHT_ALIGN_ICON
     )
     
-@hooks.register("register_rich_text_features")
-def register_fa_styling(features):
-    """Add <fa> to the richtext editor and page."""
+# @hooks.register("register_rich_text_features")
+# def register_fa_styling(features):
+#     """Add <fa> to the richtext editor and page."""
 
-    feature_name = "fa"
-    type_ = "FA"
-    tag = "fa"
+#     feature_name = "fa"
+#     type_ = "FA"
+#     tag = "fa"
 
-    control = {
-        "type": type_,
-        "label": "⚐",
-        "description": "Font Awesome",
-        'style': {            
-            'background-color': 'orange',            
-            'color': '#666',
-            'font-family': 'monospace',
-            'font-size': '0.9rem',
-            'font-weight': 'bolder',
-            'padding-left': '2px',
-            'padding-right': '4px'
-        }    
-    }
+#     control = {
+#         "type": type_,
+#         "label": "⚐",
+#         "description": "Font Awesome",
+#         'style': {            
+#             'background-color': 'orange',            
+#             'color': '#666',
+#             'font-family': 'monospace',
+#             'font-size': '0.9rem',
+#             'font-weight': 'bolder',
+#             'padding-left': '2px',
+#             'padding-right': '4px'
+#         }    
+#     }
 
-    features.register_editor_plugin(
-        "draftail", feature_name, InlineStyleFeature(control)
-    )
+#     features.register_editor_plugin(
+#         "draftail", feature_name, InlineStyleFeature(control)
+#     )
 
-    db_conversion = {
-        "from_database_format": {tag: InlineStyleElementHandler(type_)},
-        "to_database_format": {"style_map": {type_: {"element": tag + ' style="display:none;"'}}}
-    }
+#     db_conversion = {
+#         "from_database_format": {tag: InlineStyleElementHandler(type_)},
+#         "to_database_format": {"style_map": {type_: {"element": tag + ' style="display:none;"'}}}
+#     }
 
-    features.register_converter_rule("contentstate", feature_name, db_conversion)
-    features.default_features.append(feature_name)
+#     features.register_converter_rule("contentstate", feature_name, db_conversion)
+#     features.default_features.append(feature_name)
 
 @hooks.register("register_rich_text_features")
 def register_small_styling(features):
@@ -125,12 +125,12 @@ def register_fontawesome_feature(features):
         'draftail', feature_name, draftail_features.EntityFeature(
             control, 
             js=['js/draftail_fontawesome.js'],
-            css={'all': ['css/draftail-editor.css']}
+            css={'all': ['draftail-editor.css']}
             )
     )
 
     features.register_converter_rule('contentstate', feature_name, {
-        'from_database_format': {'span[class]': FontAwesomeEntityElementHandler(type_)},
+        'from_database_format': {'fontawesome[class]': FontAwesomeEntityElementHandler(type_)},
         'to_database_format': {'entity_decorators': {type_: fontawesome_entity_decorator}},
     })
 

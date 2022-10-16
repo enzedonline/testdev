@@ -19,20 +19,6 @@
 .w-panel.title:first-child input:not(:hover,:focus,[aria-invalid=true]) {
   border-color: #5555
 }
-.fa-entity {
-  font-size: smaller;
-  font-weight: 600;
-  font-family: monospace;
-  font-style: normal;
-  color: #666;
-  background: orange;
-  padding: 0.2em 0.5em;
-  border-radius: 0.5em;
-}
-.fa-entity::before {
-  content: '⚐';
-  padding-right: 0.4em;
-}
 fa {
   display: none;
 }

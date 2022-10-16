@@ -32,7 +32,7 @@ class FontAwesomeSource extends React.Component {
 
 const FontAwesome = props => {
     return React.createElement(
-        'span',
+        'fontawesome',
         {
             class: 'fa-entity',
         },
