@@ -1,35 +1,38 @@
-  .Draftail-Toolbar {
-    position: sticky !important;
-    top: calc(1rem + 51px) !important;
-    z-index: 2 !important;
-  }
-  .text-start, .Draftail-block--left-align .public-DraftStyleDefault-ltr {
-    text-align: start;
-  }
-  .text-center, .Draftail-block--centre-align .public-DraftStyleDefault-ltr {
-    text-align: center;
-  }
-  .text-end, .Draftail-block--right-align .public-DraftStyleDefault-ltr {
-    text-align: end;
-  }
-  .Draftail-ToolbarGroup {
-    /* allow toolbar button groups to wrap */
-    display: contents;
-  }
-  .w-panel.title:first-child input:not(:hover,:focus,[aria-invalid=true]) {
-    border-color: #5555
-  }
-  .fa-entity {
-    font-size: smaller;
-    font-weight: 600;
-    font-family: monospace;
-    font-style: normal;
-    color: #666;
-    background: orange;
-    padding: 0.2em 0.5em;
-    border-radius: 0.5em;
+.Draftail-Toolbar {
+  position: sticky !important;
+  top: calc(1rem + 51px) !important;
+  z-index: 2 !important;
+}
+.text-start, .Draftail-block--left-align .public-DraftStyleDefault-ltr {
+  text-align: start;
+}
+.text-center, .Draftail-block--centre-align .public-DraftStyleDefault-ltr {
+  text-align: center;
+}
+.text-end, .Draftail-block--right-align .public-DraftStyleDefault-ltr {
+  text-align: end;
+}
+.Draftail-ToolbarGroup {
+  /* allow toolbar button groups to wrap */
+  display: contents;
+}
+.w-panel.title:first-child input:not(:hover,:focus,[aria-invalid=true]) {
+  border-color: #5555
+}
+.fa-entity {
+  font-size: smaller;
+  font-weight: 600;
+  font-family: monospace;
+  font-style: normal;
+  color: #666;
+  background: orange;
+  padding: 0.2em 0.5em;
+  border-radius: 0.5em;
 }
 .fa-entity::before {
-    content: '⚐';
-    padding-right: 0.4em;
+  content: '⚐';
+  padding-right: 0.4em;
+}
+fa {
+  display: none;
 }
