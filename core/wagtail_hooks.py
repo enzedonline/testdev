@@ -1,16 +1,19 @@
+
 from django.utils.translation import gettext_lazy as _
 from wagtail import hooks
 from wagtail.admin.rich_text.converters.html_to_contentstate import \
     InlineStyleElementHandler
 from wagtail.admin.rich_text.editors.draftail.features import \
     InlineStyleFeature
+import wagtail.admin.rich_text.editors.draftail.features as draftail_features
 
 from .draftail_extensions import (CENTRE_ALIGN_ICON, LEFT_ALIGN_ICON,
-                                  MINIMISE_ICON, RIGHT_ALIGN_ICON, UNDERLINE_ICON,
+                                  MINIMISE_ICON, RIGHT_ALIGN_ICON,
+                                  UNDERLINE_ICON, FontAwesomeEntityElementHandler,
+                                  fontawesome_entity_decorator,
                                   register_block_feature,
                                   register_inline_styling)
-import wagtail.admin.rich_text.editors.draftail.features as draftail_features
-from wagtail.admin.rich_text.converters.html_to_contentstate import BlockElementHandler
+
 
 @hooks.register('register_rich_text_features')
 def register_align_left_feature(features):
@@ -105,4 +108,29 @@ def register_underline_styling(features):
         icon=UNDERLINE_ICON
     )
 
+@hooks.register('register_rich_text_features')
+def register_fontawesome_feature(features):
+    features.default_features.append('fontawesome')
+
+    feature_name = 'fontawesome'
+    type_ = 'FONTAWESOME'
+
+    control = {
+        'type': type_,
+        'label': '⚐',
+        'description': 'Font Awesome Icon',
+    }
+
+    features.register_editor_plugin(
+        'draftail', feature_name, draftail_features.EntityFeature(
+            control, 
+            js=['js/draftail_fontawesome.js'],
+            css={'all': ['css/draftail-editor.css']}
+            )
+    )
+
+    features.register_converter_rule('contentstate', feature_name, {
+        'from_database_format': {'span[class]': FontAwesomeEntityElementHandler(type_)},
+        'to_database_format': {'entity_decorators': {type_: fontawesome_entity_decorator}},
+    })
 

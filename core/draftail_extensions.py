@@ -1,9 +1,11 @@
-import wagtail.admin.rich_text.editors.draftail.features as draftail_features
 from wagtail.admin.rich_text.converters.html_to_contentstate import (
-    BlockElementHandler, InlineStyleElementHandler)
+    BlockElementHandler, InlineEntityElementHandler, InlineStyleElementHandler)
 from wagtail.admin.rich_text.editors.draftail.features import \
     InlineStyleFeature
-    
+from draftjs_exporter.dom import DOM
+import wagtail.admin.rich_text.editors.draftail.features as draftail_features
+
+
 def register_inline_styling(features, feature_name, type_, tag, description, label=None, icon=None, style=None, style_map=None):
     control = {
         "type": type_,
@@ -54,7 +56,28 @@ def register_block_feature(features, feature_name, type_, description, css_class
         'to_database_format': {'block_map': {type_: {'element': element, 'props': {'class': css_class}}}},
     })
      
+def fontawesome_entity_decorator(props):
+    """
+    Draft.js ContentState to database HTML.
+    Converts the ANCHOR entities into <a> tags.
+    """
+    return DOM.create_element('span', {
+        'class': props['children'],
+    }, props['children'])
 
+class FontAwesomeEntityElementHandler(InlineEntityElementHandler):
+    """
+    Database HTML to Draft.js ContentState.
+    Converts the <a> tags into ANCHOR entities, with the right data.
+    """
+    # In Draft.js entity terms, anchors are "mutable".
+    # We can alter the anchor's text, but it's still an anchor.
+    mutability = 'MUTABLE'
+
+    def get_attribute_data(self, attrs):
+        return {
+            'class': attrs['class'],
+        }
     
 #--------------------------------------------------------------------------------------------------    
 # SVG icons
