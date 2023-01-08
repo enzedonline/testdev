@@ -1,0 +1,2 @@
+from wagtail import blocks
+

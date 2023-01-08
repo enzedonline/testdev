@@ -9,7 +9,7 @@ class FontAwesomeSource extends React.Component {
 
         const contentWithEntity = content.createEntity(
             entityType.type,
-            'MUTABLE',
+            'IMMUTABLE',
             {
                 fragment: window.getSelection().toString(),
             },

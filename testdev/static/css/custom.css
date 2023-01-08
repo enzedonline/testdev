@@ -1,0 +1,54 @@
+:root {
+  --font-family-headings: "Quicksand", sans-serif;
+  --font-family-body: "Work Sans", sans-serif;
+  --font-family-monospace: "Roboto Mono", "Courier New", monospace;
+  --font-size-1: clamp(2rem, 1.7993rem + 0.8451vw, 2.75rem);
+  --font-size-2: clamp(1.8rem, 1.6261rem + 0.7324vw, 2.45rem);
+  --font-size-3: clamp(1.6rem, 1.4662rem + 0.5634vw, 2.1rem);
+  --font-size-4: clamp(1.4rem, 1.293rem + 0.4507vw, 1.8rem);
+  --font-size-5: clamp(1.2rem, 1.1331rem + 0.2817vw, 1.45rem);
+  --font-size-6: clamp(0.9rem, 0.8732rem + 0.1127vw, 1rem);
+  --font-size-body: clamp(1rem, 0.9599rem + 0.169vw, 1.15rem);
+}
+
+code {
+  font-family: var(--font-family-monospace);
+  font-size: var(--font-size-6);
+  text-align: left !important;
+  color: darkslateblue;
+  background-color: wheat;
+  padding: 0.06rem 0.3rem;
+}
+code {
+  border-radius: 0.3rem;
+  white-space: pre!important;
+}
+.code-block {
+  text-align: left;
+}
+.check-list-wrapper {
+  list-style: none;
+}
+.check-list {
+  margin-bottom: 0.1em;
+}
+.check-list::marker {
+  content: '🗹';
+  letter-spacing: 0.5em;
+}
+.code-block {
+  font-size: var(--font-size-6);
+  font-family: var(--font-family-monospace);
+  color: floralwhite;
+  background-color: #272822;
+  padding: 0;
+  text-align: left !important;
+  line-height: 1.6;
+}
+.code-block-wrapper {
+  background-color: #272822;
+  padding: 0.8em 1em;
+  margin-bottom: 0.8em;
+  border-radius: 0.4em;
+  list-style: none;
+}

@@ -24,10 +24,12 @@ BASE_DIR = os.path.dirname(PROJECT_DIR)
 # Application definition
 
 INSTALLED_APPS = [
+    "blocks",
     "core",
     "home",
     "search",
     'wagtail.contrib.styleguide',
+    "wagtail.contrib.typed_table_block",
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
     "wagtail.embeds",
@@ -176,8 +178,8 @@ WAGTAILADMIN_RICH_TEXT_EDITORS = {
             'features': [
                 'h2', 'h3', 'h4', 'h5', 'h6', 'bold', 'italic', 'ol', 'ul',
                 'link', 'hr', 'document-link', 
-                'underline', 'small', 'code', 'fontawesome', 
-                'blockquote', 'left-align', 'centre-align', 'right-align'
+                'underline', 'small', 'code', 'fa', 'checklist', 'codeblock',
+                'blockquote', 'left-align', 'centre-align', 'right-align', 'code-block'
                 ]
         }
     },

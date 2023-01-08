@@ -1,3 +1,15 @@
+:root {
+    --font-family-headings: "Quicksand", sans-serif;
+    --font-family-body: "Work Sans", sans-serif;
+    --font-family-monospace: "Roboto Mono", "Courier New", monospace;
+    --font-size-1: clamp(2rem, 1.7993rem + 0.8451vw, 2.75rem);
+    --font-size-2: clamp(1.8rem, 1.6261rem + 0.7324vw, 2.45rem);
+    --font-size-3: clamp(1.6rem, 1.4662rem + 0.5634vw, 2.1rem);
+    --font-size-4: clamp(1.4rem, 1.293rem + 0.4507vw, 1.8rem);
+    --font-size-5: clamp(1.2rem, 1.1331rem + 0.2817vw, 1.45rem);
+    --font-size-6: clamp(0.9rem, 0.8732rem + 0.1127vw, 1rem);
+    --font-size-body: clamp(1rem, 0.9599rem + 0.169vw, 1.15rem);
+  }
 .fa-entity {
     font-size: smaller;
     font-weight: 600;
@@ -11,4 +23,29 @@
 .fa-entity::before {
     content: '⚐';
     padding-right: 0.4em;
+}
+li.Draftail-block--checklist {
+    margin-left: 0 !important;
+}
+li.Draftail-block--checklist > div.public-DraftStyleDefault-block::before {
+    content: '🗹';
+    padding-right: 1em;
+    margin-left: -2em;
+}
+li.Draftail-block--checklist > div.public-DraftStyleDefault-block {
+    padding-left: 2em;
+}
+.Draftail-block--codeblock {
+    font-size: var(--font-size-6);
+    font-family: var(--font-family-monospace);
+    color: floralwhite;
+    background-color: #272822;
+    padding: 0;
+    text-align: left !important;
+    line-height: 1.6;
+    margin-left: 0;
+}
+
+.public-DraftStyleDefault-ul {
+    list-style: none;
 }
