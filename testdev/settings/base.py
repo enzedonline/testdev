@@ -201,3 +201,5 @@ WAGTAILADMIN_RICH_TEXT_EDITORS = {
     },
 }
 
+# FIX NEEDED FOR DJANGO 3.2.x
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
