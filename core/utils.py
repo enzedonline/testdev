@@ -3,11 +3,7 @@ import io
 import re
 from html import unescape
 
-import matplotlib.pyplot as plt
-import numpy as np
 from bs4 import BeautifulSoup
-from PIL import Image
-from wordcloud import WordCloud
 
 
 def get_streamfield_text(streamfield, strip_newlines=True, strip_punctuation=True, lowercase=True):
@@ -39,20 +35,3 @@ def plt_to_png_string(plt):
     png = base64.b64encode(image_bytes.read()).decode('utf8')
     return f'data:image/png;base64,{png}'
 
-def wordcloud_shape(corpus, mask_image):
-    mask=np.array(Image.open(mask_image.file.path))
-    wordcloud = WordCloud(
-        width=mask_image.width, 
-        height=mask_image.height, 
-        random_state=1, 
-        mask=mask, 
-        mode='RGBA', 
-        background_color='rgba(255, 255, 255, 0)', 
-        margin=0
-        ).generate(corpus)
-    px = 1/plt.rcParams['figure.dpi']
-    plt.figure(figsize=(mask_image.width*px, mask_image.height*px))
-    plt.axis("off")
-    plt.margins(x=0, y=0)
-    plt.imshow(wordcloud, interpolation="bilinear")
-    return plt
