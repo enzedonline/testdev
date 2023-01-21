@@ -30,7 +30,7 @@ class ParsedRichTextBlock(RichTextBlock):
                     try:
                         if not (element.string == '' or element.string == None):
                             # delete excess white space
-                            element.string.replace_with(re.sub(r' +', ' ', element.string))
+                            element.string.replace_with(re.sub(r' +', ' ', element.string).strip())
                         if (element.string == '' or element.string == None) and len(list(element.children)) == 0:
                             # delete empty <p> tags
                             element.decompose()
