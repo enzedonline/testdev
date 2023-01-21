@@ -30,6 +30,7 @@ def get_streamfield_text(streamfield, strip_newlines=True, strip_punctuation=Tru
 
 def plt_to_png_string(plt):
     image_bytes = io.BytesIO()
+    plt.tight_layout()
     plt.savefig(image_bytes, format='png', bbox_inches='tight', pad_inches=0)
     image_bytes.seek(0)
     png = base64.b64encode(image_bytes.read()).decode('utf8')
