@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     "blocks",
     "core",
     "home",
+    "blog",
     "search",
     "site_settings",
     'wagtail.contrib.styleguide',

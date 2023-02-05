@@ -1,32 +1,71 @@
 import base64
+import importlib
 import io
 import re
 from html import unescape
 
 from bs4 import BeautifulSoup
+from wagtail.models import Page
 
 
-def get_streamfield_text(streamfield, strip_newlines=True, strip_punctuation=True, lowercase=True):
+def page_url(slug, target=None):
+    pg = Page.objects.filter(slug=slug).first()
+    return f'{pg.url}{"#" + target if target else ""}' if pg else ''
+
+def get_streamfield_text(
+    streamfield, 
+    strip_newlines=True, 
+    strip_punctuation=True, 
+    lowercase=False,
+    strip_tags=['style', 'script', 'code']
+    ):
+    
     html = streamfield.render_as_block()
     soup = BeautifulSoup(unescape(html), "html.parser")
-    # strip <style> and <script> tags
-    for script in soup(["script", "style"]):
-        script.extract()
+
+    # strip unwanted tags tags (e.g. ['code', 'script', 'style'])
+    # <style> & <script> by default
+    if strip_tags:
+        for script in soup(strip_tags):
+            script.extract()
 
     inner_text = ' '.join(soup.findAll(text=True))
-    inner_text = inner_text.replace('\xa0','') # strip &nbsp;
-    inner_text = re.sub(r'\bfa-[^ ]*', ' ', inner_text) # strip font awesome classes
+
+    # replace &nbsp; with space
+    inner_text = inner_text.replace('\xa0',' ')
+
+    # replace & with and
+    inner_text = inner_text.replace(' & ',' and ')
+
+    # strip font awesome text
+    inner_text = re.sub(r'\bfa-[^ ]*', '', inner_text)
+
     if strip_newlines:
-        inner_text = re.sub(r'([\n]+.?)+', ' ', inner_text) # strip excess newlines
+        inner_text = re.sub(r'([\n]+.?)+', ' ', inner_text)
+
     if strip_punctuation:
-        import string
-        punctuation = f'{string.punctuation}“”’–'
+        # replace xx/yy with xx yy, leave fractions (1/2)
+        inner_text = re.sub(r'(?<=\D)/(?=\D)', ' ', inner_text)
+        # strip full stops, leave decimal points and point separators
+        inner_text = re.sub(r'\.(?=\s)', '', inner_text)
+        punctuation = '!"#$%&\'()*+,-:;<=>?@[\\]^_`{|}~“”‘’–«»‹›¿¡'
         inner_text = inner_text.translate(str.maketrans('', '', punctuation))
+
     if lowercase:
         inner_text = inner_text.lower()
-    inner_text = re.sub(r' +', ' ', inner_text) # strip excess whitespace
 
-    return inner_text.strip()
+    # strip excess whitespace
+    inner_text = re.sub(r' +', ' ', inner_text).strip()
+
+    return inner_text
+
+def count_words(text):
+    try:
+        word_break_chars='[\n|\r|\t|\f| ]'
+        ignore_words = ['', '-', '−', '–', '/']
+        return len([x for x in re.split(word_break_chars, text) if not x in ignore_words])
+    except:
+        return -1
 
 def plt_to_png_string(plt):
     image_bytes = io.BytesIO()
@@ -35,4 +74,3 @@ def plt_to_png_string(plt):
     image_bytes.seek(0)
     png = base64.b64encode(image_bytes.read()).decode('utf8')
     return f'data:image/png;base64,{png}'
-

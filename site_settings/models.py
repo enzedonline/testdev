@@ -11,24 +11,24 @@ class Tokens(BaseSiteSetting):
     mapbox = models.CharField(
         max_length=100,
         null=True,
-        blank=False,
+        blank=True,
         verbose_name=_("Mapbox Access Token")
     )
     google_analytics = models.CharField(
         max_length=100,
         null=True,
-        blank=False,
+        blank=True,
         verbose_name=_("Google Analytics Site ID")
     )
     facebook_app_id = models.CharField(
         max_length=100,
         null=True,
-        blank=False,
+        blank=True,
         verbose_name=_("Facebook App ID")
     )
     fontawesome = models.CharField(
         max_length=100,
         null=True,
-        blank=False,
+        blank=True,
         verbose_name=_("FontAwesome Kit ID")
     )    

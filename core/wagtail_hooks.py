@@ -1,15 +1,15 @@
-
+from django.contrib import messages
+from django.http import HttpResponseRedirect
 from django.utils.translation import gettext_lazy as _
 from wagtail import hooks
+from wagtail.admin.rich_text.converters.html_to_contentstate import \
+    BlockElementHandler
+from wagtail.admin.rich_text.editors.draftail import \
+    features as draftail_features
 
-from .draftail_extensions import (DRAFTAIL_ICONS,
-                                  register_block_feature,
+from .draftail_extensions import (DRAFTAIL_ICONS, register_block_feature,
                                   register_inline_styling)
 
-import wagtail.admin.rich_text.editors.draftail.features as draftail_features
-
-from wagtail.admin.rich_text.converters.html_to_contentstate import (
-    ListElementHandler, ListItemElementHandler, BlockElementHandler)
 
 @hooks.register('register_rich_text_features')
 def register_align_left_feature(features):
@@ -128,45 +128,6 @@ def register_checklist_feature(features):
         icon="tasks"
     )
     
-
-# @hooks.register("register_rich_text_features")
-# def register_checklist_feature(features):
-#     feature_name = "checklist"
-#     type_ = "checklist"
-
-#     control = {
-#         "type": type_,
-#         "icon": "tasks",
-#         "description": "Check List",
-#     }
-
-#     features.register_editor_plugin(
-#         "draftail",
-#         feature_name,
-#         draftail_features.BlockFeature(control),
-#     )
-
-#     db_conversion = {
-#         "from_database_format":  {
-#             "ul[class='check-list-wrapper']": ListElementHandler(type_),
-#             "li[class='check-list']": ListItemElementHandler(),
-#         },
-#         "to_database_format": {
-#             "block_map": {
-#                 type_: {
-#                     "element": "li",
-#                     "wrapper": "ul class='check-list-wrapper' role='list'",
-#                     "props": {
-#                         "class": "check-list"
-#                     }
-#                 }
-#             },
-#         }
-#     }
-
-#     features.register_converter_rule("contentstate", feature_name, db_conversion)
-
-
 @hooks.register("register_rich_text_features")
 def register_codeblock_feature(features):
     feature_name = "codeblock"
@@ -202,3 +163,35 @@ def register_codeblock_feature(features):
     }
 
     features.register_converter_rule("contentstate", feature_name, db_conversion)
+
+@hooks.register("after_edit_page")
+def get_wordcount(request, page):
+    if page.specific.__class__.__name__ == 'BlogPage':
+        try:
+            page.wordcount = page.get_wordcount()
+            if page.has_unpublished_changes:
+                page.save_revision()
+            else:
+                page.save()
+        except Exception as e:
+            print(f"{type(e).__name__} at line {e.__traceback__.tb_lineno} of {__file__}: {e}")       
+            messages.error(request, _('There was a problem generating the word count'))
+
+from blog.models import BlogPage
+
+@hooks.register("before_create_page")
+@hooks.register("before_delete_page")
+@hooks.register("before_edit_page")
+def check_kb_permissions(request, page, page_class=None):
+    if (page_class or page.specific_class) == BlogPage:
+        if not request.user.groups.get_queryset().filter(name__in=['Site Managers','IT Department']).exists():
+            messages.error(
+                request, 
+                'You do not have permission to add, edit or delete knowledge base articles.\
+                <br><span style="padding-left:2.3em;">Contact <a href="/lalala">support</a> \
+                to report this issue</span>'
+            )
+            referer = request.META.get('HTTP_REFERER', '/admin/')
+            if referer == f'{request.scheme}://{request.get_host()}{request.path}':
+                referer = '/admin/'
+            return HttpResponseRedirect(referer)
