@@ -1,3 +1,4 @@
+import copy
 import importlib
 import sys
 from html import escape
@@ -64,12 +65,12 @@ class RichHelpPanel(Panel):
             try:
                 if isinstance(property_list, list) and isinstance(property_list[0], dict):
                     if 'module' in property_list[0].keys() and 'method' in property_list[0].keys():
-                        parameters = property_list[0].copy()
-                        value = self.get_method_value(parameters.pop('module'), parameters.pop('method'), parameters)
+                        module = property_list[0].pop('module')
+                        method = property_list[0].pop('method')
+                        value = self.get_method_value(module, method, property_list[0])
                     elif 'object' in property_list[0].keys() and 'method' in property_list[0].keys():
-                        parameters = property_list[0].copy()
-                        obj = parameters.pop('object')
-                        prop_list = parameters.pop('method')
+                        obj = property_list[0].pop('object')
+                        prop_list = property_list[0].pop('method')
                         if not isinstance(prop_list, list):
                             prop_list = [prop_list]
                         value = self.get_object_value(obj, prop_list)
@@ -81,7 +82,7 @@ class RichHelpPanel(Panel):
                     value = self.get_object_value(object, property_list)
                 return value
             except Exception as e:
-                print(f"\n{type(e).__name__} at line {e.__traceback__.tb_lineno} of {__file__}: {e}\n") 
+                print(f"\n{type(e).__name__} at line {e.__traceback__.tb_lineno} of {__file__}: {e}") 
                 return None
 
         def get_object_value(self, object, property_list):
@@ -106,7 +107,7 @@ class RichHelpPanel(Panel):
                     pass
                 return value
             except Exception as e:
-                print(f"\n{type(e).__name__} at line {e.__traceback__.tb_lineno} of {__file__}: {e}\n") 
+                print(f"\n{type(e).__name__} at line {e.__traceback__.tb_lineno} of {__file__}: {e}") 
                 return None
 
         def get_method_value(self, module, method, kwargs={}):
@@ -128,62 +129,61 @@ class RichHelpPanel(Panel):
                 else:
                     value = func
             except Exception as e:
-                print(f"\n{type(e).__name__} at line {e.__traceback__.tb_lineno} of {__file__}: {e}\n") 
+                print(f"\n{type(e).__name__} at line {e.__traceback__.tb_lineno} of {__file__}: {e}") 
             return value
 
         def parse_args_and_kwargs(self, kwarg_dict):
             args=[]
             try:
                 if isinstance(kwarg_dict, dict):
-                    kwargs = kwarg_dict.copy()
-                    for item in kwargs:
+                    for item in kwarg_dict:
                         kwarg_value = None
-                        if isinstance(kwargs[item], list):
-                            if kwargs[item][0] == 'panel':
-                                attr_list = kwargs[item][1:]
+                        if isinstance(kwarg_dict[item], list):
+                            if kwarg_dict[item][0] == 'panel':
+                                attr_list = kwarg_dict[item][1:]
                                 kwarg_value = self.get_value(self, attr_list)
-                            elif kwargs[item][0] == 'self':
-                                attr_list = kwargs[item][1:]
+                            elif kwarg_dict[item][0] == 'self':
+                                attr_list = kwarg_dict[item][1:]
                                 kwarg_value = [self.get_value(self.instance, attr_list)]
-                            elif isinstance(kwargs[item][0], dict):
-                                if 'module' in kwargs[item][0].keys() and 'method' in kwargs[item][0].keys():
-                                    kwarg_value = [self.get_method_value(
-                                        kwargs[item][0].pop('module'), kwargs[item][0].pop('method'), kwargs[item][0]
-                                    )]
-                                elif 'object' in kwargs[item][0].keys() and 'method' in kwargs[item][0].keys():
-                                    obj = kwargs[item].pop('object')
-                                    prop_list = kwargs[item].pop('method')
+                            elif isinstance(kwarg_dict[item][0], dict):
+                                if 'module' in kwarg_dict[item][0].keys() and 'method' in kwarg_dict[item][0].keys():
+                                    module = kwarg_dict[item][0].pop('module')
+                                    method = kwarg_dict[item][0].pop('method')
+                                    kwarg_value = [self.get_method_value(module, method, kwarg_dict[item][0])]
+                                elif 'object' in kwarg_dict[item][0].keys() and 'method' in kwarg_dict[item][0].keys():
+                                    obj = kwarg_dict[item].pop('object')
+                                    prop_list = kwarg_dict[item].pop('method')
                                     if not isinstance(prop_list, list):
                                         prop_list = [prop_list]
                                     kwarg_value = [self.get_object_value(obj, prop_list)]
                             if kwarg_value:
-                                kwargs[item] = kwarg_value
+                                kwarg_dict[item] = kwarg_value
                             if item == 'args':
                                 if kwarg_value:
                                     args = [kwarg_value]
                                 else:
-                                    args = kwargs[item]
+                                    args = kwarg_dict[item]
 
-                        elif isinstance(kwargs[item], dict):
-                            if 'module' in kwargs[item].keys() and 'method' in kwargs[item].keys():
-                                kwargs[item] = self.get_method_value(
-                                    kwargs[item].pop('module'), kwargs[item].pop('method'), kwargs[item]
-                                )
-                            elif 'object' in kwargs[item].keys() and 'method' in kwargs[item].keys():
-                                obj = kwargs[item].pop('object')
-                                prop_list = kwargs[item].pop('method')
+                        elif isinstance(kwarg_dict[item], dict):
+                            if 'module' in kwarg_dict[item].keys() and 'method' in kwarg_dict[item].keys():
+                                module = kwarg_dict[item].pop('module')
+                                method = kwarg_dict[item].pop('method')
+                                kwarg_dict[item] = self.get_method_value(module, method, kwarg_dict[item])
+                            elif 'object' in kwarg_dict[item].keys() and 'method' in kwarg_dict[item].keys():
+                                obj = kwarg_dict[item].pop('object')
+                                prop_list = kwarg_dict[item].pop('method')
                                 if not isinstance(prop_list, list):
                                     prop_list = [prop_list]
-                                kwargs[item] = self.get_object_value(obj, prop_list)
+                                kwarg_dict[item] = self.get_object_value(obj, prop_list)
                             if item == 'args':
-                                args = kwargs[item]
+                                args = kwarg_dict[item]
 
-                    if 'args' in kwargs:
-                        kwargs.pop('args')
+                    if 'args' in kwarg_dict:
+                        kwarg_dict.pop('args')
 
-                    return args, kwargs
+                    return args, kwarg_dict
             except Exception as e:
-                print(f"\n{type(e).__name__} at line {e.__traceback__.tb_lineno} of {__file__}: {e}\n") 
+                print(f"\n{type(e).__name__} at line {e.__traceback__.tb_lineno} of {__file__}: {e}") 
                 return [], {}
             else:
                 return [], {}
@@ -210,17 +210,18 @@ class RichHelpPanel(Panel):
             # keep looping on error
             hidden_fields = {}
             parsed_text = self.panel.text
-            for item in self.panel.value_dict:
+            value_dict = copy.deepcopy(self.panel.value_dict)
+            for item in value_dict:
                 try:
-                    value_to_parse = self.panel.value_dict[item]
+                    value_to_parse = value_dict[item]
                     if not isinstance(value_to_parse, list):
                         value_to_parse = [value_to_parse]
                     value = self.get_value(self.instance, value_to_parse)
                     parsed_text = parsed_text.replace('{{' + item + '}}', str(value))
                     hidden_fields[item] = str(value)
                 except Exception as e:
-                    print(f"\n{type(e).__name__} at line {e.__traceback__.tb_lineno} of {__file__}: {e}\n") 
-                    parsed_text = f'Error parsing {escape(self.panel.text)}'
+                    print(f"\n{type(e).__name__} at line {e.__traceback__.tb_lineno} of {__file__}: {e}") 
+                    print(f'Error parsing {escape(self.panel.text)}')
             return format_html(
                 f'{parsed_text} {self.hidden_input(hidden_fields) if self.panel.add_hidden_fields else ""}'
             )
@@ -231,5 +232,3 @@ class RichHelpPanel(Panel):
                 return format_html(' style="{}"', self.panel.style)
             return ''
 
-class ParsingError(Exception):
-    pass
