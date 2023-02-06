@@ -9,7 +9,7 @@ from wagtail.admin.rich_text.editors.draftail import \
 
 from .draftail_extensions import (DRAFTAIL_ICONS, register_block_feature,
                                   register_inline_styling)
-
+from blog.models import BlogPage
 
 @hooks.register('register_rich_text_features')
 def register_align_left_feature(features):
@@ -166,7 +166,7 @@ def register_codeblock_feature(features):
 
 @hooks.register("after_edit_page")
 def get_wordcount(request, page):
-    if page.specific.__class__.__name__ == 'BlogPage':
+    if page.specific_class == BlogPage:
         try:
             page.wordcount = page.get_wordcount()
             if page.has_unpublished_changes:
