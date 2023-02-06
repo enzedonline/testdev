@@ -1,8 +1,6 @@
 import copy
 import importlib
-import sys
 from html import escape
-from Lib import traceback
 
 from django.utils.html import format_html
 from wagtail.admin.panels import Panel
