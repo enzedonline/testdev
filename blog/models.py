@@ -53,8 +53,8 @@ class BlogPage(Page):
             style='text-align: center;'
             ),
         RichHelpPanel(
-            '<p class="tagit edit-permission-{{perm}}">You are viewing this page in read-only mode</p>',
-            {'perm': [('permissions_for_user', {'user': ['panel', 'request', 'user']}), 'can_edit']}
+            '<p class="tagit edit-permission-{{perm}}">You do not have publish permission for this page.</p>',
+            {'perm': [('permissions_for_user', {'user': ['panel', 'request', 'user']}), 'can_publish']}
         ),
         RichHelpPanel(
             text="<h5>Siblings</h5>{{siblings}}",
