@@ -5,7 +5,7 @@
 <script src="{% static 'js/jquery-3.6.0.min.js'%}"></script>  
 <script src="{% static 'js/enzedonline.js'%}"></script>
 
-<div style="width:90%; margin: 2rem auto">
+<article style="width:90%; margin: 2rem auto">
 <h1>{{ self.title }}</h1>
 
 <p>Word Count: {{ page.wordcount }}</p>
@@ -13,4 +13,4 @@
 {% include_block block %}
 {% endfor %}
 
-</div>
+</article>
