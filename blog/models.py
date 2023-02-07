@@ -6,7 +6,7 @@ from wagtail.blocks import RichTextBlock
 from wagtail.fields import StreamField
 from wagtail.models import Page
 
-from core.panels import RichHelpPanel
+from core.panels import InfoPanel
 from core.utils import get_streamfield_text
 
 
@@ -22,12 +22,19 @@ class BlogPage(Page):
     )
 
     content_panels = Page.content_panels + [
-        RichHelpPanel('<span class="editor-reminder">Some important notice to display</span>'),
-        RichHelpPanel(
+        InfoPanel('<span class="editor-reminder">Some important notice to display</span>'),
+        InfoPanel(
+            '<h5><a target="_blank" href="{{url}}" style="color: blue; text-decoration: underline;">News Article Editors Guide</a></h5>',
+            value_dict={
+                'url': [{'module': 'core.utils', 'method': 'page_url', 'slug': 'first-blog', 'target': 'news-article'}]
+            },
+            style='text-align: center;'
+            ),
+        InfoPanel(
             '<b>Word Count:</b> {{wordcount}}', {'wordcount': 'wordcount'},
             add_hidden_fields=True
             ),
-        RichHelpPanel(
+        InfoPanel(
             '<div class="tagit">\
                 Created by <a href="/profiles/{{username}}" style="color: blue; text-decoration: underline;" target="_blank" >\
                 {{fullname}}</a>.<br>\
@@ -40,23 +47,16 @@ class BlogPage(Page):
             },
             datetime_format='%d %B %Y'
             ),
-        RichHelpPanel('Random number: {{rnd}}', {'rnd': [{'module': 'random', 'method': 'randint', 'a': 1,'b': 9999}]}),
-        RichHelpPanel(
+        InfoPanel('Random number: {{rnd}}', {'rnd': [{'module': 'random', 'method': 'randint', 'a': 1,'b': 9999}]}),
+        InfoPanel(
             'Maximum of 3,56,4,99,5 is {{maximum}}',
             {'maximum': [{'module': 'builtins', 'method': 'max', 'args':[3,56,4,99,5]}]}
             ),
-        RichHelpPanel(
-            '<h5><a target="_blank" href="{{url}}" style="color: blue; text-decoration: underline;">News Article Editors Guide</a></h5>',
-            value_dict={
-                'url': [{'module': 'core.utils', 'method': 'page_url', 'slug': 'first-blog', 'target': 'news-article'}]
-            },
-            style='text-align: center;'
-            ),
-        RichHelpPanel(
+        InfoPanel(
             '<p class="tagit edit-permission-{{perm}}">You do not have publish permission for this page.</p>',
             {'perm': [('permissions_for_user', {'user': ['panel', 'request', 'user']}), 'can_publish']}
         ),
-        RichHelpPanel(
+        InfoPanel(
             text="<h5>Siblings</h5>{{siblings}}",
             value_dict={
                 "siblings": [
