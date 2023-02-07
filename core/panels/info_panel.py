@@ -1,13 +1,14 @@
 import copy
 import importlib
+from datetime import date, datetime, time
 from html import escape
 
 from django.utils.html import format_html
 from wagtail.admin.panels import Panel
 
 
-class RichHelpPanel(Panel):
-    """ RichHelpPanel Panel Class - built on the ReadOnlyPanel
+class InfoPanel(Panel):
+    """ InfoPanel Panel Class - built on the ReadOnlyPanel
         Like the HelpPanel but with basic HTML tags and dynamic content
         Supply a Django template like text and a value dictionary
         Template tags ({{tag}}) that match dictionary keys will be replaced with the value from the dictionary.
@@ -98,11 +99,6 @@ class RichHelpPanel(Panel):
                     value = value(*args, **kwargs)    
                 if len(property_list) > 1:
                     value = self.get_object_value(value, property_list[1:])
-                try:
-                    if type(value).__name__ in ['date', 'datetime', 'time']:
-                        value = value.strftime(self.panel.datetime_format)
-                except:
-                    pass
                 return value
             except Exception as e:
                 print(f"\n{type(e).__name__} at line {e.__traceback__.tb_lineno} of {__file__}: {e}") 
@@ -215,6 +211,11 @@ class RichHelpPanel(Panel):
                     if not isinstance(value_to_parse, list):
                         value_to_parse = [value_to_parse]
                     value = self.get_value(self.instance, value_to_parse)
+                    try:
+                        if type(value) in [date, datetime, time]:
+                            value = value.strftime(self.panel.datetime_format)
+                    except:
+                        pass
                     parsed_text = parsed_text.replace('{{' + item + '}}', str(value))
                     hidden_fields[item] = str(value)
                 except Exception as e:
