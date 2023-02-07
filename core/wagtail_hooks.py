@@ -165,6 +165,7 @@ def register_codeblock_feature(features):
     features.register_converter_rule("contentstate", feature_name, db_conversion)
 
 @hooks.register("after_edit_page")
+@hooks.register("after_create_page")
 def get_wordcount(request, page):
     if page.specific_class == BlogPage:
         try:
