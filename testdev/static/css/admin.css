@@ -145,3 +145,29 @@ code {
   font-size: larger;
   border-radius: 0.6rem;
 }
+
+.restricted-field-warning {
+  color: red;
+  margin-top: 1em;
+}
+.restricted-field-warning::before {
+  content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' width='1.2em' height='1.2em' fill='red'  %3E%3Cpath d='M256 512c141.4 0 256-114.6 256-256S397.4 0 256 0S0 114.6 0 256S114.6 512 256 512zm0-384c13.3 0 24 10.7 24 24V264c0 13.3-10.7 24-24 24s-24-10.7-24-24V152c0-13.3 10.7-24 24-24zm32 224c0 17.7-14.3 32-32 32s-32-14.3-32-32s14.3-32 32-32s32 14.3 32 32z'/%3E%3C/svg%3E");
+  padding: 0 0.5em 0 0;
+  vertical-align: -0.35em;
+}
+
+.disabled-display-field {
+  appearance: none;
+  border: 1px solid var(--w-color-grey-100);
+  border-radius: 0.3125rem;
+  color: var(--w-color-grey-600);
+  font-size: 1.125rem;
+  font-weight: 400;
+  line-height: 1.5;
+  min-height: 2.625rem;
+  padding: 0.375rem 1.25rem;
+  width: 100%;
+  background-color: var(--w-color-grey-50);
+  color: var(--w-color-grey-400);
+  cursor: not-allowed;
+}

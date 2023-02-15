@@ -5,6 +5,7 @@ import re
 from html import unescape
 
 from bs4 import BeautifulSoup
+from django.utils.encoding import force_str
 from wagtail.models import Page
 
 
@@ -74,3 +75,18 @@ def plt_to_png_string(plt):
     image_bytes.seek(0)
     png = base64.b64encode(image_bytes.read()).decode('utf8')
     return f'data:image/png;base64,{png}'
+
+def text_from_html(value):
+    """
+    Returns the unescaped text content of an HTML string.
+    """
+
+    return BeautifulSoup(force_str(value), "html5lib").getText()
+
+def has_role(user, groups):
+    try:
+        group_list = groups if isinstance(groups, list) else [groups]
+        return user.groups.get_queryset().filter(name__in=group_list).exists()
+    except Exception as e:
+        print(f"{type(e).__name__} at line {e.__traceback__.tb_lineno} of {__file__}: {e}")       
+        return False

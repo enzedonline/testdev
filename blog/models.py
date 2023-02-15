@@ -3,16 +3,53 @@ import re
 from django.db import models
 from wagtail.admin.panels import FieldPanel
 from wagtail.blocks import RichTextBlock
-from wagtail.fields import StreamField
+from wagtail.fields import StreamField, RichTextField
 from wagtail.models import Page
-
+from core.forms import RestrictedPanelsAdminPageForm
 from core.panels import InfoPanel, RestrictedFieldPanel
 from core.utils import get_streamfield_text
 from django.contrib.auth.models import Group
 
-
 class BlogPage(Page):
-    wordcount = models.IntegerField(null=True, blank=True, verbose_name="Word Count")
+    wordcount = models.IntegerField(null=True, blank=True, verbose_name="Word Count", default=0)
+    some_date = models.DateTimeField(null=True, blank=True, help_text="Some helpful text")
+    some_text = models.CharField(max_length=255)
+    some_rich_text = RichTextField(null=True, blank=True)
+    some_image = models.ForeignKey(
+        'wagtailimages.Image',
+        null=True,
+        blank=True,
+        related_name='+',
+        on_delete=models.SET_NULL,
+        verbose_name='Some Image',
+    )
+    some_document = models.ForeignKey(
+        'wagtaildocs.Document',
+        null=True,
+        blank=True,
+        related_name='+',
+        on_delete=models.SET_NULL,
+        verbose_name='Some Document',
+    )
+    some_product = models.ForeignKey(
+        'site_settings.Product',
+        null=True,
+        blank=True,
+        related_name='+',
+        on_delete=models.SET_NULL,
+        verbose_name='Some Product',
+    )
+    some_page = models.ForeignKey(
+        'wagtailcore.Page',
+        null=True,
+        blank=True,
+        related_name='+',
+        on_delete=models.SET_NULL,
+        verbose_name='Some Page',
+    )
+
+
+
     content = StreamField(
         [
             ("rich_text", RichTextBlock()),
@@ -23,7 +60,13 @@ class BlogPage(Page):
     )
 
     content_panels = Page.content_panels + [
-        RestrictedFieldPanel('wordcount', 'Vendors', permission='Publish'),
+        RestrictedFieldPanel('some_date', ['Event Management', 'Marketing VPs']),
+        RestrictedFieldPanel('some_text'),
+        RestrictedFieldPanel('some_rich_text'),
+        RestrictedFieldPanel('some_image'),
+        RestrictedFieldPanel('some_document'),
+        RestrictedFieldPanel('some_product'),
+        RestrictedFieldPanel('some_page'),
         # InfoPanel('<span class="editor-reminder">Some important notice to display</span>'),
         # InfoPanel(
         #     '<h5><a target="_blank" href="{{url}}" style="color: blue; text-decoration: underline;">News Article Editors Guide</a></h5>',
@@ -85,8 +128,10 @@ class BlogPage(Page):
         #         ]
         #     },
         # ),
-        FieldPanel("content"),
+        RestrictedFieldPanel("content"),
     ]
+
+    base_form_class = RestrictedPanelsAdminPageForm
 
     class Meta:
         verbose_name = 'Blog Page'

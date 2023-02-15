@@ -6,10 +6,11 @@ from wagtail.admin.rich_text.converters.html_to_contentstate import \
     BlockElementHandler
 from wagtail.admin.rich_text.editors.draftail import \
     features as draftail_features
-
+from wagtail.models import Page
 from .draftail_extensions import (DRAFTAIL_ICONS, register_block_feature,
                                   register_inline_styling)
 from blog.models import BlogPage
+from .utils import has_role
 
 @hooks.register('register_rich_text_features')
 def register_align_left_feature(features):
@@ -183,16 +184,22 @@ from blog.models import BlogPage
 @hooks.register("before_create_page")
 @hooks.register("before_delete_page")
 @hooks.register("before_edit_page")
-def check_kb_permissions(request, page, page_class=None):
-    if (page_class or page.specific_class) == BlogPage:
-        if not request.user.groups.get_queryset().filter(name__in=['Site Managers','IT Department']).exists():
+def check_page_permissions(request, page, page_class=None):
+    page_class = page_class or page.specific_class
+    if not issubclass(page_class, Page):
+        # kind of redundant - use django-admin groups for this, though this will override those settings
+        # careful!, doesn't cover bulk actions, need seperate hook for that
+        # this could be adapted to cover a page branch rather than type, not possible via django-admin
+        if not has_role(request.user, ['Site Managers','IT Department']):
+            page_type = getattr(page_class._meta, 'verbose_name', page_class.__name__)
             messages.error(
                 request, 
-                'You do not have permission to add, edit or delete knowledge base articles.\
+                f'You do not have permission to add, edit or delete {page_type}s.\
                 <br><span style="padding-left:2.3em;">Contact <a href="/lalala">support</a> \
                 to report this issue</span>'
             )
             referer = request.META.get('HTTP_REFERER', '/admin/')
-            if referer == f'{request.scheme}://{request.get_host()}{request.path}':
+            if referer == request.build_absolute_uri():
                 referer = '/admin/'
             return HttpResponseRedirect(referer)
+

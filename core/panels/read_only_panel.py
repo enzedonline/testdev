@@ -1,140 +1,94 @@
-from wagtail.admin.panels import Panel
-from django.utils.html import format_html
-from wagtail.documents.models import Document
-from django.db import models
-import datetime
+from bs4 import BeautifulSoup
+from django.utils.safestring import mark_safe
+from wagtail.admin.panels import FieldPanel
+from wagtail.rich_text import RichText
+from wagtail.blocks import StreamValue
+from core.utils import text_from_html
+from django.utils.functional import cached_property
 
-class ReadOnlyPanel(Panel):
-    
-    """ ReadOnlyPanel EditHandler Class
-        Usage:
-        fieldname:          name of field to display
-        style:              optional, any valid style string
-        add_hidden_input:   optional, add a hidden input field to allow retrieving data in form_clean (self.data['field'])
-        If the field name is invalid, or an error is received getting the value, empty string is returned.
-        """
-    def __init__(self, fieldname, style=None, add_hidden_input=False, *args, **kwargs):
-        # error if fieldname is not string
-        if type(fieldname)=='str':
-            self.fieldname = fieldname
-        else:
-            try:
-                self.fieldname = str(fieldname)
-            except:
-                pass
-        self.style = style
-        self.add_hidden_input = add_hidden_input
-        super().__init__(*args, **kwargs)
+class RestrictedFieldPanel(FieldPanel):
+    def __init__(self, field_name, authorised_groups, **kwargs):
+        self.field_name = field_name
+        self.authorised_groups = authorised_groups \
+            if isinstance(authorised_groups, list) else [authorised_groups]
+        super().__init__(self.field_name, **kwargs)
 
-    def clone(self):
-        return self.__class__(
-            fieldname=self.fieldname,
-            heading=self.heading,
-            help_text=self.help_text,
-            style=self.style,
-            add_hidden_input=self.add_hidden_input,
+    def clone_kwargs(self):
+        kwargs = super().clone_kwargs()
+        kwargs.update(
+            authorised_groups=self.authorised_groups,
         )
+        return kwargs
 
+    def get_form_options(self):
+        return super().get_form_options()
 
-    class BoundPanel(Panel.BoundPanel):
+    def format_value_for_display(self, value):
+        """
+        Hook to allow formatting of raw field values (and other attribute values) for human-readable
+        display. For example, if rendering a ``RichTextField`` value, you might extract text from the HTML
+        to generate a safer display value.
+        """
+        # Improve representation of many-to-many values
+        if callable(getattr(value, "all", "")):
+            return ", ".join(str(obj) for obj in value.all()) or "None"
 
-        def get_value(self):
-            # try to get the value of field, return empty string if failed
-            try:
-                value = getattr(self.instance, self.panel.fieldname)
-                if callable(value):
-                    value = value()
-            except AttributeError:
-                value = ""
-            if not value:
-                value = "-"
-            # evaluate choices correctly
-            choices = getattr(
-                getattr(type(self.instance), self.panel.fieldname).field,
-                "choices",
-                None,
-            )
-            if choices:
-                value = [choice[1] for choice in choices if choice[0] == value][0]
-            return value
+        # Avoid rendering potentially unsafe HTML mid-form
+        if isinstance(value, (RichText, StreamValue)):
+            return text_from_html(value)
+
+        return value
+
+    class BoundPanel(FieldPanel.BoundPanel):
         
-        def render_html(self, parent_context):
-            # document fields (does not work for custom document model)
-            if type(getattr(self.instance, self.panel.fieldname)) == Document:
-                return format_html(
-                    """
-                        <div class="field" {}>
-                        {}
-                        <div class="field-content">
-                        <div id="id_csv_file-chooser" class="chooser document-chooser " data-chooser-url="/admin/documents/chooser/">
-                        <a href="{}"> 
-                            <div class="chosen">
-                                <svg class="icon icon-doc-full-inverse icon" aria-hidden="true" focusable="false"><use href="#icon-doc-full-inverse"></use></svg>
-                                
-                                    <span class="title">{}</span>
-                            </div>
-                            </a>
-                        </div>
-                        </div>
-                        {}
-                        </div>
-                    """,
-                    format_html(self.get_style()),
-                    self.heading_tag("label"),
-                    getattr(self.instance, self.panel.fieldname).file.url,
-                    self.render(),
-                    self.hidden_input(),
-                )
-            # render the final output
-            return format_html(
-                '<div class="field" {}>'
-                '{}'
-                '<div class="field-content">{}</div>'
-                '{}'
-                '</div>',
-                format_html(self.get_style()), self.heading_tag('label'), self.render(), self.hidden_input())
+        def is_authorised(self):
+            try:
+                is_authorised = self.request.user.groups.get_queryset().filter(name__in=self.panel.authorised_groups).exists()
+                return is_authorised
+            except:
+                print("error")
+                return False
 
-        def render(self):
-            # return formatted field value
-            self.value = self.get_value()
-            # format types properly
-            if type(self.value) == datetime.datetime:
-                self.value = self.value.strftime("%d.%m.%Y %H:%M:%S")
-            # make text_field pre formated
-            if type(getattr(type(self.instance), self.panel.fieldname).field) == models.TextField:
-                return format_html(
-                    '<div style="padding-top: 1.2em;"><pre>{}</pre></div>', self.value
-                )
-            return format_html('<div style="padding-top: 1em;">{}</div>', self.value)
+        def render_html(self, parent_context = None):
+            return super().render_html(parent_context) \
+                if self.is_authorised() else self.disable_input(parent_context)
 
-        def render_as_object(self):
-            return format_html(
-                '<fieldset>{}'
-                '<ul class="fields"><li><div class="field">{}</div></li></ul>'
-                '</fieldset>',
-                self.panel.heading('legend'), self.render())
+        def disable_input(self, parent_context):
+            msg = '<span style="color:red;">Read-only</span>'
+            self.bound_field.help_text = mark_safe(
+                f'{self.bound_field.help_text}/n{msg}' if self.bound_field.help_text else msg
+            )
+            # Don't do this, the field value is dropped on save
+            self.form.fields[self.field_name].disabled = True
+            html = super().render_html(parent_context)
+            if self.form._meta.exclude:
+                self.form._meta.exclude.append(self.field_name)
+            else:
+                # self.form._meta.exclude = [self.field_name]
+                opts = self.panel.get_form_options()
+                opts["exclude"] = opts['fields'].copy()
+            # self.form.base_fields.pop(self.field_name)
+            # self.form.fields.pop(self.field_name)
+            # self.form.Meta.fields.remove(self.field_name)
 
-        def hidden_input(self):
-            # add a hidden input field if selected, field value can be retrieved in form_clean with self.data['field']
-            if self.panel.add_hidden_input:
-                input = f'<input type="hidden" name="{self.panel.fieldname}" value="{self.value}" id="id_{self.panel.fieldname}">'
-                return format_html(input)
-            return ''
 
-        def heading_tag(self, tag):
-            # read headline from verbose_name
-            verbose_name = getattr(type(self.instance), self.panel.fieldname).field.verbose_name
-            if not self.heading and verbose_name:
-                self.panel.heading = verbose_name
-            # add the label/legend tags only if heading supplied
-            if self.panel.heading:
-                if tag == 'legend':
-                    return format_html('<legend class="w-field__label">{}</legend>', self.panel.heading)
-                return format_html('<label class="w-field__label">{}{}</label>', self.panel.heading, ':')
-            return ''
+            return html
+            # soup = BeautifulSoup(super().render_html(parent_context), "html.parser")
+            # soup.find('input')['disabled'] = ''
+            # return mark_safe(soup.renderContents().decode("utf-8"))
 
-        def get_style(self):
-            # add style if supplied
-            if self.panel.style:
-                return format_html('style="{}"', self.panel.style)
-            return format_html('style="{}"', "padding-bottom: 1em;")
+        def get_read_only_context_data(self):
+            return {
+                "display_value": self.panel.format_value_for_display(
+                    self.value_from_instance
+                ),
+                "id_for_label": self.id_for_label(),
+                "help_text": self.help_text,
+                "help_text_id": "%s-helptext" % self.prefix,
+                "raw_value": self.value_from_instance,
+                "show_add_comment_button": self.comments_enabled,
+            }
+        
+        @cached_property
+        def value_from_instance(self):
+            return getattr(self.instance, self.field_name)         

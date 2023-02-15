@@ -5,6 +5,7 @@ from modelcluster.models import ClusterableModel
 from wagtail.admin.panels import FieldPanel, InlinePanel, PageChooserPanel
 from wagtail.contrib.settings.models import BaseSiteSetting, register_setting
 from wagtail.models import Orderable
+from wagtail.snippets.models import register_snippet
 
 @register_setting(icon='password')
 class Tokens(BaseSiteSetting):
@@ -32,3 +33,19 @@ class Tokens(BaseSiteSetting):
         blank=True,
         verbose_name=_("FontAwesome Kit ID")
     )    
+
+
+@register_snippet
+class Product(models.Model):
+    sku = models.CharField(max_length=10, verbose_name=_("SKU"))
+    title = models.CharField(max_length=100, verbose_name=_("Product Title"))
+    description = models.TextField(verbose_name=_("Product Description"))
+
+    panels = [
+        FieldPanel('sku'),
+        FieldPanel('title'),
+        FieldPanel('description')
+    ]
+
+    def __str__(self):
+        return f'{self.sku} - {self.title}'

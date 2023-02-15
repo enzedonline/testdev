@@ -1,21 +1,266 @@
+from bs4 import BeautifulSoup
+from core.forms import RestrictedPanelsAdminPageForm
+from django.contrib import messages
+from django.utils.safestring import mark_safe
+from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import FieldPanel
+from wagtail.admin.rich_text.editors.draftail import DraftailRichTextArea
+from wagtail.admin.widgets import AdminPageChooser
+from wagtail.blocks.base import BlockField
+from wagtail.blocks.stream_block import StreamBlock
+from wagtail.documents.widgets import AdminDocumentChooser
+from wagtail.images.widgets import AdminImageChooser
+from wagtail.snippets.widgets import AdminSnippetChooser
+
 
 class RestrictedFieldPanel(FieldPanel):
-    def __init__(self, field_name, authorised_groups, **kwargs):
+    def __init__(
+        self,
+        field_name,
+        authorised_roles=[],
+        allow_on_create=False,
+        allow_for_owner=False,
+        hide_if_restricted=False,
+        **kwargs,
+    ):
+        super().__init__(field_name, **kwargs)
         self.field_name = field_name
-        self.authorised_groups = authorised_groups if isinstance(authorised_groups, list) else [authorised_groups]
-        super().__init__(self.field_name, **kwargs)
+        self.authorised_roles = (
+            authorised_roles
+            if isinstance(authorised_roles, list)
+            else [authorised_roles]
+        )
+        self.allow_on_create = allow_on_create
+        self.allow_for_owner = allow_for_owner
+        self.hide_if_restricted = hide_if_restricted
 
     def clone_kwargs(self):
         kwargs = super().clone_kwargs()
         kwargs.update(
-            authorised_groups=self.authorised_groups
+            authorised_roles=self.authorised_roles,
+            allow_on_create=self.allow_on_create,
+            allow_for_owner=self.allow_for_owner,
+            hide_if_restricted=self.hide_if_restricted,
         )
         return kwargs
 
+    def get_form_options(self):
+        opts = {"restricted": []}
+        opts = opts | super().get_form_options()
+        opts["restricted-field-panels"] = {
+            self.field_name: {
+                'authorised_roles': self.authorised_roles,
+                'allow_on_create': self.allow_on_create,
+                'allow_for_owner': self.allow_for_owner,
+                'hide_if_restricted': self.hide_if_restricted,
+            }
+        }
+        return opts
+
     class BoundPanel(FieldPanel.BoundPanel):
-        def is_shown(self):
-            show_field = super().is_shown()
-            is_authorised = self.request.user.groups.get_queryset().filter(name__in=self.panel.authorised_groups).exists()
-            return (show_field and is_authorised)
+        def __init__(self, **kwargs):
+            super().__init__(**kwargs)
+            self.is_authorised = (
+                getattr(self, 'field_name', None) in getattr(self.form, 'authorised_fields', [])
+            )
+            self.base_form_error = self._has_base_form_error()
+
+        def render_html(self, parent_context=None):
+            if self.base_form_error:
+                return mark_safe(f'<p class="restricted-field-warning">{_("Base Form Error")}</p>')
+            else:
+                return (
+                    super().render_html(parent_context)
+                    if self.is_authorised
+                    else self.disable_input(parent_context)
+                )
+
+        def disable_input(self, parent_context):
+            # default render, set input element to disabled, add warning sub-label
+            # not called if hide_if_restricted=True and no default error
+            field = object
+            if self.field_name in self.form.fields.keys():
+                field = self.form.fields[self.field_name]
+                field.disabled = True
+            widget = getattr(field, 'widget', None)
+
+            try:
+                if isinstance(field, BlockField) and isinstance(field.block, StreamBlock):
+                    return self.render_streamfield()
+
+                # RichTextField just render contents
+                if isinstance(widget, DraftailRichTextArea):
+                    return self.render_richtextfield()
+
+                # Render html and button elements
+                html = super().render_html(parent_context)
+                soup = BeautifulSoup(html, "html.parser")
+
+                # strip all scripts and link buttons
+                for element in soup('a', class_='button') + soup('script'): 
+                    element.extract()
+
+                # strip all buttons except for comment buttons
+                for element in soup('button'):
+                    if not (
+                        element.has_attr('class') 
+                        and 'w-field__comment-button' in element["class"]
+                        ):
+                        element.extract()
+
+                # add default display for empty choosers
+                if not getattr(self.form.instance, self.field_name, False):
+                    unchosen = soup.find(class_="unchosen")
+                    if unchosen:
+                        unchosen = self.render_empty_chooser(widget, unchosen)
+
+                # look for input field
+                input = soup.find("input")
+                if input:
+                    # Add hover title and warning label, force input to disabled (in case field=None)
+                    if self.panel.authorised_roles:
+                        input["title"] = f'{_("Restricted to")} {", ".join(self.panel.authorised_roles)}'
+                    input["disabled"] = ''
+                    soup.append(self.warning_label)
+                    return mark_safe(soup.renderContents().decode("utf-8"))
+
+            except Exception as e:
+                print(f"{type(e).__name__} at line {e.__traceback__.tb_lineno} of {__file__}: {e}")       
+
+            # fallback in case of error or widget/field type not handled above
+            return mark_safe(
+                f'<p class="restricted-field">{_("Restricted Field")}</p>{str(self.warning_label)}'
+            )
+
+        def render_richtextfield(self):
+            # RichTextField - CharField with DraftailRichTextArea widget
+            # Return instance value (plain HTML)
+            return mark_safe(
+                f'<div class="disabled-display-field">\
+                {getattr(self.form.instance, self.field_name, {_("Restricted Field")})}</div>\
+                {str(self.warning_label)}'
+            )
+
+        def render_streamfield(self):   
+            # Return rendered streamfield in collapsed <details> tag if streamfield has value
+            # Add input field field_name-count with value=0 
+            # field validation uses this pre-clean - because we don't return anything, count needs to be 0
+            soup = BeautifulSoup()
+            streamfield = soup.new_tag('div')
+            streamfield_value = getattr(self.form.instance, self.field_name, None)
+            contents_container = soup.new_tag('div')
+            contents_container['class'] = 'disabled-display-field'
+            contents_container['style'] = 'margin-top: 1em;'
+
+            if streamfield_value:
+                streamfield_contents = BeautifulSoup(streamfield_value.render_as_block(), 'html.parser')
+                streamfield.append(self.toggle_svg_js)
+                details = soup.new_tag('details')
+                streamfield.append(details)
+                summary = soup.new_tag('summary')
+                details.append(summary)
+                summary_heading = soup.new_tag('a')
+                summary.append(summary_heading)
+                summary_heading['onclick'] = f'toggle_svg("{self.field_name}-toggler")'
+                summary_heading['style'] = 'cursor: pointer;'
+                svg = soup.new_tag('svg')
+                summary_heading.append(svg)
+                svg['class'] = 'icon icon-arrow-down-big w-panel__icon'
+                svg['id'] = f'{self.field_name}-toggler'
+                svg['aria-hidden'] = "true"
+                svg['style'] = "transform: rotate(-90deg);"
+                use = soup.new_tag('use')
+                svg.append(use)
+                use['href'] = "#icon-arrow-down-big"
+                summary_heading_text = soup.new_tag('span')
+                summary_heading.append(summary_heading_text)
+                summary_heading_text['style'] = "padding-left: 1em;"
+                summary_heading_text.string = f'{_("StreamField Contents")}'
+                details.append(contents_container)
+            else:
+                streamfield_contents = soup.new_tag('p')
+                streamfield_contents.string = f'{_("Empty Streamfield")}'
+                streamfield.append(contents_container)
+
+            contents_container.append(streamfield_contents)
+            input_field = soup.new_tag('input')
+            streamfield.append(input_field)
+            input_field['type'] = 'hidden'
+            input_field['name'] = f'{self.field_name}-count'
+            input_field['data-streamfield-stream-count'] = ''
+            input_field['value'] = '0'
+            streamfield.append(self.warning_label)
+            return mark_safe(streamfield.renderContents().decode("utf-8"))
+
+        def render_empty_chooser(self, widget, unchosen):
+
+            svg_icon_href = None
+            soup = BeautifulSoup()
+            unchosen.clear()
+
+            if isinstance(widget, AdminImageChooser):
+                svg_icon_href = 'icon-image'
+            if isinstance(widget, AdminDocumentChooser):
+                svg_icon_href = 'icon-doc-full-inverse'
+            if isinstance(widget, AdminPageChooser):
+                svg_icon_href = 'icon-doc-empty-inverse'
+            if isinstance(widget, AdminSnippetChooser):
+                svg_icon_href = 'icon-snippet'
+
+            if svg_icon_href:
+                chooser_preview = soup.new_tag('div')
+                unchosen.append(chooser_preview)
+                chooser_preview['class'] = "chooser__preview"
+                chooser_preview['role'] = "presentation"
+                chooser_preview['style'] = "display: inline-flex; margin-right: 1.5em;"
+                svg = soup.new_tag('svg')
+                chooser_preview.append(svg)
+                svg['aria-hidden'] = "false"
+                svg['class'] =f"icon icon-doc-full-inverse icon"
+                use = soup.new_tag('use')
+                svg.append(use)
+                use['href'] = f"#{svg_icon_href}"
+
+            chooser_title = soup.new_tag('span')
+            unchosen.append(chooser_title)
+            chooser_title['class'] = "chooser__title"
+            chooser_title['style'] = "vertical-align: 0.5em;"
+            chooser_title['data-chooser-title'] = ""
+            chooser_title.string = f'{_("Not Selected")}'
+            return unchosen
+
+        def _has_base_form_error(self):
+            try:
+                if not issubclass(self.form.__class__, RestrictedPanelsAdminPageForm):
+                    raise TypeError(
+                        f'{self.instance.__class__.__name__}: {_("Incorrect form type for RestrictedFieldPanel")}'
+                    )
+                return False
+            except Exception as e:
+                print(f"{type(e).__name__} at line {e.__traceback__.tb_lineno} of {__file__}: {e}")       
+                messages.error(
+                    self.request, 
+                    _("RestrictedFieldPanel should only be used with a base_form_class inherited from RestrictedPanelsAdminPageForm")
+                )
+                referer = self.request.META.get('HTTP_REFERER', '/admin/')
+                if referer == self.request.build_absolute_uri():
+                    referer = '/admin/'
+                return referer
+
+        @property
+        def warning_label(self):
+            warning = BeautifulSoup().new_tag("div")
+            warning.string = str(_("Read Only"))
+            warning["class"] = "help restricted-field-warning"
+            return warning
+
+        @property
+        def toggle_svg_js(self):
+            # rotate svg according to collapsed/expanded status
+            js = 'const toggle_svg = (svg_id) => {let x = document.getElementById(svg_id); \
+                if (x.ariaHidden === "true") { x.ariaHidden = "false"; x.style = "transform: rotate(0deg);"} \
+                else { x.ariaHidden = "true";  x.style = "transform: rotate(-90deg);"} }'
+            script = BeautifulSoup().new_tag("script")
+            script.string = js
+            return script
 
