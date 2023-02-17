@@ -14,6 +14,12 @@ from wagtail.snippets.widgets import AdminSnippetChooser
 
 
 class RestrictedFieldPanel(FieldPanel):
+    """
+    
+    Custom css classes:
+        restricted-field-warning - formats read-only label, supplements wagtail help class
+        disabled-display-field - formats disabled rich-text fields, streamfields and fallback/error returns
+    """
     def __init__(
         self,
         field_name,
@@ -67,7 +73,7 @@ class RestrictedFieldPanel(FieldPanel):
 
         def render_html(self, parent_context=None):
             if self.base_form_error:
-                return mark_safe(f'<p class="restricted-field-warning">{_("Base Form Error")}</p>')
+                return mark_safe(f'<p class="disabled-display-field">{_("Base Form Error")}</p>')
             else:
                 return (
                     super().render_html(parent_context)
@@ -85,11 +91,14 @@ class RestrictedFieldPanel(FieldPanel):
             widget = getattr(field, 'widget', None)
 
             try:
-                if isinstance(field, BlockField) and isinstance(field.block, StreamBlock):
+                if (
+                    issubclass(field.__class__, BlockField) 
+                    and issubclass(field.block.__class__, StreamBlock)
+                    ):
                     return self.render_streamfield()
 
-                # RichTextField just render contents
-                if isinstance(widget, DraftailRichTextArea):
+                # RichTextField just render contents as html
+                if issubclass(widget.__class__, DraftailRichTextArea):
                     return self.render_richtextfield()
 
                 # Render html and button elements
@@ -129,7 +138,7 @@ class RestrictedFieldPanel(FieldPanel):
 
             # fallback in case of error or widget/field type not handled above
             return mark_safe(
-                f'<p class="restricted-field">{_("Restricted Field")}</p>{str(self.warning_label)}'
+                f'<p class="disabled-display-field">{_("Restricted Field")}</p>{str(self.warning_label)}'
             )
 
         def render_richtextfield(self):
@@ -197,29 +206,31 @@ class RestrictedFieldPanel(FieldPanel):
             svg_icon_href = None
             soup = BeautifulSoup()
             unchosen.clear()
+            widget_class = widget.__class__
 
-            if isinstance(widget, AdminImageChooser):
+            if issubclass(widget_class, AdminImageChooser):
                 svg_icon_href = 'icon-image'
-            if isinstance(widget, AdminDocumentChooser):
+            elif issubclass(widget_class, AdminDocumentChooser):
                 svg_icon_href = 'icon-doc-full-inverse'
-            if isinstance(widget, AdminPageChooser):
+            elif issubclass(widget_class, AdminPageChooser):
                 svg_icon_href = 'icon-doc-empty-inverse'
-            if isinstance(widget, AdminSnippetChooser):
+            elif issubclass(widget_class, AdminSnippetChooser):
                 svg_icon_href = 'icon-snippet'
+            else:
+                svg_icon_href = 'icon-placeholder'
 
-            if svg_icon_href:
-                chooser_preview = soup.new_tag('div')
-                unchosen.append(chooser_preview)
-                chooser_preview['class'] = "chooser__preview"
-                chooser_preview['role'] = "presentation"
-                chooser_preview['style'] = "display: inline-flex; margin-right: 1.5em;"
-                svg = soup.new_tag('svg')
-                chooser_preview.append(svg)
-                svg['aria-hidden'] = "false"
-                svg['class'] =f"icon icon-doc-full-inverse icon"
-                use = soup.new_tag('use')
-                svg.append(use)
-                use['href'] = f"#{svg_icon_href}"
+            chooser_preview = soup.new_tag('div')
+            unchosen.append(chooser_preview)
+            chooser_preview['class'] = "chooser__preview"
+            chooser_preview['role'] = "presentation"
+            chooser_preview['style'] = "display: inline-flex; margin-right: 1.5em;"
+            svg = soup.new_tag('svg')
+            chooser_preview.append(svg)
+            svg['aria-hidden'] = "false"
+            svg['class'] = "icon"
+            use = soup.new_tag('use')
+            svg.append(use)
+            use['href'] = f"#{svg_icon_href}"
 
             chooser_title = soup.new_tag('span')
             unchosen.append(chooser_title)
@@ -249,9 +260,17 @@ class RestrictedFieldPanel(FieldPanel):
 
         @property
         def warning_label(self):
-            warning = BeautifulSoup().new_tag("div")
-            warning.string = str(_("Read Only"))
+            soup = BeautifulSoup()
+            warning = soup.new_tag("div")
             warning["class"] = "help restricted-field-warning"
+            svg = soup.new_tag('svg')
+            warning.append(svg)
+            svg['class'] = "icon"
+            svg['style'] = "height: 1.2em; width: 1.2em; vertical-align: -0.3em; margin-right: 0.5em;"
+            use = soup.new_tag('use')
+            svg.append(use)
+            use['href'] = "#icon-warning"
+            warning.append(f'{_("Read Only")}')
             return warning
 
         @property
@@ -264,3 +283,4 @@ class RestrictedFieldPanel(FieldPanel):
             script.string = js
             return script
 
+    
