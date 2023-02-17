@@ -90,3 +90,12 @@ def has_role(user, groups):
     except Exception as e:
         print(f"{type(e).__name__} at line {e.__traceback__.tb_lineno} of {__file__}: {e}")       
         return False
+
+def count_words(text):
+    try:
+        word_break_chars='[\n|\r|\t|\f| ]'
+        ignore_words = ['', '-', '−', '–', '/']
+        return len([x for x in re.split(word_break_chars, text) if not x in ignore_words])
+    except:
+        return -1
+
