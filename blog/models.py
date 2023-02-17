@@ -2,13 +2,12 @@ import re
 
 from django.db import models
 from wagtail.admin.panels import FieldPanel
-from wagtail.blocks import RichTextBlock
+from wagtail.blocks import RichTextBlock, RawHTMLBlock
 from wagtail.fields import StreamField, RichTextField
 from wagtail.models import Page
 from core.forms import RestrictedPanelsAdminPageForm
 from core.panels import InfoPanel, RestrictedFieldPanel
-from core.utils import get_streamfield_text
-from django.contrib.auth.models import Group
+from core.utils import get_streamfield_text, count_words
 
 class BlogPage(Page):
     wordcount = models.IntegerField(null=True, blank=True, verbose_name="Word Count", default=0)
@@ -37,7 +36,7 @@ class BlogPage(Page):
         blank=True,
         related_name='+',
         on_delete=models.SET_NULL,
-        verbose_name='Some Product',
+        verbose_name='Some Snippet',
     )
     some_page = models.ForeignKey(
         'wagtailcore.Page',
@@ -53,6 +52,7 @@ class BlogPage(Page):
     content = StreamField(
         [
             ("rich_text", RichTextBlock()),
+            ("html", RawHTMLBlock()),
         ],
         verbose_name="Page Content",
         blank=True,
@@ -144,4 +144,4 @@ class BlogPage(Page):
     def get_wordcount(self, corpus=None):
         if not corpus:
             corpus = self.corpus()
-        return len(corpus.split(" "))
+        return count_words(corpus)
