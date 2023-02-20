@@ -70,6 +70,7 @@ class RestrictedFieldPanel(FieldPanel):
                 getattr(self, 'field_name', None) in getattr(self.form, 'authorised_panels', [])
             )
             self.base_form_error = self._has_base_form_error()
+            self.render_soup = None
 
         def render_html(self, parent_context=None):
             if self.base_form_error:
@@ -103,14 +104,14 @@ class RestrictedFieldPanel(FieldPanel):
 
                 # Render html and button elements
                 html = super().render_html(parent_context)
-                soup = BeautifulSoup(html, "html.parser")
+                self.render_soup = BeautifulSoup(html, "html.parser")
 
                 # strip all scripts and link buttons
-                for element in soup('a', class_='button') + soup('script'): 
+                for element in self.render_soup('a', class_='button') + self.render_soup('script'): 
                     element.extract()
 
                 # strip all buttons except for comment buttons
-                for element in soup('button'):
+                for element in self.render_soup('button'):
                     if not (
                         element.has_attr('class') 
                         and 'w-field__comment-button' in element["class"]
@@ -119,19 +120,19 @@ class RestrictedFieldPanel(FieldPanel):
 
                 # add default display for empty choosers
                 if not getattr(self.form.instance, self.field_name, False):
-                    unchosen = soup.find(class_="unchosen")
+                    unchosen = self.render_soup.find(class_="unchosen")
                     if unchosen:
                         unchosen = self.render_empty_chooser(widget, unchosen)
 
                 # look for input field
-                input = soup.find("input")
+                input = self.render_soup.find("input")
                 if input:
                     # Add hover title and warning label, force input to disabled (in case field=None)
                     if self.panel.authorised_roles:
                         input["title"] = f'{_("Restricted to")} {", ".join(self.panel.authorised_roles)}'
                     input["disabled"] = ''
-                    soup.append(self.warning_label)
-                    return mark_safe(soup.renderContents().decode("utf-8"))
+                    self.render_soup.append(self.warning_label)
+                    return mark_safe(self.render_soup.renderContents().decode("utf-8"))
 
             except Exception as e:
                 print(f"{type(e).__name__} at line {e.__traceback__.tb_lineno} of {__file__}: {e}")       
@@ -162,22 +163,24 @@ class RestrictedFieldPanel(FieldPanel):
             contents_container['style'] = 'margin-top: 1em;'
 
             if streamfield_value:
+                svg_id = f'{self.field_name}-toggler'
+                toggler_animation = soup.new_tag('style')
+                streamfield.append(toggler_animation)
+                toggler_animation.append(
+                    f'[open] svg#content-toggler {{transform: rotate(0deg);}} svg#content-toggler {{transform: rotate(-90deg);}}'
+                )
                 streamfield_contents = BeautifulSoup(streamfield_value.render_as_block(), 'html.parser')
-                streamfield.append(self.toggle_svg_js)
                 details = soup.new_tag('details')
                 streamfield.append(details)
                 summary = soup.new_tag('summary')
                 details.append(summary)
                 summary_heading = soup.new_tag('a')
                 summary.append(summary_heading)
-                summary_heading['onclick'] = f'toggle_svg("{self.field_name}-toggler")'
                 summary_heading['style'] = 'cursor: pointer;'
                 svg = soup.new_tag('svg')
                 summary_heading.append(svg)
-                svg['class'] = 'icon icon-arrow-down-big w-panel__icon'
-                svg['id'] = f'{self.field_name}-toggler'
-                svg['aria-hidden'] = "true"
-                svg['style'] = "transform: rotate(-90deg);"
+                svg['class'] = 'icon w-panel__icon restricted-streamfield-arrow'
+                svg['id'] = svg_id
                 use = soup.new_tag('use')
                 svg.append(use)
                 use['href'] = "#icon-arrow-down-big"
@@ -273,14 +276,4 @@ class RestrictedFieldPanel(FieldPanel):
             warning.append(f'{_("Read Only")}')
             return warning
 
-        @property
-        def toggle_svg_js(self):
-            # rotate svg according to collapsed/expanded status
-            js = 'const toggle_svg = (svg_id) => {let x = document.getElementById(svg_id); \
-                if (x.ariaHidden === "true") { x.ariaHidden = "false"; x.style = "transform: rotate(0deg);"} \
-                else { x.ariaHidden = "true";  x.style = "transform: rotate(-90deg);"} }'
-            script = BeautifulSoup().new_tag("script")
-            script.string = js
-            return script
-
-    
+  
