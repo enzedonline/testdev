@@ -67,7 +67,7 @@ class RestrictedFieldPanel(FieldPanel):
         def __init__(self, **kwargs):
             super().__init__(**kwargs)
             self.is_authorised = (
-                getattr(self, 'field_name', None) in getattr(self.form, 'authorised_fields', [])
+                getattr(self, 'field_name', None) in getattr(self.form, 'authorised_panels', [])
             )
             self.base_form_error = self._has_base_form_error()
 
