@@ -19,6 +19,7 @@ class RestrictedFieldPanel(FieldPanel):
     Custom css classes:
         restricted-field-warning - formats read-only label, supplements wagtail help class
         disabled-display-field - formats disabled rich-text fields, streamfields and fallback/error returns
+        restricted-summary - format for collapsible streamfield display heading
     """
     def __init__(
         self,
@@ -70,7 +71,7 @@ class RestrictedFieldPanel(FieldPanel):
                 getattr(self, 'field_name', None) in getattr(self.form, 'authorised_panels', [])
             )
             self.base_form_error = self._has_base_form_error()
-            self.render_soup = None
+            self.render_soup = BeautifulSoup()
 
         def render_html(self, parent_context=None):
             if self.base_form_error:
@@ -155,47 +156,47 @@ class RestrictedFieldPanel(FieldPanel):
             # Return rendered streamfield in collapsed <details> tag if streamfield has value
             # Add input field field_name-count with value=0 
             # field validation uses this pre-clean - because we don't return anything, count needs to be 0
-            soup = BeautifulSoup()
-            streamfield = soup.new_tag('div')
+
+            streamfield = self.render_soup.new_tag('div')
             streamfield_value = getattr(self.form.instance, self.field_name, None)
-            contents_container = soup.new_tag('div')
+            contents_container = self.render_soup.new_tag('div')
             contents_container['class'] = 'disabled-display-field'
             contents_container['style'] = 'margin-top: 1em;'
 
             if streamfield_value:
                 svg_id = f'{self.field_name}-toggler'
-                toggler_animation = soup.new_tag('style')
+                toggler_animation = self.render_soup.new_tag('style')
                 streamfield.append(toggler_animation)
                 toggler_animation.append(
-                    f'[open] svg#content-toggler {{transform: rotate(0deg);}} svg#content-toggler {{transform: rotate(-90deg);}}'
+                    f'[open] svg#{svg_id} {{transform: rotate(0deg);}} svg#{svg_id} {{transform: rotate(-90deg);}}'
                 )
                 streamfield_contents = BeautifulSoup(streamfield_value.render_as_block(), 'html.parser')
-                details = soup.new_tag('details')
+                details = self.render_soup.new_tag('details')
                 streamfield.append(details)
-                summary = soup.new_tag('summary')
+                summary = self.render_soup.new_tag('summary')
                 details.append(summary)
-                summary_heading = soup.new_tag('a')
+                summary['class'] = 'w-panel__heading w-panel__heading--label restricted-summary'
+                summary_heading = self.render_soup.new_tag('a')
                 summary.append(summary_heading)
-                summary_heading['style'] = 'cursor: pointer;'
-                svg = soup.new_tag('svg')
+                svg = self.render_soup.new_tag('svg')
                 summary_heading.append(svg)
                 svg['class'] = 'icon w-panel__icon restricted-streamfield-arrow'
                 svg['id'] = svg_id
-                use = soup.new_tag('use')
+                use = self.render_soup.new_tag('use')
                 svg.append(use)
                 use['href'] = "#icon-arrow-down-big"
-                summary_heading_text = soup.new_tag('span')
+                summary_heading_text = self.render_soup.new_tag('span')
                 summary_heading.append(summary_heading_text)
                 summary_heading_text['style'] = "padding-left: 1em;"
                 summary_heading_text.string = f'{_("StreamField Contents")}'
                 details.append(contents_container)
             else:
-                streamfield_contents = soup.new_tag('p')
+                streamfield_contents = self.render_soup.new_tag('p')
                 streamfield_contents.string = f'{_("Empty Streamfield")}'
                 streamfield.append(contents_container)
 
             contents_container.append(streamfield_contents)
-            input_field = soup.new_tag('input')
+            input_field = self.render_soup.new_tag('input')
             streamfield.append(input_field)
             input_field['type'] = 'hidden'
             input_field['name'] = f'{self.field_name}-count'
@@ -207,7 +208,6 @@ class RestrictedFieldPanel(FieldPanel):
         def render_empty_chooser(self, widget, unchosen):
 
             svg_icon_href = None
-            soup = BeautifulSoup()
             unchosen.clear()
             widget_class = widget.__class__
 
@@ -222,20 +222,20 @@ class RestrictedFieldPanel(FieldPanel):
             else:
                 svg_icon_href = 'icon-placeholder'
 
-            chooser_preview = soup.new_tag('div')
+            chooser_preview = self.render_soup.new_tag('div')
             unchosen.append(chooser_preview)
             chooser_preview['class'] = "chooser__preview"
             chooser_preview['role'] = "presentation"
             chooser_preview['style'] = "display: inline-flex; margin-right: 1.5em;"
-            svg = soup.new_tag('svg')
+            svg = self.render_soup.new_tag('svg')
             chooser_preview.append(svg)
             svg['aria-hidden'] = "false"
             svg['class'] = "icon"
-            use = soup.new_tag('use')
+            use = self.render_soup.new_tag('use')
             svg.append(use)
             use['href'] = f"#{svg_icon_href}"
 
-            chooser_title = soup.new_tag('span')
+            chooser_title = self.render_soup.new_tag('span')
             unchosen.append(chooser_title)
             chooser_title['class'] = "chooser__title"
             chooser_title['style'] = "vertical-align: 0.5em;"
@@ -263,14 +263,13 @@ class RestrictedFieldPanel(FieldPanel):
 
         @property
         def warning_label(self):
-            soup = BeautifulSoup()
-            warning = soup.new_tag("div")
+            warning = self.render_soup.new_tag("div")
             warning["class"] = "help restricted-field-warning"
-            svg = soup.new_tag('svg')
+            svg = self.render_soup.new_tag('svg')
             warning.append(svg)
             svg['class'] = "icon"
             svg['style'] = "height: 1.2em; width: 1.2em; vertical-align: -0.3em; margin-right: 0.5em;"
-            use = soup.new_tag('use')
+            use = self.render_soup.new_tag('use')
             svg.append(use)
             use['href'] = "#icon-warning"
             warning.append(f'{_("Read Only")}')
