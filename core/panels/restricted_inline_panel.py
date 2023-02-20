@@ -6,6 +6,13 @@ from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import InlinePanel
 
 class RestrictedInlinePanel(InlinePanel):
+    """
+    
+    Custom css classes:
+        restricted-field-warning - formats read-only label, supplements wagtail help class
+        disabled-display-field - formats disabled rich-text fields and fallback/error returns
+        restricted-summary - format for collapsible inline panel display heading
+    """
     def __init__(
         self,
         relation_name,
@@ -58,7 +65,7 @@ class RestrictedInlinePanel(InlinePanel):
                 self.panel.relation_name in getattr(self.form, 'authorised_panels', [])
             )
             self.base_form_error = self._has_base_form_error()
-            self.render_soup = None
+            self.render_soup = BeautifulSoup()
             self.related_instances = getattr(self.instance, self.panel.db_field.related_name, None).all()
 
         def render_html(self, parent_context=None):
@@ -98,13 +105,13 @@ class RestrictedInlinePanel(InlinePanel):
                     else:
                         input["disabled"] = ''
 
-            # add read-only warning above panels
-            self.render_soup.insert(0, self.warning_label)
-
             if self.related_instances.count() == 0:
                 self.render_empty_value()
             else:
                 self.render_sub_panels()
+
+            # add read-only warning below panels
+            self.render_soup.append(self.warning_label)
 
             return mark_safe(self.render_soup.renderContents().decode("utf-8"))
 
@@ -112,22 +119,25 @@ class RestrictedInlinePanel(InlinePanel):
             # move panels into collapsed <details>, handle richtextfields
             self.render_rich_text_fields()
             display = self.render_soup.find(id=f'id_{self.panel.db_field.related_name}-FORMS')
-            display.insert_after(self.toggle_svg_js)
+            svg_id = f'{self.panel.db_field.related_name}-toggler'
+            toggler_animation = self.render_soup.new_tag('style')
+            display.insert_before(toggler_animation)
+            toggler_animation.append(
+                f'[open] svg#{svg_id} {{transform: rotate(0deg);}} svg#{svg_id} {{transform: rotate(-90deg);}}'
+            )
             details = self.render_soup.new_tag('details')
             display.insert_after(details)
             details['style'] = 'margin-top: 1em;'
             summary = self.render_soup.new_tag('summary')
+            summary['class'] = 'w-panel__heading w-panel__heading--label restricted-summary'
             details.append(summary)
             summary_heading = self.render_soup.new_tag('a')
             summary.append(summary_heading)
-            summary_heading['onclick'] = f'toggle_svg("{self.panel.db_field.related_name}-toggler")'
-            summary_heading['style'] = 'cursor: pointer;'
             svg = self.render_soup.new_tag('svg')
             summary_heading.append(svg)
             svg['class'] = 'icon icon-arrow-down-big w-panel__icon'
-            svg['id'] = f'{self.panel.db_field.related_name}-toggler'
+            svg['id'] = svg_id
             svg['aria-hidden'] = "true"
-            svg['style'] = "transform: rotate(-90deg);"
             use = self.render_soup.new_tag('use')
             svg.append(use)
             use['href'] = "#icon-arrow-down-big"
@@ -139,7 +149,7 @@ class RestrictedInlinePanel(InlinePanel):
 
         def render_rich_text_fields(self):
             # get stored value for rtf and render this as HTML instead
-            for richtextfield in self.render_soup.find_all('input', {'data-draftail-input' :True}):
+            for richtextfield in self.render_soup.find_all('input', {'data-draftail-input':True}):
                 name, index, remote_field = richtextfield.attrs['id'].rsplit('-',2)
                 value = getattr(self.related_instances[int(index)], remote_field, '')
                 rtf = self.render_soup.new_tag('div')
@@ -216,13 +226,3 @@ class RestrictedInlinePanel(InlinePanel):
             use['href'] = "#icon-warning"
             warning.append(f'{_("Read Only")}')
             return warning
-
-        @property
-        def toggle_svg_js(self):
-            # rotate svg according to collapsed/expanded status
-            js = 'const toggle_svg = (svg_id) => {let x = document.getElementById(svg_id); \
-                if (x.ariaHidden === "true") { x.ariaHidden = "false"; x.style = "transform: rotate(0deg);"} \
-                else { x.ariaHidden = "true";  x.style = "transform: rotate(-90deg);"} }'
-            script = BeautifulSoup().new_tag("script")
-            script.string = js
-            return script
