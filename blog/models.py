@@ -1,18 +1,40 @@
 import re
 
 from django.db import models
-from wagtail.admin.panels import FieldPanel
-from wagtail.blocks import RichTextBlock, RawHTMLBlock
-from wagtail.fields import StreamField, RichTextField
-from wagtail.models import Page
+from modelcluster.fields import ParentalKey
+from wagtail.admin.panels import FieldPanel, InlinePanel, MultiFieldPanel
+from wagtail.blocks import RawHTMLBlock, RichTextBlock
+from wagtail.fields import RichTextField, StreamField
+from wagtail.models import Orderable, Page
+
 from core.forms import RestrictedPanelsAdminPageForm
-from core.panels import InfoPanel, RestrictedFieldPanel
-from core.utils import get_streamfield_text, count_words
+from core.panels import InfoPanel, RestrictedFieldPanel, RestrictedInlinePanel
+from core.utils import count_words, get_streamfield_text
+
+
+class CarouselImages(Orderable):
+    """Between 1 and 5 images for the home page carousel."""
+
+    page = ParentalKey("blog.BlogPage", related_name="carousel_images")
+    carousel_image = models.ForeignKey(
+        "wagtailimages.Image",
+        null=True,
+        blank=False,
+        on_delete=models.SET_NULL,
+        related_name="+",
+        verbose_name="Image"
+    )
+    caption = RichTextField(null=True, blank=True)
+
+    panels = [FieldPanel("carousel_image"), FieldPanel("caption")]
+
+    class Meta(Orderable.Meta):
+        verbose_name = 'Carousel Image'
 
 class BlogPage(Page):
     wordcount = models.IntegerField(null=True, blank=True, verbose_name="Word Count", default=0)
     some_date = models.DateTimeField(null=True, blank=True, help_text="Some helpful text")
-    some_text = models.CharField(max_length=255)
+    some_text = models.CharField(max_length=255, default="some default value")
     some_rich_text = RichTextField(null=True, blank=True)
     some_image = models.ForeignKey(
         'wagtailimages.Image',
@@ -46,9 +68,6 @@ class BlogPage(Page):
         on_delete=models.SET_NULL,
         verbose_name='Some Page',
     )
-
-
-
     content = StreamField(
         [
             ("rich_text", RichTextBlock()),
@@ -60,13 +79,18 @@ class BlogPage(Page):
     )
 
     content_panels = Page.content_panels + [
-        RestrictedFieldPanel('some_date', ['Event Management', 'Marketing VPs']),
-        RestrictedFieldPanel('some_text'),
-        RestrictedFieldPanel('some_rich_text'),
-        RestrictedFieldPanel('some_image'),
-        RestrictedFieldPanel('some_document'),
-        RestrictedFieldPanel('some_product'),
-        RestrictedFieldPanel('some_page'),
+        MultiFieldPanel(
+            [InlinePanel("carousel_images", max_num=5, min_num=1)],
+            heading="Carousel Images",
+        ),
+        # RestrictedFieldPanel('some_date', ['Event Management', 'Editors']),
+        # RestrictedFieldPanel('some_text'),
+        # RestrictedFieldPanel('some_rich_text'),
+        # RestrictedFieldPanel('some_image'),
+        # RestrictedFieldPanel('some_document'),
+        # RestrictedFieldPanel('some_product'),
+        # RestrictedFieldPanel('some_page'),
+        # RestrictedFieldPanel("content"),
         # InfoPanel('<span class="editor-reminder">Some important notice to display</span>'),
         # InfoPanel(
         #     '<h5><a target="_blank" href="{{url}}" style="color: blue; text-decoration: underline;">News Article Editors Guide</a></h5>',
@@ -128,7 +152,6 @@ class BlogPage(Page):
         #         ]
         #     },
         # ),
-        RestrictedFieldPanel("content"),
     ]
 
     base_form_class = RestrictedPanelsAdminPageForm
