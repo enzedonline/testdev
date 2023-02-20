@@ -166,3 +166,7 @@ code {
   color: var(--w-color-grey-400);
   cursor: not-allowed;
 }
+.restricted-summary{
+  font-family: var(--font-family-headings);
+  font-weight: 600;
+}
