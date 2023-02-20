@@ -27,10 +27,18 @@ class RestrictedPanelsAdminPageForm(WagtailAdminPageForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.authorised_fields = [] # field must be implicitly authorised to be editable
+        self.restricted_field_panels = list(getattr(self.Meta, "restricted-field-panels", {}).items())
+        self.restricted_inline_panels = list(getattr(self.Meta, "restricted-inline-panels", {}).items())
+        self.authorised_panels = [] # field must be implicitly authorised to be editable
         self.declined_fields = [] # fields that fail authorisation but are displayed on form
+        self.declined_inline_panels = [] # fields that fail authorisation but are displayed on form
+
         self.no_default_errors = []
         self.authorise_panels()
+
+    def authorise_panels(self):
+        self._authorise_field_panels()
+        self._authorise_inline_panels()
 
     def clean(self, *args, **kwargs):
         cleaned_data = super().clean(*args, **kwargs)
@@ -42,20 +50,18 @@ class RestrictedPanelsAdminPageForm(WagtailAdminPageForm):
                 self.fields.pop(field_name, None)
                 cleaned_data.pop(field_name, None)
                 self.errors.pop(field_name, None)
+        for relation_name in self.declined_inline_panels:
+            # TODO: popping formset on new page causes key error
+            if self.instance.id:
+                self.formsets.pop(relation_name, None)  
         return cleaned_data
 
-    @property
-    def restricted_panels(self):
-        restricted_field_panels = list(getattr(self.Meta, "restricted-field-panels", {}).items())
-        restricted_inline_panels = list(getattr(self.Meta, "restricted-inline-panels", {}).items())
-        return restricted_field_panels + restricted_inline_panels
-
-    def authorise_panels(self):        
-        for field_name, parameters in self.restricted_panels:
+    def _authorise_field_panels(self):        
+        for field_name, parameters in self.restricted_field_panels:
             # each item should be a tuple with field name and a list of authorised groups
             hide_if_restricted = parameters.pop('hide_if_restricted', False)
             if self.is_authorised(**parameters):
-                self.authorised_fields.append(field_name)
+                self.authorised_panels.append(field_name)
             else:
                 if self.field_has_default_error(self.fields[field_name]):
                     # new page with read-only on required field but no default
@@ -70,6 +76,21 @@ class RestrictedPanelsAdminPageForm(WagtailAdminPageForm):
                     # defer removing field otherwise field is hidden
                     # add to restricted fields for clean
                     self.declined_fields.append(field_name)
+
+    def _authorise_inline_panels(self):        
+        for relation_name, parameters in self.restricted_inline_panels:
+            # each item should be a tuple with field name and a list of authorised groups
+            hide_if_restricted = parameters.pop('hide_if_restricted', False)
+            if self.is_authorised(**parameters):
+                self.authorised_panels.append(relation_name)
+            else:
+                if hide_if_restricted:
+                    # remove from form fields
+                    self.formsets.pop(relation_name, None)
+                else:
+                    # defer removing field otherwise field is hidden
+                    # add to restricted fields for clean
+                    self.declined_inline_panels.append(relation_name)
 
     def is_authorised(self, authorised_roles, allow_on_create, allow_for_owner):
         # logic to determine if editor has authorisation on restricted field panel
