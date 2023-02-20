@@ -1,5 +1,3 @@
-import re
-
 from django.db import models
 from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import FieldPanel, InlinePanel, MultiFieldPanel
@@ -80,7 +78,7 @@ class BlogPage(Page):
 
     content_panels = Page.content_panels + [
         MultiFieldPanel(
-            [InlinePanel("carousel_images", max_num=5, min_num=1)],
+            [RestrictedInlinePanel("carousel_images", max_num=5, min_num=1)],
             heading="Carousel Images",
         ),
         # RestrictedFieldPanel('some_date', ['Event Management', 'Editors']),
@@ -90,7 +88,7 @@ class BlogPage(Page):
         # RestrictedFieldPanel('some_document'),
         # RestrictedFieldPanel('some_product'),
         # RestrictedFieldPanel('some_page'),
-        # RestrictedFieldPanel("content"),
+        RestrictedFieldPanel("content"),
         # InfoPanel('<span class="editor-reminder">Some important notice to display</span>'),
         # InfoPanel(
         #     '<h5><a target="_blank" href="{{url}}" style="color: blue; text-decoration: underline;">News Article Editors Guide</a></h5>',
