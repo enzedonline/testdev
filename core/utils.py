@@ -6,6 +6,7 @@ from html import unescape
 
 from bs4 import BeautifulSoup
 from django.utils.encoding import force_str
+from wagtail.blocks.stream_block import StreamValue
 from wagtail.models import Page
 
 
@@ -99,3 +100,20 @@ def count_words(text):
     except:
         return -1
 
+def find_all_streamfields_with_css_class(css_class):
+    
+    found_pages = []
+    pages = Page.objects.all().specific()
+
+    for page in pages:
+
+        for item in page.__dict__.items():
+            if item[1].__class__ == StreamValue:
+                if stream_has_css_class(item[1], css_class): found_pages.append((page, item[0]))
+                print(page.title)
+    
+    return [*set(found_pages)]
+
+def stream_has_css_class(streamvalue, css_class):
+    render = BeautifulSoup(streamvalue.render_as_block(), 'html.parser')
+    return (render.select_one(f'.{css_class}') != None) if render else False
