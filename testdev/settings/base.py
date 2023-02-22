@@ -30,7 +30,6 @@ INSTALLED_APPS = [
     "blog",
     "search",
     "site_settings",
-    'wagtail.contrib.styleguide',
     "wagtail.contrib.typed_table_block",
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
@@ -179,8 +178,8 @@ WAGTAILADMIN_RICH_TEXT_EDITORS = {
             'features': [
                 'h2', 'h3', 'h4', 'h5', 'h6', 'bold', 'italic', 'ol', 'ul',
                 'link', 'hr', 'document-link', 
-                'underline', 'small', 'code', 'fa', 'checklist', 'codeblock',
-                'blockquote', 'left-align', 'centre-align', 'right-align', 'code-block'
+                'underline', 'small', 'code', 'fa', 'checklist', 
+                'quoteblock', 'left-align', 'centre-align', 'right-align', 'code-block'
                 ]
         }
     },

@@ -35,15 +35,27 @@ li.Draftail-block--checklist > div.public-DraftStyleDefault-block::before {
 li.Draftail-block--checklist > div.public-DraftStyleDefault-block {
     padding-left: 2em;
 }
-.Draftail-block--codeblock {
+.Draftail-block--code-block {
     font-size: var(--font-size-6);
     font-family: var(--font-family-monospace);
     color: floralwhite;
     background-color: #272822;
-    padding: 0;
+    padding: 0 0 0 0.5em;
     text-align: left !important;
     line-height: 1.6;
-    margin-left: 0;
+    margin-left: 0 !important;
+}
+
+.Draftail-block--quoteblock {
+    font-size: var(--font-size-5);
+    font-family: var(--font-family-headings);
+    color: #272822;
+    border-inline-start: 0.5rem solid lightseagreen;
+    background-color: lightblue;
+    padding: 0 0 0 1em;
+    text-align: left !important;
+    line-height: 1.6;
+    margin-left: 0 !important;
 }
 
 .public-DraftStyleDefault-ul {

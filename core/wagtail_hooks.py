@@ -131,39 +131,29 @@ def register_checklist_feature(features):
     
 @hooks.register("register_rich_text_features")
 def register_codeblock_feature(features):
-    feature_name = "codeblock"
-    type_ = "codeblock"
-
-    control = {
-        "type": type_,
-        "icon": "code",
-        "description": "Code Block",
-    }
-
-    features.register_editor_plugin(
-        "draftail",
-        feature_name,
-        draftail_features.BlockFeature(control),
+    register_block_feature(
+        features=features,
+        feature_name='code-block',
+        type_='code-block',
+        description='Code Block',
+        css_class='code-block',
+        element='li',
+        wrapper="ul class='code-block-wrapper' role='list'",
+        icon=DRAFTAIL_ICONS.code_block
     )
 
-    db_conversion = {
-        "from_database_format":  {
-            "li[class='code-block']": BlockElementHandler(type_),
-        },
-        "to_database_format": {
-            "block_map": {
-                type_: {
-                    "element": "li",
-                    "wrapper": "ul class='code-block-wrapper'",
-                    "props": {
-                        "class": "code-block"
-                    }
-                }
-            },
-        }
-    }
-
-    features.register_converter_rule("contentstate", feature_name, db_conversion)
+@hooks.register("register_rich_text_features")
+def register_quoteblock_feature(features):
+    register_block_feature(
+        features=features,
+        feature_name='quoteblock',
+        type_='quoteblock',
+        description='Quote Block',
+        css_class='quoteblock',
+        element='li',
+        wrapper="ul class='quoteblock-wrapper' role='list'",
+        icon="openquote"
+    )
 
 @hooks.register("after_edit_page")
 @hooks.register("after_create_page")

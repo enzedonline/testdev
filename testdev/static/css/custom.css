@@ -81,9 +81,6 @@ code {
   border-radius: 0.3rem;
   white-space: pre!important;
 }
-.code-block {
-  text-align: left;
-}
 .check-list-wrapper {
   list-style: none;
 }
@@ -105,6 +102,23 @@ code {
 }
 .code-block-wrapper {
   background-color: #272822;
+  padding: 0.8em 1em;
+  margin-bottom: 0.8em;
+  border-radius: 0.4em;
+  list-style: none;
+}
+.quoteblock {
+  font-size: var(--font-size-5);
+  font-family: var(--font-family-headings);
+  color: #272822;
+  background-color: lightblue;
+  padding: 0;
+  text-align: left !important;
+  line-height: 1.6;
+}
+.quoteblock-wrapper {
+  border-inline-start: 0.5rem solid lightseagreen;
+  background-color: lightblue;
   padding: 0.8em 1em;
   margin-bottom: 0.8em;
   border-radius: 0.4em;

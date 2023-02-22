@@ -11,6 +11,10 @@
   --font-size-body: clamp(1rem, 0.9599rem + 0.169vw, 1.15rem);
 }
 
+html {
+  scroll-padding-bottom: 60px;
+}
+
 body {
   margin: 0;
   font-family: var(--font-family-body);
@@ -170,3 +174,4 @@ code {
   font-family: var(--font-family-headings);
   font-weight: 600;
 }
+
