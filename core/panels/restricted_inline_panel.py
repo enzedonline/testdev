@@ -1,17 +1,36 @@
 from bs4 import BeautifulSoup
-from core.forms import RestrictedPanelsAdminPageForm
 from django.contrib import messages
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import InlinePanel
+
+from ..forms import RestrictedPanelsAdminFormMixin
+
+
+class msg:
+    BASE_FORM_ERROR = _("Base Form Error")
+    BASE_FORM_ERROR_VERBOSE = _(
+        "RestrictedInlinePanel should only be used with a base_form_class inherited from RestrictedPanelsAdminFormMixin"
+    )
+    DETAILS = _("Details")
+    INCORRECT_TYPE = _("Incorrect form type for RestrictedInlinePanel")
+    NOT_SELECTED = _("Not Selected")
+    READ_ONLY = _("Read Only")
+    REQUIRED_FIELD = _("Read-only access for required field.")
+    RESTRICTED_FIELD = _("Restricted Field")
 
 class RestrictedInlinePanel(InlinePanel):
     """
     
     Custom css classes:
         restricted-field-warning - formats read-only label, supplements wagtail help class
-        disabled-display-field - formats disabled rich-text fields and fallback/error returns
         restricted-summary - format for collapsible inline panel display heading
+        disabled-display-field - formats disabled rich-text fields and fallback/error returns
+                               - inline css is added to handle lists in these fields
+    For multi-lingual sites:
+    - Either use gettext_lazy or custom translation model
+    - Panel affects source page/model only, translation pages must be handled seperately
+    - Editor language preference can be found in self.for_user.wagtail_userprofile.get_preferred_language()
     """
     def __init__(
         self,
@@ -70,7 +89,7 @@ class RestrictedInlinePanel(InlinePanel):
 
         def render_html(self, parent_context=None):
             if self.base_form_error:
-                return mark_safe(f'<p class="disabled-display-field">{_("Base Form Error")}</p>')
+                return mark_safe(f'<p class="disabled-display-field">{msg.BASE_FORM_ERROR}</p>')
             else:
                 return (
                     super().render_html(parent_context)
@@ -79,42 +98,57 @@ class RestrictedInlinePanel(InlinePanel):
                 )
 
         def disable_input(self, parent_context):
-            html = super().render_html(parent_context)
-            # return html
-            self.render_soup = BeautifulSoup(html, "html.parser")
+            try:
+                if self.panel.hide_if_restricted:
+                    # TODO: find a way to prevent section from loading
+                    return self.render_restricted_message()
+                
+                html = super().render_html(parent_context)
+                # return html
+                self.render_soup = BeautifulSoup(html, "html.parser")
 
-            # strip all scripts and link buttons
-            for element in self.render_soup('a', class_='button') + self.render_soup('script'): 
-            # for element in self.render_soup('a', class_='button'): 
-                element.extract()
-
-            # strip all buttons except for comment buttons
-            for element in self.render_soup('button'):
-                if not (
-                    element.has_attr('class') 
-                    and 'w-field__comment-button' in element["class"]
-                    ):
+                # strip all scripts and link buttons
+                for element in self.render_soup('a', class_='button') + self.render_soup('script'): 
+                # for element in self.render_soup('a', class_='button'): 
                     element.extract()
 
-            input_tags = self.render_soup.find_all("input")
-            # set panel count forms to 0
-            if input_tags:
-                for input in input_tags: 
-                    if any([x in input['id'] for x in ["TOTAL_FORMS", "INITIAL_FORMS", "MIN_NUM_FORMS", "MAX_NUM_FORMS"]]):
-                        input['value'] = 0
-                    else:
-                        input["disabled"] = ''
+                # strip all buttons except for comment buttons
+                for element in self.render_soup('button'):
+                    if not (
+                        element.has_attr('class') 
+                        and 'w-field__comment-button' in element["class"]
+                        ):
+                        element.extract()
 
-            if self.related_instances.count() == 0:
-                self.render_empty_value()
-            else:
-                self.render_sub_panels()
+                input_tags = self.render_soup.find_all("input")
+                # set panel count forms to 0
+                if input_tags:
+                    for input in input_tags: 
+                        if any([x in input['id'] for x in ["TOTAL_FORMS", "INITIAL_FORMS", "MIN_NUM_FORMS", "MAX_NUM_FORMS"]]):
+                            input['value'] = 0
+                        else:
+                            input["disabled"] = ''
 
-            # add read-only warning below panels
-            self.render_soup.append(self.warning_label)
+                if self.related_instances.count() == 0:
+                    self.render_empty_value()
+                else:
+                    self.render_sub_panels()
 
-            return mark_safe(self.render_soup.renderContents().decode("utf-8"))
+                # add read-only warning below panels
+                self.render_soup.append(self.warning_label)
 
+                return mark_safe(self.render_soup.renderContents().decode("utf-8"))
+            except Exception as e:
+                print(f"{type(e).__name__} at line {e.__traceback__.tb_lineno} of {__file__}: {e}")       
+
+            # fallback in case of error or widget/field type not handled above
+            return self.render_restricted_message()
+        
+        def render_restricted_message(self):
+            return mark_safe(
+                f'<p class="disabled-display-field">{msg.RESTRICTED_FIELD}</p>{str(self.warning_label)}'
+            )
+        
         def render_sub_panels(self):
             # move panels into collapsed <details>, handle richtextfields
             self.render_rich_text_fields()
@@ -144,19 +178,22 @@ class RestrictedInlinePanel(InlinePanel):
             summary_heading_text = self.render_soup.new_tag('span')
             summary_heading.append(summary_heading_text)
             summary_heading_text['style'] = "padding-left: 1em;"
-            summary_heading_text.string = f'{_("Details")}'
+            summary_heading_text.string = f'{msg.DETAILS}'
             details.append(display.extract())
 
         def render_rich_text_fields(self):
             # get stored value for rtf and render this as HTML instead
-            for richtextfield in self.render_soup.find_all('input', {'data-draftail-input':True}):
-                name, index, remote_field = richtextfield.attrs['id'].rsplit('-',2)
-                value = getattr(self.related_instances[int(index)], remote_field, '')
-                rtf = self.render_soup.new_tag('div')
-                rtf['class'] = "disabled-display-field"
-                rtf.append(BeautifulSoup(value, 'html.parser'))
-                richtextfield.insert_after(rtf)
-                richtextfield.extract()
+            richtextfields = self.render_soup.find_all('input', {'data-draftail-input':True})
+            if richtextfields:
+                self.insert_list_css()
+                for richtextfield in richtextfields:
+                    name, index, remote_field = richtextfield.attrs['id'].rsplit('-',2)
+                    value = getattr(self.related_instances[int(index)], remote_field, '')
+                    rtf = self.render_soup.new_tag('div')
+                    rtf['class'] = "disabled-display-field"
+                    rtf.append(BeautifulSoup(value, 'html.parser'))
+                    richtextfield.insert_after(rtf)
+                    richtextfield.extract()
 
         def render_empty_value(self):
             # display placeholder icon in default chooser panel
@@ -181,7 +218,7 @@ class RestrictedInlinePanel(InlinePanel):
             chooser_title['class'] = "chooser__title"
             chooser_title['style'] = "vertical-align: 0.5em;"
             chooser_title['data-chooser-title'] = ""
-            chooser_title.string = f'{_("Not Selected")}'
+            chooser_title.string = f'{msg.NOT_SELECTED}'
 
             if self.panel.min_num > 0 and not self.instance.id:
                 # display warning on new page if at least 1 instance required
@@ -189,7 +226,7 @@ class RestrictedInlinePanel(InlinePanel):
                 error['class'] = 'error-message'
                 span = self.render_soup.new_tag('span')
                 span['style'] = 'padding-left: 0.5em;'
-                span.append(f'{_("Read-only access for required field.")}')
+                span.append(f'{msg.REQUIRED_FIELD}')
                 error.append(span)
                 container.insert_after(error)
 
@@ -197,17 +234,14 @@ class RestrictedInlinePanel(InlinePanel):
 
         def _has_base_form_error(self):
             try:
-                if not issubclass(self.form.__class__, RestrictedPanelsAdminPageForm):
+                if not issubclass(self.form.__class__, RestrictedPanelsAdminFormMixin):
                     raise TypeError(
-                        f'{self.instance.__class__.__name__}: {_("Incorrect form type for RestrictedFieldPanel")}'
+                        f'{self.instance.__class__.__name__}: {msg.INCORRECT_TYPE}'
                     )
                 return False
             except Exception as e:
                 print(f"{type(e).__name__} at line {e.__traceback__.tb_lineno} of {__file__}: {e}")       
-                messages.error(
-                    self.request, 
-                    _("RestrictedFieldPanel should only be used with a base_form_class inherited from RestrictedPanelsAdminPageForm")
-                )
+                messages.error(self.request, f'{msg.BASE_FORM_ERROR_VERBOSE}')
                 referer = self.request.META.get('HTTP_REFERER', '/admin/')
                 if referer == self.request.build_absolute_uri():
                     referer = '/admin/'
@@ -224,5 +258,15 @@ class RestrictedInlinePanel(InlinePanel):
             use = self.render_soup.new_tag('use')
             svg.append(use)
             use['href'] = "#icon-warning"
-            warning.append(f'{_("Read Only")}')
+            warning.append(f'{msg.READ_ONLY}')
             return warning
+
+        def insert_list_css(self):
+            # wagtail css disables list styling in forms, add it for disabled display containers
+            css = '.disabled-display-field ol {padding: 0 0 0 40px !important;}' \
+                  '.disabled-display-field ol li {list-style-type: decimal !important;}' \
+                  '.disabled-display-field ul {padding: 0 0 0 40px !important; margin: 1em 0 !important;}' \
+                  '.disabled-display-field ul li {list-style-type: disc !important;}'
+            style = self.render_soup.new_tag('style')
+            style.append(css)
+            self.render_soup.insert(0, style)

@@ -1,3 +1,2 @@
 from .info_panel import InfoPanel
-from .restricted_field_panel import RestrictedFieldPanel
-from .restricted_inline_panel import RestrictedInlinePanel
+from .restricted_panels import RestrictedFieldPanel, RestrictedInlinePanel

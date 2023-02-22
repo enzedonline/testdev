@@ -1,1 +1,1 @@
-from .restricted_panels_admin_page_form import RestrictedPanelsAdminPageForm
+from .restricted_panels_admin_forms import RestrictedPanelsAdminPageForm, RestrictedPanelsAdminFormMixin
