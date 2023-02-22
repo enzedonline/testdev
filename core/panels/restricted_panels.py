@@ -167,8 +167,8 @@ class RestrictedFieldPanel(FieldPanel):
                     if self.panel.authorised_roles:
                         input["title"] = f'{msg.RESTRICTED_TO} {", ".join(self.panel.authorised_roles)}'
                     input["disabled"] = ''
-                    self.render_soup.append(self.warning_label)
-                    return mark_safe(self.render_soup.renderContents().decode("utf-8"))
+                self.render_soup.append(self.warning_label)
+                return mark_safe(self.render_soup.renderContents().decode("utf-8"))
 
             except Exception as e:
                 print(f"{type(e).__name__} at line {e.__traceback__.tb_lineno} of {__file__}: {e}")       

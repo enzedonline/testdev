@@ -34,6 +34,11 @@ class BlogPage(Page):
     some_date = models.DateTimeField(null=True, blank=True, help_text="Some helpful text")
     some_text = models.CharField(max_length=255, default="some default value")
     some_rich_text = RichTextField(null=True, blank=True)
+    some_choice_field = models.CharField(
+        max_length=255, 
+        default="a",
+        choices=[('a', 'Choice A'), ('b', 'Choice B'), ('c', 'Choice C')]
+        )
     some_image = models.ForeignKey(
         'wagtailimages.Image',
         null=True,
@@ -77,13 +82,14 @@ class BlogPage(Page):
     )
 
     content_panels = Page.content_panels + [
-        MultiFieldPanel(
-            [RestrictedInlinePanel("carousel_images", max_num=5, min_num=1)],
-            heading="Carousel Images",
-        ),
+        # MultiFieldPanel(
+        #     [RestrictedInlinePanel("carousel_images", max_num=5, min_num=1)],
+        #     heading="Carousel Images",
+        # ),
         # RestrictedFieldPanel('some_date', ['Event Management', 'Editors']),
         # RestrictedFieldPanel('some_text'),
-        RestrictedFieldPanel('some_rich_text'),
+        RestrictedFieldPanel('some_choice_field'),
+        # RestrictedFieldPanel('some_rich_text'),
         # RestrictedFieldPanel('some_image'),
         # RestrictedFieldPanel('some_document'),
         # RestrictedFieldPanel('some_product'),
