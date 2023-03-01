@@ -1,3 +1,4 @@
+{% extends "base.html" %} 
 {% load static wagtailcore_tags home_tags %}
 <link rel="stylesheet" href="{% static 'css/custom.css' %}" type="text/css">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
@@ -5,14 +6,26 @@
 <script src="{% static 'js/jquery-3.6.0.min.js'%}"></script>  
 <script src="{% static 'js/enzedonline.js'%}"></script>
 
+{% block content %}
+
 <article style="width:90%; margin: 2rem auto">
 
 <h1>{{ self.title }}</h1>
 
-{% comment %} <h3>Rich Text</h3>
-<p>{{ page.intro|richtext }}</p>
-<h3>Plain Text</h3> {% endcomment %}
-{% comment %} <p>{{ page.intro|plaintext }}</p> {% endcomment %}
+<dl style="list-style: none;">
+{% for detail_page in page.get_children.live %}
+    <li>
+        {{ detail_page.title}}
+        <a style="padding: 0 1em;" href="{{ detail_page.url }}">OPEN PAGE</a>
+        {% with detail_page.get_children.live as video_page %}
+            {% if video_page %}
+                <a href="{{ video_page.first.url }}">OPEN VIDEO PAGE</a>
+            {% endif %}
+        {% endwith %}
+    </li>
+{% endfor %}
+</dl>
+
 <p>{% html_to_text page.intro %}</p>
 
 {% for block in page.content %}
@@ -20,3 +33,5 @@
 {% endfor %}
 
 </arcticle>
+
+{% endblock %}

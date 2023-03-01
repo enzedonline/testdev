@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     "core",
     "home",
     "blog",
+    "menu",
     "search",
     "site_settings",
     "wagtail.contrib.typed_table_block",

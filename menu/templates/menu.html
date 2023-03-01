@@ -1,0 +1,33 @@
+{% load wagtailcore_tags menu_tags %}
+
+{% comment %} replace main-menu with your menu slug {% endcomment %}
+{% load_menu 'main-menu' as menu %}
+
+{% comment %}sample css for menu{% endcomment %}
+{% include 'css/menu_css.html' %}
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark p-2 pe-md-1">
+  <div class="container-fluid">
+    <div class="ps-2">
+      <a class="navbar-brand" href="/">{{ menu.logo }}<span>{{ menu.title }}</span></a>
+    </div>
+    <button 
+        class="navbar-toggler menu-{{ menu.slug }}" 
+        type="button" 
+        data-bs-toggle="collapse" 
+        data-bs-target="#navbar-{{ menu.slug }}" 
+        aria-controls="navbarSupportedContent" 
+        aria-expanded="false" 
+        aria-label="Toggle navigation" 
+        onmouseup="$(this).blur();">
+        <span class="navbar-toggler-icon menu-{{ menu.slug }}"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-end" id="navbar-{{ menu.slug }}">
+      <ul class="navbar-nav mb-2 mb-lg-0 menu-{{ menu.slug }}">
+        {% for item in menu.items %}
+          {% include_block item with context=context link_type='nav-item' %}
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</nav>

@@ -7,9 +7,9 @@ from wagtail.fields import RichTextField, StreamField
 from wagtail.models import Orderable, Page
 
 from core.forms import RestrictedPanelsAdminPageForm
-from core.panels import InfoPanel, RestrictedFieldPanel, RestrictedInlinePanel
+from core.panels import UtilityPanel, RestrictedFieldPanel, RestrictedInlinePanel
 from core.utils import count_words, get_streamfield_text
-
+from menu.models import Menu
 
 class CarouselImages(Orderable):
     """Between 1 and 5 images for the home page carousel."""
@@ -113,19 +113,19 @@ class BlogPage(Page):
         RestrictedFieldPanel('some_product'),
         RestrictedFieldPanel('some_page'),
         RestrictedFieldPanel("content"),
-        # InfoPanel('<span class="editor-reminder">Some important notice to display</span>'),
-        # InfoPanel(
+        # UtilityPanel('<span class="editor-reminder">Some important notice to display</span>'),
+        # UtilityPanel(
         #     '<h5><a target="_blank" href="{{url}}" style="color: blue; text-decoration: underline;">News Article Editors Guide</a></h5>',
         #     value_dict={
         #         'url': [{'module': 'core.utils', 'method': 'page_url', 'slug': 'first-blog', 'target': 'news-article'}]
         #     },
         #     style='text-align: center;'
         #     ),
-        # InfoPanel(
+        # UtilityPanel(
         #     '<b>Word Count:</b> {{wordcount}}', {'wordcount': 'wordcount'},
         #     add_hidden_fields=True
         #     ),
-        # InfoPanel(
+        # UtilityPanel(
         #     '<div class="tagit">\
         #         Created by <a href="/profiles/{{username}}" style="color: blue; text-decoration: underline;" target="_blank" >\
         #         {{fullname}}</a>.<br>\
@@ -138,16 +138,16 @@ class BlogPage(Page):
         #     },
         #     datetime_format='%d %B %Y'
         #     ),
-        # InfoPanel('Random number: {{rnd}}', {'rnd': [{'module': 'random', 'method': 'randint', 'a': 1,'b': 9999}]}),
-        # InfoPanel(
+        # UtilityPanel('Random number: {{rnd}}', {'rnd': [{'module': 'random', 'method': 'randint', 'a': 1,'b': 9999}]}),
+        # UtilityPanel(
         #     'Maximum of 3,56,4,99,5 is {{maximum}}',
         #     {'maximum': [{'module': 'builtins', 'method': 'max', 'args':[3,56,4,99,5]}]}
         #     ),
-        # InfoPanel(
+        # UtilityPanel(
         #     '<p class="tagit edit-permission-{{perm}}">You do not have publish permission for this page.</p>',
         #     {'perm': [('permissions_for_user', {'user': ['panel', 'request', 'user']}), 'can_publish']}
         # ),
-        # InfoPanel(
+        # UtilityPanel(
         #     text="<h5>Siblings</h5>{{siblings}}",
         #     value_dict={
         #         "siblings": [
@@ -174,7 +174,14 @@ class BlogPage(Page):
         #         ]
         #     },
         # ),
-    ]
+        FieldPanel('some_text_area'),
+        UtilityPanel(
+            '{{file_reader}}', 
+            {
+                'file_reader': {'module': 'core.utils', 'method': 'file_to_text_field_button', 'field': 'some_text_area'}
+            }
+        ),
+]
 
     base_form_class = RestrictedPanelsAdminPageForm
 

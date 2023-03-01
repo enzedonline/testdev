@@ -6,6 +6,7 @@ from html import unescape
 
 from bs4 import BeautifulSoup
 from django.utils.encoding import force_str
+from django.utils.translation import gettext_lazy as _
 from wagtail.blocks.stream_block import StreamValue
 from wagtail.models import Page
 
@@ -117,3 +118,24 @@ def find_all_streamfields_with_css_class(css_class):
 def stream_has_css_class(streamvalue, css_class):
     render = BeautifulSoup(streamvalue.render_as_block(), 'html.parser')
     return (render.select_one(f'.{css_class}') != None) if render else False
+
+def file_to_text_field_button(field):
+    return '''
+        <label for="svgFile"> 
+            <span class="w-panel__heading w-panel__heading--label">''' + _("Read data from file") + '''</span> 
+        </label> 
+        <input type="file" id="''' + field + '''File" accept=".svg" style="border-style: none; padding: 0;" />
+        <script> 
+            const svgFile = document.getElementById("''' + field + '''File"); 
+            svgFile.addEventListener("change", (e) => {
+                e.preventDefault(); 
+                const input = svgFile.files[0]; 
+                const reader = new FileReader(); 
+                reader.onload = function (e) {
+                    const svgField = document.getElementById("id_''' + field + '''"); 
+                    svgField.value = e.target.result; 
+                }; 
+                reader.readAsText(input); 
+            }); 
+        </script>'''    
+

@@ -1,0 +1,8 @@
+{% load menu_tags %}
+
+{% link_appearance as link %}
+{% if link.show %}
+    <li class="{{link_type}} menu-{{menu.slug}} {{ link.active }}">
+        <a class="nav-link menu-{{menu.slug}} {{ link.active }}" href="{{ self.url }}">{{ self.svg }}{{ self.title }}</a>
+    </li>
+{% endif %}
