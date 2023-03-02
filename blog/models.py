@@ -99,20 +99,20 @@ class BlogPage(Page):
     )
 
     content_panels = Page.content_panels + [
-        MultiFieldPanel(
-            [RestrictedInlinePanel("carousel_images", max_num=5, min_num=1)],
-            heading="Carousel Images",
-        ),
-        RestrictedFieldPanel('some_date'),
-        RestrictedFieldPanel('some_text'),
-        RestrictedFieldPanel('some_text_area'),
-        RestrictedFieldPanel('some_choice_field'),
-        RestrictedFieldPanel('some_rich_text'),
-        RestrictedFieldPanel('some_image'),
-        RestrictedFieldPanel('some_document'),
+        # MultiFieldPanel(
+        #     [RestrictedInlinePanel("carousel_images", max_num=5, min_num=1)],
+        #     heading="Carousel Images",
+        # ),
+        # RestrictedFieldPanel('some_date'),
+        # RestrictedFieldPanel('some_text'),
+        # RestrictedFieldPanel('some_text_area'),
+        # RestrictedFieldPanel('some_choice_field'),
+        # RestrictedFieldPanel('some_rich_text'),
+        # RestrictedFieldPanel('some_image'),
+        # RestrictedFieldPanel('some_document'),
         RestrictedFieldPanel('some_product'),
-        RestrictedFieldPanel('some_page'),
-        RestrictedFieldPanel("content"),
+        # RestrictedFieldPanel('some_page'),
+        # RestrictedFieldPanel("content"),
         # UtilityPanel('<span class="editor-reminder">Some important notice to display</span>'),
         # UtilityPanel(
         #     '<h5><a target="_blank" href="{{url}}" style="color: blue; text-decoration: underline;">News Article Editors Guide</a></h5>',

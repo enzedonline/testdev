@@ -11,7 +11,7 @@ from wagtail.fields import StreamField
 from wagtail.snippets.blocks import SnippetChooserBlock
 from wagtail.snippets.models import register_snippet
 
-from .panels import FileToTextFieldPanel
+from .panels import SVGFieldPanel
 
 
 class MenuIconForm(WagtailAdminPageForm):
@@ -40,7 +40,7 @@ class MenuIcon(models.Model):
 
     panels = [
         FieldPanel('label'),
-        FileToTextFieldPanel('svg'),
+        SVGFieldPanel('svg'),
     ]
 
     def __str__(self) -> str:
