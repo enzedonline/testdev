@@ -108,7 +108,7 @@ class BlogPage(Page):
         # RestrictedFieldPanel('some_text_area'),
         # RestrictedFieldPanel('some_choice_field'),
         # RestrictedFieldPanel('some_rich_text'),
-        # RestrictedFieldPanel('some_image'),
+        RestrictedFieldPanel('some_image'),
         # RestrictedFieldPanel('some_document'),
         RestrictedFieldPanel('some_product'),
         # RestrictedFieldPanel('some_page'),

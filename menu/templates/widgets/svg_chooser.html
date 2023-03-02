@@ -1,0 +1,11 @@
+{% extends "wagtailadmin/widgets/chooser.html" %}
+
+{% block chosen_icon %}
+    <div class="chooser__preview" 
+        style="height:125px; width:125px;" 
+        id= '__ID__-svg' 
+        data-chooser-image 
+        role="presentation">
+        {{ svg|safe }}
+    </div>
+{% endblock chosen_icon %}

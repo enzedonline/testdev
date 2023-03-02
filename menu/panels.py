@@ -18,7 +18,7 @@ class SVGFieldPanel(FieldPanel):
                 <p class="w-panel__heading w-panel__heading--label" id="''' + self.field_name + '''-svgPreviewLabel">
                     ''' + _("Preview") + '''
                 </p> 
-                <div id="''' + self.field_name + '''-svgPreview"></div>
+                <div id="''' + self.field_name + '''-svgPreview" style="width: 200px;"></div>
                 <script> 
                     const svgFile = document.getElementById("''' + self.field_name + '''File"); 
                     const svgField = document.getElementById("''' + self.id_for_label() + '''")
