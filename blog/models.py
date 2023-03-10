@@ -99,6 +99,7 @@ class BlogPage(Page):
     )
 
     content_panels = Page.content_panels + [
+        FieldPanel('owner'),
         # MultiFieldPanel(
         #     [RestrictedInlinePanel("carousel_images", max_num=5, min_num=1)],
         #     heading="Carousel Images",
