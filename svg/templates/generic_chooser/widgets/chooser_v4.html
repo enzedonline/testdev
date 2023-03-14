@@ -1,14 +1,13 @@
 {% load wagtailadmin_tags %}
-<link rel="stylesheet" type="text/css" href="/static/css/svg-chooser.css">
 
 <div id="{{ attrs.id }}-chooser" class="chooser {% block chooser_class %}{{ widget.classname }}{% endblock %} {% if is_empty %}blank{% endif %}" {% if choose_modal_url %}data-choose-modal-url="{{ choose_modal_url }}"{% endif %}>
 
     <div class="chosen">
-        {% block chosen_icon %}
-            <div class="svg-chooser-preview" data-chooser-icon>
-                {{ icon|safe }}
+        {% block chosen_image %}
+            <div class="svg-chooser-preview" data-chooser-image>
+                {{ image|safe }}
             </div>
-        {% endblock chosen_icon %}
+        {% endblock chosen_image %}
         {% block chosen_state_view %}
             <div class="chooser__title" data-chooser-title>{{ title }}</div>
         {% endblock %}

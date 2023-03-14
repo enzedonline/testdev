@@ -1,0 +1,17 @@
+.svg-viewset-cell {
+    height: 2.5rem; 
+    width: 8rem;
+}
+.svg-viewset-item {
+    height: 2.5rem; 
+    display: inline-flex;
+    background: conic-gradient(
+        whitesmoke 90deg,
+        ivory 90deg 180deg,
+        whitesmoke 180deg 270deg,
+        ivory 270deg
+    );
+    background-repeat: repeat ;
+    background-size: 0.6rem 0.6rem;
+    background-position: top left;
+}

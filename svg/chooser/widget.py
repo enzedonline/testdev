@@ -3,16 +3,16 @@ from django.utils.translation import gettext_lazy as _
 from generic_chooser.widgets import AdminChooser
 from django.template.loader import render_to_string
 
-from ..models import SVGIcon
+from ..models import SVGImage
 
 
 class SVGChooser(AdminChooser):
-    icon = "image"
-    model = SVGIcon
+    image = "image"
+    model = SVGImage
 
-    choose_one_text = _('Choose an icon')
-    choose_another_text = _('Choose another icon')
-    choose_modal_url_name = 'svg_icon_chooser:choose'
+    choose_one_text = _('Choose an image')
+    choose_another_text = _('Choose another image')
+    choose_modal_url_name = 'svg_image_chooser:choose'
 
     def get_value_data(self, value):
         if value is None:
@@ -30,14 +30,14 @@ class SVGChooser(AdminChooser):
             return {
                 'value': None,
                 'title': '',
-                'icon': '',
+                'image': '',
                 'edit_item_url': None,
             }
         else:
             return {
                 'value': value,
                 'title': self.get_title(instance),
-                'icon': getattr(instance, 'svg', ''),
+                'image': getattr(instance, 'svg', ''),
                 'edit_item_url': self.get_edit_item_url(instance),
             }
 
@@ -52,7 +52,7 @@ class SVGChooser(AdminChooser):
             'attrs': attrs,
             'is_empty': value_data['value'] is None,
             'title': value_data['title'],
-            'icon': value_data['icon'],
+            'image': value_data['image'],
             'edit_item_url': value_data['edit_item_url'],
             'create_item_url': self.get_create_item_url(),
             'choose_modal_url': self.get_choose_modal_url(),

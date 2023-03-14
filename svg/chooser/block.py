@@ -6,8 +6,8 @@ from wagtail.blocks import ChooserBlock
 class SVGChooserBlock(ChooserBlock):
     @cached_property
     def target_model(self):
-        from ..models import SVGIcon
-        return SVGIcon
+        from ..models import SVGImage
+        return SVGImage
         
     @cached_property
     def widget(self):
@@ -18,4 +18,4 @@ class SVGChooserBlock(ChooserBlock):
         return self.widget.get_value_data(value)
 
     class Meta:
-        icon = "image"
+        image = "image"

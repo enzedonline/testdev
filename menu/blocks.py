@@ -36,13 +36,13 @@ class DisplayWhenChoiceBlock(DefaultChoiceBlock):
 class MenuItemValue(StructValue):
     @property
     def svg(self):
-        icon = self.get("icon")
-        return mark_safe(icon.svg) if icon else ''
+        image = self.get("image")
+        return mark_safe(image.svg) if image else ''
     
 class MenuStructBlock(StructBlock):
-    icon = SVGChooserBlock(
+    image = SVGChooserBlock(
         required=False,
-        label=_("Optional icon for display")
+        label=_("Optional image for display")
     )
     display_when = DisplayWhenChoiceBlock(required=False)
 
@@ -59,7 +59,7 @@ class InternalLinkValue(MenuItemValue):
     def title(self) -> str:
         display_title = self.get("display_title")
         page = self.get("page")
-        return display_title or page.title
+        return display_title or page.localized.title
     
 class InternalLinkBlock(MenuStructBlock):
     page = PageChooserBlock()
@@ -71,7 +71,7 @@ class InternalLinkBlock(MenuStructBlock):
     )
 
     class Meta:
-        icon = 'doc-empty'
+        image = 'doc-empty'
         template = "link_block.html"
         label = _("Link to Internal Page")
         value_class = InternalLinkValue
@@ -93,7 +93,7 @@ class ExternalLinkBlock(MenuStructBlock):
     )
 
     class Meta:
-        icon = 'link'
+        image = 'link'
         template = "link_block.html"
         label = _("Link to External URL")
         value_class = ExternalLinkValue
@@ -132,7 +132,7 @@ class AutoFillLinkBlock(StructBlock):
     display_when = DisplayWhenChoiceBlock(required=False)
 
     class Meta:
-        icon = 'list-ul'
+        image = 'list-ul'
         template = "autolink_block.html"
         label = _("Auto-fill Internal Page Links")
 
@@ -149,7 +149,7 @@ class SubMenuStructBlock(MenuStructBlock):
     links = LinksBlock()
 
     class Meta:
-        icon = 'folder-open-1'
+        image = 'folder-open-1'
         template = "submenu.html"
         label = _("Sub Menu")
 

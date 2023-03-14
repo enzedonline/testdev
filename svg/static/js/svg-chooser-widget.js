@@ -12,7 +12,7 @@ function ChooserWidget(id, opts) {
     this.id = id;
     this.chooserElement = $('#' + id + '-chooser');
     this.titleElement = this.chooserElement.find('[data-chooser-title]');
-    this.iconElement = this.chooserElement.find('[data-chooser-icon]');
+    this.imageElement = this.chooserElement.find('[data-chooser-image]');
     this.inputElement = $('#' + id);
     this.editLinkElement = this.chooserElement.find('.edit-link');
     this.editLinkWrapper = this.chooserElement.find('.edit-link-wrapper');
@@ -62,7 +62,7 @@ ChooserWidget.prototype.setStateFromModalData = function(data) {
     this.setState({
         'value': data.id,
         'title': data.string,
-        'icon': data.icon,
+        'image': data.image,
         'edit_item_url': data.edit_link
     });
 }
@@ -72,7 +72,7 @@ ChooserWidget.prototype.setState = function(newState) {
         console.log('setState', newState);
         this.inputElement.val(newState.value);
         this.titleElement.text(newState.title);
-        this.iconElement.html(newState.icon);
+        this.imageElement.html(newState.image);
         this.chooserElement.removeClass('blank');
         if (newState.edit_item_url) {
             this.editLinkElement.attr('href', newState.edit_item_url);
@@ -92,7 +92,7 @@ ChooserWidget.prototype.getState = function() {
     return {
         'value': this.inputElement.val(),
         'title': this.titleElement.text(),
-        'icon': this.iconElement.html(),
+        'image': this.imageElement.html(),
         'edit_item_url': this.editLinkElement.attr('href')
     };
 };

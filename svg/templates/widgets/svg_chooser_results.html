@@ -1,10 +1,8 @@
-<link rel="stylesheet" type="text/css" href="/static/css/svg-chooser.css">
-
 <ul class="listing horiz images chooser">
 {% for row in rows %}
     <li>
         <a class="item-choice" href="{{ row.choose_url }}">
-            <div class="image svg-chooser-preview">{{ row.icon|safe }}</div>
+            <div class="image svg-chooser-preview">{{ row.image|safe }}</div>
             <div class="svg-chooser-item-label"><h3>{{ row.title }}</h3></div>
         </a>
     </li>

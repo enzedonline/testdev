@@ -1,28 +1,33 @@
-{% load wagtailcore_tags menu_tags %}
+{% load static wagtailcore_tags menu_tags %}
 
 {% comment %} replace main-menu with your menu slug {% endcomment %}
 {% load_menu 'main-menu' as menu %}
 
 {% comment %}sample css for menu{% endcomment %}
-{% include 'css/menu_css.html' %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/menu.css' %}"/>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark p-2 pe-md-1">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark py-0 pe-md-1">
   <div class="container-fluid">
-    <div class="ps-2">
-      <a class="navbar-brand" href="/">{{ menu.logo }}<span>{{ menu.title }}</span></a>
+    <div class="p-0">
+      <a class="navbar-brand" href="/">
+        {{ menu.logo }} {{ menu.title }}
+      </a>
     </div>
     <button 
         class="navbar-toggler menu-{{ menu.slug }}" 
         type="button" 
         data-bs-toggle="collapse" 
-        data-bs-target="#navbar-{{ menu.slug }}" 
+        data-bs-target=".menu-bar-collapse"  
         aria-controls="navbarSupportedContent" 
         aria-expanded="false" 
         aria-label="Toggle navigation" 
-        onmouseup="$(this).blur();">
-        <span class="navbar-toggler-icon menu-{{ menu.slug }}"></span>
+        onclick="document.activeElement.blur();">
+        <span class="navbar-toggler-image menu-{{ menu.slug }}"></span>
     </button>
-    <div class="collapse navbar-collapse justify-content-end" id="navbar-{{ menu.slug }}">
+    <div 
+      class="collapse navbar-collapse dual-collapse2 justify-content-end menu-bar-collapse" 
+      id="navbar-{{ menu.slug }}"
+    >
       <ul class="navbar-nav mb-2 mb-lg-0 menu-{{ menu.slug }}">
         {% for item in menu.items %}
           {% include_block item with context=context link_type='nav-item' %}
@@ -31,3 +36,4 @@
     </div>
   </div>
 </nav>
+

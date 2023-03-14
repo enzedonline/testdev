@@ -1,75 +1,68 @@
-from wagtail.admin.filters import WagtailFilterSet
 import re
-from django.utils.safestring import mark_safe
 
 from bs4 import BeautifulSoup
+from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
-from wagtail.admin.forms import WagtailAdminModelForm
 from wagtail.admin.panels import FieldPanel
-from wagtail.snippets.models import register_snippet
-from modelcluster.models import ClusterableModel
 
 from .panels import SVGFieldPanel
-from modelcluster.fields import ParentalKey
 
-from taggit.models import TaggedItemBase
-from taggit.managers import TaggableManager
 
-class SVGTag(TaggedItemBase):
-    content_object = ParentalKey('svg.SVGIcon', on_delete=models.CASCADE, related_name='tagged_items')
-
-class SVGIconForm(WagtailAdminModelForm):
-    def clean(self) -> None:
-        # check valid svg has been entered
-        cleaned_data = super().clean()
-        code = cleaned_data.get('svg')
-        if code:
-            # strip any xmlns:svg definition as it corrupts BSoup output.
-            code = re.sub(r'xmlns:svg=\"\S+\"', '', code)
-            soup = BeautifulSoup(code, 'xml')
-            svg = soup.find('svg')
-            if svg:
-                del svg['height']
-                del svg['width']
-                del svg['preserveAspectRatio']
-                # remove this next loop if you wany to allow <script> tags in <svg> icons
-                for script in svg.find_all('script'):
-                    script.extract()
-                if not svg.has_attr('viewBox'):
-                    self.add_error('svg', _("SVG element must include a valid viewBox attribute."))
-                cleaned_data['svg'] = str(svg.prettify())
-            else:
-                self.add_error('svg', _("Please enter a valid SVG including the SVG element."))
-        return cleaned_data
-    
-class SVGIcon(ClusterableModel):
-    base_form_class = SVGIconForm
-
-    label = models.CharField(max_length=255)
+class SVGImage(models.Model):
+    label = models.CharField(max_length=255, verbose_name=_("label"), unique=True)
     svg = models.TextField(
-        verbose_name="SVG", 
-        help_text=_("Height and width attributes will be stripped on save.")
+        verbose_name="SVG",
+        help_text=_("Height and width attributes will be stripped on save."),
     )
-    tags = TaggableManager(through=SVGTag, blank=True)
 
     panels = [
-        FieldPanel('label'),
-        FieldPanel('tags'),
-        SVGFieldPanel('svg'),
+        FieldPanel("label"),
+        SVGFieldPanel("svg"),  # provides read svg file feature with preview and parsing
     ]
 
     def __str__(self):
         return self.label
-    
-    @property
-    def icon(self):
-        return mark_safe(self.svg)
+
+    def image(self):
+        # used by SVGViewSet to display the image in the snippet list view
+        return mark_safe(
+            f'<div class="svg-viewset-cell">\
+                <div class="svg-viewset-item">\
+                    {self.svg}\
+                </div>\
+            </div>'
+        )
+
+    image.short_description = "Image"
 
     class Meta:
-        verbose_name = _("SVG Icon")
+        verbose_name = _("SVG Image")
 
-class SVGFilterSet(WagtailFilterSet):
-    class Meta:
-        model = SVGIcon
-        fields = ["label"]
+    def clean(self) -> None:
+        # strip height/width attribute - should come from container or class
+        # strip any xmlns:svg definition as it corrupts BSoup output.
+        # strip preserveAspectRatio - default is True
+        # strip any embedded JavaScript (purely for security)
+        # check for valid svg element with viewBox attribute
+        if self.svg:
+            self.svg = re.sub(r"xmlns:svg=\"\S+\"", "", self.svg)
+            soup = BeautifulSoup(self.svg, "xml")
+            svg = soup.find("svg")
+            if svg:
+                del svg["height"]
+                del svg["width"]
+                del svg["preserveAspectRatio"]
+                # remove this next loop if you wany to allow <script> tags in <svg> images
+                for script in svg.find_all("script"):
+                    script.extract()
+                if not (svg.has_attr("viewBox") or svg.has_attr("viewbox")):
+                    raise ValidationError(
+                        _("SVG element must include a valid viewBox attribute.")
+                    )
+                self.svg = str(svg.prettify())
+            else:
+                raise ValidationError(
+                    _("Please enter a valid SVG including the SVG element.")
+                )

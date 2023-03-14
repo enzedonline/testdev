@@ -5,13 +5,12 @@ register = template.Library()
 
 @register.simple_tag()
 def load_menu(menu_slug):
-    return Menu.objects.filter(slug=menu_slug).first()
+    return Menu.objects.filter(slug=menu_slug).first().localized
 
 @register.simple_tag(takes_context=True)
 def display_item(context):
     display_when = context['self']['display_when']
     is_authenticated = str(context['request'].user.is_authenticated)
-    
     return (display_when == 'ALWAYS' or is_authenticated == display_when)
 
 @register.simple_tag(takes_context=True)
@@ -31,7 +30,7 @@ def get_autofill_pages(context):
     except: # 500 error has no request
         authenticated = False
 
-    parent_page = autofill_block['parent_page']
+    parent_page = autofill_block['parent_page'].localized
     links=[]
 
     # include parent page if selected and if matches restriction (just assume exists=private here)
