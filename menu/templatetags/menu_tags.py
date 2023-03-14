@@ -5,8 +5,11 @@ register = template.Library()
 
 @register.simple_tag()
 def load_menu(menu_slug):
-    return Menu.objects.filter(slug=menu_slug).first().localized
-
+    try:
+        return Menu.objects.filter(slug=menu_slug).first().localized
+    except:
+        return Menu.objects.filter(slug=menu_slug).first()
+   
 @register.simple_tag(takes_context=True)
 def display_item(context):
     display_when = context['self']['display_when']
