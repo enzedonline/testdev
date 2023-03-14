@@ -7,7 +7,7 @@ from wagtail.fields import RichTextField, StreamField
 from wagtail.models import Orderable, Page
 
 from core.forms import RestrictedPanelsAdminPageForm
-from core.panels import UtilityPanel, RestrictedFieldPanel, RestrictedInlinePanel
+from core.panels import UtilityPanel, RestrictedFieldPanel, RestrictedInlinePanel, RegexPanel
 from core.utils import count_words, get_streamfield_text
 from menu.models import Menu
 
@@ -51,6 +51,7 @@ class BlogPage(Page):
     some_text = models.CharField(max_length=255, default="some default value")
     some_text_area = models.TextField(default="some default value")
     some_rich_text = RichTextField(null=True, blank=True)
+    some_slug = models.SlugField(null=True, blank=True)
     some_choice_field = models.CharField(
         max_length=255, 
         default="a",
@@ -99,7 +100,8 @@ class BlogPage(Page):
     )
 
     content_panels = Page.content_panels + [
-        FieldPanel('owner'),
+        # FieldPanel('owner'),
+        RegexPanel('some_slug'),
         # MultiFieldPanel(
         #     [RestrictedInlinePanel("carousel_images", max_num=5, min_num=1)],
         #     heading="Carousel Images",
