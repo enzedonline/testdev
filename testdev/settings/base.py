@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     "menu",
     "search",
     "site_settings",
+    'svg',
     "wagtail.contrib.typed_table_block",
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",

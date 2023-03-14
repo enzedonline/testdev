@@ -1,0 +1,47 @@
+.modal-dialog {
+    max-width: min(90vw, 1400px);
+}
+ul.listing.images.chooser {
+    grid-template-columns: repeat(auto-fill,minmax(130px,1fr));
+    display: grid;
+}
+ul.listing.images.chooser li {
+    align-self: start;
+    padding: 1.5em 1.5em 0 1.5em;
+    display: inline-block;
+    width: min(130px,150px);
+    border-bottom: 0;
+}
+.svg-chooser-item-label {
+    width: 100%;
+    text-align: center;
+    hyphens: auto;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    word-wrap: break-word;
+    -webkit-hyphens: auto; 
+    -moz-hyphens: auto; 
+    -ms-hyphens: auto; 
+}
+.svg-chooser-preview {
+    background: conic-gradient(
+        whitesmoke 90deg,
+        ivory 90deg 180deg,
+        whitesmoke 180deg 270deg,
+        ivory 270deg
+    );
+    background-repeat: repeat ;
+    background-size: 20px 20px;
+    background-position: top left;
+}    
+.chosen .svg-chooser-preview {
+    width: 100px;
+}
+.item-choice .svg-chooser-preview {
+    width: 100% !important;
+    height: 100% !important;
+}
+.item-choice .svg-chooser-preview svg {
+    aspect-ratio: 1;
+}
+

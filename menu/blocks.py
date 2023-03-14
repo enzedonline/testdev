@@ -3,10 +3,8 @@ from django.utils.translation import gettext_lazy as _
 from wagtail.blocks import (BooleanBlock, CharBlock, ChoiceBlock, IntegerBlock,
                             PageChooserBlock, StreamBlock, StructBlock,
                             StructValue, URLBlock)
-# from wagtail.snippets.blocks import SnippetChooserBlock
 
-from .chooser.block import SVGChooserBlock
-from .icons import MenuIcon
+from svg.chooser.block import SVGChooserBlock
 
 class DefaultChoiceBlock(ChoiceBlock):
 
@@ -43,7 +41,6 @@ class MenuItemValue(StructValue):
     
 class MenuStructBlock(StructBlock):
     icon = SVGChooserBlock(
-        MenuIcon,
         required=False,
         label=_("Optional icon for display")
     )

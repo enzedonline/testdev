@@ -6,15 +6,14 @@ from wagtail.fields import StreamField
 from wagtail.snippets.models import register_snippet
 
 from .blocks import MenuStreamBlock
-from .chooser.svg_chooser import SVGSnippetChooser
-from .icons import MenuIcon
+from svg.chooser.widget import SVGChooser
 
 @register_snippet
 class Menu(models.Model):
-    title = models.CharField(max_length=255, null=True, blank=True, verbose_name=_("Optional Menu Titile"))
+    title = models.CharField(max_length=255, null=True, blank=True, verbose_name=_("Optional Menu Title"))
     slug = models.SlugField(unique=True)
     icon = models.ForeignKey(
-        'MenuIcon',
+        'svg.SVGIcon',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -28,7 +27,7 @@ class Menu(models.Model):
     panels = [
         FieldPanel('title'),
         FieldPanel('slug'),
-        FieldPanel('icon', widget=SVGSnippetChooser(MenuIcon)),
+        FieldPanel('icon', widget=SVGChooser),
         FieldPanel('items')
     ]
 

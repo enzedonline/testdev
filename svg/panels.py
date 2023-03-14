@@ -11,27 +11,35 @@ class SVGFieldPanel(FieldPanel):
 
         def file_to_text_field_button(self):
             return '''
+                <link rel="stylesheet" type="text/css" href="/static/css/svg-field-panel.css">
                 <label for="svgFile"> 
-                    <span class="w-panel__heading w-panel__heading--label">''' + _("Read data from file") + '''</span> 
+                    <h4 class="w-panel__heading w-panel__heading--label svg-panel-label">''' + _("Read data from file") + '''</h4> 
                 </label> 
                 <input type="file" id="''' + self.field_name + '''File" accept=".svg" style="border-style: none; padding: 0; display: block; width: fit-content;" />
-                <p class="w-panel__heading w-panel__heading--label" id="''' + self.field_name + '''-svgPreviewLabel">
+                <h4 class="w-panel__heading w-panel__heading--label svg-panel-label" id="''' + self.field_name + '''-svgPreviewLabel">
                     ''' + _("Preview") + '''
-                </p> 
-                <div id="''' + self.field_name + '''-svgPreview" style="width: 200px;"></div>
+                </h4> 
+                <div class="svg-preview" id="''' + self.field_name + '''-svgPreview"></div>
                 <script> 
                     const svgFile = document.getElementById("''' + self.field_name + '''File"); 
                     const svgField = document.getElementById("''' + self.id_for_label() + '''")
                     const svgPreview = document.getElementById("''' + self.field_name + '''-svgPreview")
                     const renderPreview = (svg) => {
                         if (svg.includes('<script')) {
+                            svgPreview.removeAttribute("class");
                             svgPreview.innerHTML='<p class="error-message">''' + _("SVG with embedded JavaScript not supported") + '''</p>';
                         } else if (svg.includes('<svg') && svg.includes('</svg>')) {
+                            svgPreview.setAttribute("class", "svg-preview");
                             svgPreview.innerHTML=svg;
                             svg_tag = svgPreview.getElementsByTagName('svg')[0];
-                            svg_tag.removeAttribute('height');
-                            svg_tag.removeAttribute('width');
+                            if (!svg_tag.hasAttribute('viewBox')) {
+                                svgPreview.innerHTML='<p class="error-message">''' + _("SVG must have a valid viewBox attribute") + '''</p>';
+                            } else {
+                                svg_tag.removeAttribute('height');
+                                svg_tag.removeAttribute('width');                           
+                            }
                         } else {
+                            svgPreview.removeAttribute("class");
                             svgPreview.innerHTML='<p>''' + _("Please enter a valid SVG element") + '''</p>';
                         }
                     }
