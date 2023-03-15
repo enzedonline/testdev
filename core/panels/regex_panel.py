@@ -29,7 +29,7 @@ class RegexPanel(FieldPanel):
                     "pattern", '^[-\w]+$'
                 )
             else:
-                raise ImproperlyConfigured(_("Field must be a SlugField or have a pattern set on either the model field or panel definition."))
+                raise ImproperlyConfigured(_("Field must be a SlugField or have a pattern set in the panel definition."))
 
         def render_html(self, parent_context) -> str:
             html = super().render_html(parent_context)
@@ -39,9 +39,16 @@ class RegexPanel(FieldPanel):
                 input_element['onkeydown']="return regex_keydownhandler(event)"
                 script = soup.new_tag('script')
                 script.string = f'\
+                    const inputElement = document.getElementById("{input_element["id"]}"); \
+                    const textColour = window.getComputedStyle(inputElement).color; \
                     function regex_keydownhandler(event) {{ \
-                        if (!(/{self.form.fields[self.field_name].pattern}/.test(event.key))){{\
-                            return false;}} \
+                        if (!(/{self.form.fields[self.field_name].pattern}/.test(event.key))){{ \
+                            event.srcElement.style.color = "var(--w-color-critical-200)"; \
+                            try {{clearInterval(errorInterval);}} catch(err) {{}} \
+                            errorInterval = setInterval(() => {{ \
+                                event.srcElement.style.color = textColour; }}, 200);\
+                            return false;\
+                        }} \
                     }}'
                 soup.append(script)
             return mark_safe(str(soup.prettify()))
