@@ -121,19 +121,19 @@ def stream_has_css_class(streamvalue, css_class):
 
 def file_to_text_field_button(field):
     return '''
-        <label for="svgFile"> 
+        <label for="''' + field + '''File"> 
             <span class="w-panel__heading w-panel__heading--label">''' + _("Read data from file") + '''</span> 
         </label> 
-        <input type="file" id="''' + field + '''File" accept=".svg" style="border-style: none; padding: 0;" />
+        <input type="file" id="''' + field + '''File" style="border-style: none; padding: 0;" />
         <script> 
-            const svgFile = document.getElementById("''' + field + '''File"); 
-            svgFile.addEventListener("change", (e) => {
+            const ''' + field + '''File = document.getElementById("''' + field + '''File"); 
+            ''' + field + '''File.addEventListener("change", (e) => {
                 e.preventDefault(); 
-                const input = svgFile.files[0]; 
+                const input = ''' + field + '''File.files[0]; 
                 const reader = new FileReader(); 
                 reader.onload = function (e) {
-                    const svgField = document.getElementById("id_''' + field + '''"); 
-                    svgField.value = e.target.result; 
+                    const ''' + field + '''Field = document.getElementById("id_''' + field + '''"); 
+                    ''' + field + '''Field.value = e.target.result; 
                 }; 
                 reader.readAsText(input); 
             }); 

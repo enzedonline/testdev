@@ -21,7 +21,7 @@ class SVGFieldPanel(FieldPanel):
 
         def file_to_text_with_preview(self):
             return '''
-                <label for="svgFile"> 
+                <label for="''' + self.field_name + '''File"> 
                     <h4 class="w-panel__heading w-panel__heading--label svg-panel-label">
                         ''' + self.msg['file_label'] + '''
                     </h4> 
