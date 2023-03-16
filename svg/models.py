@@ -54,7 +54,7 @@ class SVGImage(models.Model):
                 del svg["height"]
                 del svg["width"]
                 del svg["preserveAspectRatio"]
-                # remove this next loop if you wany to allow <script> tags in <svg> images
+                # remove this next loop if you want to allow <script> tags in <svg> images
                 for script in svg.find_all("script"):
                     script.extract()
                 if not (svg.has_attr("viewBox") or svg.has_attr("viewbox")):
