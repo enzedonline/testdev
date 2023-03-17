@@ -31,7 +31,10 @@ const initialiseSvgPanel = () => {
             svgTextField = document.getElementById(textfieldId);
             svgFile = document.getElementById(fieldName + 'File');
             svgPreview = document.getElementById(fieldName + '-svgPreview');
+            svgTextField.style.maxHeight='20em';
+            svgTextField.style.overflowY='auto';
             renderSvgPanelPreview(svgTextField.value);
+            
             svgTextField.addEventListener("input", () => {
                 renderSvgPanelPreview(svgTextField.value);
             });
@@ -42,7 +45,9 @@ const initialiseSvgPanel = () => {
                 reader.onload = function (e) {
                     svgTextField.value = e.target.result; 
                     renderSvgPanelPreview(e.target.result); 
-                }; 
+                    svgTextField.style.height=0;
+                    svgTextField.style.height=svgTextField.scrollHeight + 5 + 'px';
+                    }; 
                 reader.readAsText(input); 
             });
         };
