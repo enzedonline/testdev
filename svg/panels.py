@@ -17,9 +17,9 @@ class SVGFieldPanel(FieldPanel):
 
         def render_html(self, parent_context = None):
             html = super().render_html(parent_context)
-            return mark_safe(html + self.file_to_text_with_preview() + self.json_vars())
+            return mark_safe(html + self.import_text_with_preview() + self.json_vars())
 
-        def file_to_text_with_preview(self):
+        def import_text_with_preview(self):
             return '''
                 <label for="''' + self.field_name + '''File"> 
                     <h4 class="w-panel__heading w-panel__heading--label svg-panel-label">

@@ -14,7 +14,10 @@ class SVGImage(models.Model):
     label = models.CharField(max_length=255, verbose_name=_("label"), unique=True)
     svg = models.TextField(
         verbose_name="SVG",
-        help_text=_("Height and width attributes will be stripped on save."),
+        help_text=mark_safe(_(
+            "Paste in SVG data, drag/drop or import from .svg file.<br>"
+            "Height and width attributes will be stripped on save."
+        )),
     )
 
     panels = [

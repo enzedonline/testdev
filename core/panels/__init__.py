@@ -1,5 +1,5 @@
 from .utility_panel import UtilityPanel
 from .restricted_panels import RestrictedFieldPanel, RestrictedInlinePanel
-from .file_to_text_field_panel import FileToTextFieldPanel
+from .import_text_field_panel import ImportTextFieldPanel
 from .regex_panel import RegexPanel
 from .localised_select_panel import LocalizedSelectPanel

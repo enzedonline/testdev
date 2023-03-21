@@ -1,0 +1,22 @@
+{% load wagtailadmin_tags %}
+<div class="{{ classname }} import-text-block">
+    {% if help_text %}
+        <span>
+            <div class="help">
+                {% icon name="help" classname="default" %}
+                {{ help_text }}
+            </div>
+        </span>
+    {% endif %}
+    {% for child in children.values %}
+        <div class="w-field" data-field data-contentpath="{{ child.block.name }}">
+            {{ child.render_form }}
+            <input type="file"
+                   id="{{ prefix }}-filter"
+                   {% if filter %}accept="{{ filter }}"{% endif %} 
+                   style="border-style: none;
+                          padding-left: 0px;
+                          padding-top: 0px" />
+        </div>
+    {% endfor %}
+</div>

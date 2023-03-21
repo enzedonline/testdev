@@ -21,6 +21,17 @@ const renderSvgPanelPreview = (svg) => {
     }
 }
 
+const readFile = (source, target) => {
+    const reader = new FileReader();
+    reader.addEventListener('load', (event) => {
+        target.value = event.target.result;
+        renderSvgPanelPreview(event.target.result); 
+        target.style.height = target.scrollHeight 
+            + parseFloat(getComputedStyle(target).paddingTop) 
+            + parseFloat(getComputedStyle(target).paddingBottom) + 'px';
+    });
+    reader.readAsText(source);
+}
 const initialiseSvgPanel = () => {
     window.addEventListener('DOMContentLoaded', (event) => {
         const svgFieldNameElement = document.getElementById("svg_field_name")
@@ -31,8 +42,10 @@ const initialiseSvgPanel = () => {
             svgTextField = document.getElementById(textfieldId);
             svgFile = document.getElementById(fieldName + 'File');
             svgPreview = document.getElementById(fieldName + '-svgPreview');
-            svgTextField.style.maxHeight='20em';
-            svgTextField.style.overflowY='auto';
+            svgTextField.style.fontFamily = 'monospace';
+            svgTextField.style.fontSize = '0.8em';
+            svgTextField.style.maxHeight = '25em';
+            svgTextField.style.overflowY = 'auto';
             renderSvgPanelPreview(svgTextField.value);
             
             svgTextField.addEventListener("input", () => {
@@ -41,15 +54,21 @@ const initialiseSvgPanel = () => {
             svgFile.addEventListener("change", (e) => {
                 e.preventDefault(); 
                 const input = svgFile.files[0]; 
-                const reader = new FileReader(); 
-                reader.onload = function (e) {
-                    svgTextField.value = e.target.result; 
-                    renderSvgPanelPreview(e.target.result); 
-                    svgTextField.style.height=0;
-                    svgTextField.style.height=svgTextField.scrollHeight + 5 + 'px';
-                    }; 
-                reader.readAsText(input); 
+                readFile(input, svgTextField);
+                svgFile.value = '';
             });
+            svgTextField.parentElement.addEventListener('dragover', (event) => {
+                event.stopPropagation();
+                event.preventDefault();
+                event.dataTransfer.dropEffect = 'copy';
+            });
+            svgTextField.parentElement.addEventListener('drop', (event) => {
+                event.stopPropagation();
+                event.preventDefault();
+                const input = event.dataTransfer.files[0];
+                readFile(input, svgTextField)
+            });
+    
         };
     });
 };

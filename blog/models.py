@@ -7,7 +7,7 @@ from wagtail.fields import RichTextField, StreamField
 from wagtail.models import Orderable, Page
 
 from core.forms import RestrictedPanelsAdminPageForm
-from core.panels import UtilityPanel, RestrictedFieldPanel, RestrictedInlinePanel, RegexPanel, FileToTextFieldPanel
+from core.panels import UtilityPanel, RestrictedFieldPanel, RestrictedInlinePanel, RegexPanel, ImportTextFieldPanel
 from core.utils import count_words, get_streamfield_text
 from menu.models import Menu
 
@@ -100,9 +100,9 @@ class BlogPage(Page):
     )
 
     content_panels = Page.content_panels + [
-        # FieldPanel('owner'),
+        FieldPanel('owner'),
         RegexPanel('some_slug'),
-        FileToTextFieldPanel('some_text_area', file_type_filter=".csv"),
+        ImportTextFieldPanel('some_text_area', file_type_filter=".html"),
         # MultiFieldPanel(
         #     [RestrictedInlinePanel("carousel_images", max_num=5, min_num=1)],
         #     heading="Carousel Images",
@@ -182,7 +182,7 @@ class BlogPage(Page):
         UtilityPanel(
             '{{file_reader}}', 
             {
-                'file_reader': {'module': 'core.utils', 'method': 'file_to_text_field_button', 'field': 'some_text_area'}
+                'file_reader': {'module': 'core.utils', 'method': 'import_text_field_button', 'field': 'some_text_area'}
             }
         ),
 ]

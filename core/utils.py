@@ -119,7 +119,7 @@ def stream_has_css_class(streamvalue, css_class):
     render = BeautifulSoup(streamvalue.render_as_block(), 'html.parser')
     return (render.select_one(f'.{css_class}') != None) if render else False
 
-def file_to_text_field_button(field):
+def import_text_field_button(field):
     return '''
         <label for="''' + field + '''File"> 
             <span class="w-panel__heading w-panel__heading--label">''' + _("Read data from file") + '''</span> 

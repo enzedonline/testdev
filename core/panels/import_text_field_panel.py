@@ -1,9 +1,16 @@
+from bs4 import BeautifulSoup
+from django.core.exceptions import ImproperlyConfigured
 from django.utils.safestring import mark_safe
-from wagtail.admin.panels import FieldPanel
 from django.utils.translation import gettext_lazy as _
+from wagtail.admin.panels import FieldPanel
 
 
-class FileToTextFieldPanel(FieldPanel):
+class ImportTextFieldPanel(FieldPanel):
+    """
+    TextArea form field with option to import from file or drag/drop.
+    file_type_filter: any valid accept string
+    https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/accept
+    """
     def __init__(self, field_name, file_type_filter=None, *args, **kwargs):
         self.file_type_filter = file_type_filter
         super().__init__(field_name, *args, **kwargs)
@@ -22,16 +29,19 @@ class FileToTextFieldPanel(FieldPanel):
                 f'accept="{self.panel.file_type_filter}" ' if self.panel.file_type_filter else ""
             )
 
-
         msg = {
             'file_label': _("Read data from file"),
         }
 
         def render_html(self, parent_context=None):
             html = super().render_html(parent_context)
-            return mark_safe(html + self.file_to_text_field_button())
+            if not BeautifulSoup(html, 'html.parser').find('textarea'):
+                raise ImproperlyConfigured(_("ImportTextFieldPanel should only be used with TextFields"))
+            return mark_safe(
+                html + self.import_text_field_button() + self.initialise_panel()
+            )
 
-        def file_to_text_field_button(self):
+        def import_text_field_button(self):
             file_input_id = f'{self.field_name}File'
             return '''
                 <label for="''' + file_input_id + '''"> 
@@ -44,23 +54,16 @@ class FileToTextFieldPanel(FieldPanel):
                     id="''' + file_input_id + '''" 
                     ''' + self.accepts + ''' 
                     style="border-style: none; padding: 0; display: block; width: fit-content;" 
-                />
+                />'''
+        
+        def initialise_panel(self):
+            return '''
                 <script>
-                    input''' + file_input_id + ''' = document.getElementById("''' + file_input_id + '''");
-                    textField''' + self.id_for_label() + ''' = document.getElementById("''' + self.id_for_label() + '''");
-                    textField''' + self.id_for_label() + '''.style.maxHeight='20em';
-                    textField''' + self.id_for_label() + '''.style.overflowY='auto';
-                    input''' + file_input_id + '''.addEventListener("change", (e) => {
-                        e.preventDefault(); 
-                        const input = input''' + file_input_id + '''.files[0]; 
-                        const reader = new FileReader(); 
-                        reader.onload = function (e) {
-                            textField''' + self.id_for_label() + '''.value = e.target.result;
-                            textField''' + self.id_for_label() + '''.style.height=0;
-                            textField''' + self.id_for_label() + '''.style.height=textField 
-                            ''' + self.id_for_label() + '''.scrollHeight + 5 + 'px';
-                        }; 
-                        reader.readAsText(input); 
-                    });                
+                    window.addEventListener('DOMContentLoaded', (event) => {
+                        initialiseImportTextFieldPanel(
+                            "''' + f'{self.field_name}File' + '''", 
+                            "''' + self.id_for_label() + '''"
+                        )
+                    });
                 </script>
                 '''    

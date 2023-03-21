@@ -1,16 +1,17 @@
 from django.contrib import messages
 from django.http import HttpResponseRedirect
+from django.templatetags.static import static
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from wagtail import hooks
-from wagtail.admin.rich_text.converters.html_to_contentstate import \
-    BlockElementHandler
-from wagtail.admin.rich_text.editors.draftail import \
-    features as draftail_features
 from wagtail.models import Page
+
+from blog.models import BlogPage
+
 from .draftail_extensions import (DRAFTAIL_ICONS, register_block_feature,
                                   register_inline_styling)
-from blog.models import BlogPage
 from .utils import has_role
+
 
 @hooks.register('register_rich_text_features')
 def register_align_left_feature(features):
@@ -171,6 +172,7 @@ def get_wordcount(request, page):
 
 from blog.models import BlogPage
 
+
 @hooks.register("before_create_page")
 @hooks.register("before_delete_page")
 @hooks.register("before_edit_page")
@@ -193,3 +195,11 @@ def check_page_permissions(request, page, page_class=None):
                 referer = '/admin/'
             return HttpResponseRedirect(referer)
 
+@hooks.register('insert_editor_js')
+def svg_editor_js():
+    admin_js = static('js/admin.js')
+    import_text_field_panel_js = static('js/import_text_field_panel.js')
+    return mark_safe(
+        f'<script src="{admin_js}"></script>' +
+        f'<script src="{import_text_field_panel_js}"></script>'
+    )

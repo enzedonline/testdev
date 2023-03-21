@@ -1,0 +1,10 @@
+.import-text-block .w-field__wrapper {
+    margin-bottom: 0.5rem;
+}
+.import-text-block textarea {
+    max-height: 25em;
+    overflow-y: auto !important;
+}
+.import-text-block .help {
+    padding-bottom: 0.5rem;
+}
