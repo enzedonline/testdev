@@ -185,7 +185,7 @@ class BlogPage(Page):
                 'file_reader': {'module': 'core.utils', 'method': 'import_text_field_button', 'field': 'some_text_area'}
             }
         ),
-]
+    ]
 
     base_form_class = RestrictedPanelsAdminPageForm
 
