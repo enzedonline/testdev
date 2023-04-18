@@ -41,21 +41,21 @@ class BaseUserChooseView(BaseChooseView):
     def columns(self):
         return [
             TitleColumn(
-                "username",
+                name="username",
                 label=_("Username"),
                 accessor="username",
                 url_name=self.chosen_url_name,
                 link_attrs={"data-chooser-modal-choice": True},
             ),
             TitleColumn(
-                "get_full_name",
+                name="get_full_name",
                 label=_("Name"),
                 accessor="get_full_name",
                 url_name=self.chosen_url_name,
                 link_attrs={"data-chooser-modal-choice": True},
             ),
             TitleColumn(
-                "email",
+                name="email",
                 label=_("Email"),
                 accessor="email",
                 url_name=self.chosen_url_name,
@@ -91,8 +91,8 @@ class UserChooserViewSet(ChooserViewSet):
     choose_results_view_class = UserChooseResultsView
 
     icon = "user"
-    choose_one_text = "Choose a user"
-    choose_another_text = "Choose another user"
-    edit_item_text = "Edit this user"
+    choose_one_text = _("Choose a user")
+    choose_another_text = _("Choose another user")
+    edit_item_text = _("Edit this user")
 
 user_chooser_viewset = UserChooserViewSet("user_chooser")
