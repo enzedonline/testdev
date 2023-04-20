@@ -6,8 +6,6 @@ from django.utils.translation import gettext_lazy as _
 from wagtail import hooks
 from wagtail.models import Page
 
-from blog.models import BlogPage
-
 from .draftail_extensions import (DRAFTAIL_ICONS, register_block_feature,
                                   register_inline_styling)
 from .utils import has_role
@@ -155,23 +153,6 @@ def register_quoteblock_feature(features):
         wrapper="ul class='quoteblock-wrapper' role='list'",
         icon="openquote"
     )
-
-@hooks.register("after_edit_page")
-@hooks.register("after_create_page")
-def get_wordcount(request, page):
-    if page.specific_class == BlogPage:
-        try:
-            page.wordcount = page.get_wordcount()
-            if page.has_unpublished_changes:
-                page.save_revision()
-            else:
-                page.save()
-        except Exception as e:
-            print(f"{type(e).__name__} at line {e.__traceback__.tb_lineno} of {__file__}: {e}")       
-            messages.error(request, _('There was a problem generating the word count'))
-
-from blog.models import BlogPage
-
 
 @hooks.register("before_create_page")
 @hooks.register("before_delete_page")

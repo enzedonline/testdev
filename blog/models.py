@@ -1,5 +1,6 @@
 from django import forms
 from django.db import models
+from django.utils.functional import cached_property
 from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import FieldPanel, InlinePanel, MultiFieldPanel
 from wagtail.blocks import RawHTMLBlock, RichTextBlock
@@ -7,9 +8,12 @@ from wagtail.fields import RichTextField, StreamField
 from wagtail.models import Orderable, Page
 
 from core.forms import RestrictedPanelsAdminPageForm
-from core.panels import UtilityPanel, RestrictedFieldPanel, RestrictedInlinePanel, RegexPanel, ImportTextFieldPanel
+from core.panels import (ImportTextFieldPanel, RegexPanel,
+                         RestrictedFieldPanel, RestrictedInlinePanel,
+                         UtilityPanel)
 from core.utils import count_words, get_streamfield_text
 from menu.models import Menu
+
 
 class CarouselImages(Orderable):
     """Between 1 and 5 images for the home page carousel."""
@@ -100,6 +104,10 @@ class BlogPage(Page):
     )
 
     content_panels = Page.content_panels + [
+        UtilityPanel(
+            '<b>Word Count:</b> {{wordcount}}', {'wordcount': 'wordcount'},
+            style = 'margin-bottom: 2em;display: block;background-color: antiquewhite;padding: 1em;border-radius: 1em;'
+        ),
         FieldPanel('owner'),
         RegexPanel('some_slug'),
         ImportTextFieldPanel('some_text_area', file_type_filter=".html"),
@@ -112,11 +120,11 @@ class BlogPage(Page):
         # RestrictedFieldPanel('some_text_area'),
         # RestrictedFieldPanel('some_choice_field'),
         # RestrictedFieldPanel('some_rich_text'),
-        RestrictedFieldPanel('some_image'),
+        # RestrictedFieldPanel('some_image'),
         # RestrictedFieldPanel('some_document'),
-        RestrictedFieldPanel('some_product'),
+        # RestrictedFieldPanel('some_product'),
         # RestrictedFieldPanel('some_page'),
-        # RestrictedFieldPanel("content"),
+        RestrictedFieldPanel("content"),
         # UtilityPanel('<span class="editor-reminder">Some important notice to display</span>'),
         # UtilityPanel(
         #     '<h5><a target="_blank" href="{{url}}" style="color: blue; text-decoration: underline;">News Article Editors Guide</a></h5>',
@@ -192,12 +200,14 @@ class BlogPage(Page):
     class Meta:
         verbose_name = 'Blog Page'
 
+    @cached_property
     def corpus(self):
         return get_streamfield_text(
             self.content
         )
 
-    def get_wordcount(self, corpus=None):
+    @cached_property
+    def words(self, corpus=None):
         if not corpus:
-            corpus = self.corpus()
+            corpus = self.corpus
         return count_words(corpus)
