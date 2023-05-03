@@ -16,7 +16,7 @@ from menu.models import Menu
 
 
 class CarouselImages(Orderable):
-    """Between 1 and 5 images for the home page carousel."""
+    """Between 1 and 5 images for the blog page carousel."""
 
     page = ParentalKey("blog.BlogPage", related_name="carousel_images")
     carousel_image = models.ForeignKey(
@@ -111,10 +111,10 @@ class BlogPage(Page):
         FieldPanel('owner'),
         RegexPanel('some_slug'),
         ImportTextFieldPanel('some_text_area', file_type_filter=".html"),
-        # MultiFieldPanel(
-        #     [RestrictedInlinePanel("carousel_images", max_num=5, min_num=1)],
-        #     heading="Carousel Images",
-        # ),
+        MultiFieldPanel(
+            [RestrictedInlinePanel("carousel_images", max_num=5, min_num=1)],
+            heading="Carousel Images",
+        ),
         # RestrictedFieldPanel('some_date'),
         # RestrictedFieldPanel('some_text'),
         # RestrictedFieldPanel('some_text_area'),
