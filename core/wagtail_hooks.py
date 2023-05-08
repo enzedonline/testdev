@@ -177,7 +177,7 @@ def check_page_permissions(request, page, page_class=None):
             return HttpResponseRedirect(referer)
 
 @hooks.register('insert_editor_js')
-def svg_editor_js():
+def register_admin_js():
     admin_js = static('js/admin.js')
     import_text_field_panel_js = static('js/import_text_field_panel.js')
     return mark_safe(
