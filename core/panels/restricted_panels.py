@@ -109,8 +109,8 @@ class RestrictedFieldPanel(FieldPanel):
     Adds the following kwargs to field panel to determine if panel should be editable, read-only or hidden
         authorised_roles=[] - list of roles to pass on to form to determine if authorised to edit.
                             - superusers and roles listed in RESTRICTED_PANEL_OVERRIDE_ROLES will always be authorised.
-        allow_on_create=False - if true, panel will be editable on a new page/model only for restricted users
-        allow_for_owner=False - if true, panel will be editable pages/models created by logged in user for restricted users
+        allow_on_create=False - if true, for a restricted user, panel will be editable on a new page/model only 
+        allow_for_owner=False - if true, for a restricted user, panel will be editable pages/models owned (created by default) by that user 
         hide_if_restricted=False - if true, panel will not be present on form for restricted users
     StreamFields and RichTextFields will be rendered as is if restricted. Admin CSS rules may differ to front end
       causing the read-only display to differ from that displayed on website.
@@ -326,8 +326,8 @@ class RestrictedInlinePanel(InlinePanel):
     Adds the following kwargs to field panel to determine if panel should be editable, read-only or hidden
         authorised_roles=[] - list of roles to pass on to form to determine if authorised to edit.
                             - superusers and roles listed in RESTRICTED_PANEL_OVERRIDE_ROLES will always be authorised.
-        allow_on_create=False - if true, panel will be editable on a new page/model only for restricted users
-        allow_for_owner=False - if true, panel will be editable pages/models created by logged in user for restricted users
+        allow_on_create=False - if true, for a restricted user, panel will be editable on a new page/model only 
+        allow_for_owner=False - if true, for a restricted user, panel will be editable pages/models owned (created by default) by that user 
         hide_if_restricted=False - if true, panel will not be present on form for restricted users
     RichTextFields will be rendered as is if panel is restricted. Admin CSS rules may differ to front end
       causing the read-only display to differ from that displayed on website.
