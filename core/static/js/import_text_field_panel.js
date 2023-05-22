@@ -23,6 +23,7 @@ const initialiseImportTextFieldPanel = (fileInputId, textFieldId) => {
             const input = fileInput.files[0];
             readFile(input, textField)
             fileInput.value = '';
+            fileInput.blur();
         });
         
         textField.parentElement.addEventListener('dragover', (event) => {
