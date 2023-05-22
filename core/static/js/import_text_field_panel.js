@@ -2,13 +2,15 @@ const initialiseImportTextFieldPanel = (fileInputId, textFieldId) => {
 
         const fileInput = document.getElementById(fileInputId);
         const textField = document.getElementById(textFieldId);
-        textField.style.maxHeight='20em';
+        const textInitialHeight = textField.style.height
+        if (textField.style.maxHeight == '') {textField.style.maxHeight = '30em';}
         textField.style.overflowY='auto';
 
         const readFile = (source, target) => {
             const reader = new FileReader();
             reader.addEventListener('load', (event) => {
                 target.value = event.target.result;
+                target.style.height = textInitialHeight;
                 target.style.height = target.scrollHeight 
                     + parseFloat(getComputedStyle(target).paddingTop) 
                     + parseFloat(getComputedStyle(target).paddingBottom) + 'px';
@@ -22,6 +24,7 @@ const initialiseImportTextFieldPanel = (fileInputId, textFieldId) => {
             readFile(input, textField)
             fileInput.value = '';
         });
+        
         textField.parentElement.addEventListener('dragover', (event) => {
             event.stopPropagation();
             event.preventDefault();

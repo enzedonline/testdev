@@ -8,13 +8,17 @@ class ImportTextBlockDefinition extends window.wagtailStreamField.blocks
                 initialError,
             );
 
-            const dataField = document.getElementById(prefix + '-text');
-            const fileInput = document.getElementById(prefix + '-filter');
-
+            const fileInput = document.getElementById(prefix + '-fileinput');
+            const textField = document.getElementById(prefix + '-text');
+            const textInitialHeight = textField.style.height
+            if (textField.style.maxHeight == '') {textField.style.maxHeight = '30em';}
+            textField.style.overflowY='auto';
+    
             const readFile = (source, target) => {
                 const reader = new FileReader();
                 reader.addEventListener('load', (event) => {
                     target.value = event.target.result;
+                    target.style.height = textInitialHeight;
                     target.style.height = target.scrollHeight 
                         + parseFloat(getComputedStyle(target).paddingTop) 
                         + parseFloat(getComputedStyle(target).paddingBottom) + 'px';
@@ -25,19 +29,20 @@ class ImportTextBlockDefinition extends window.wagtailStreamField.blocks
             fileInput.addEventListener('change', (event) => {
                 event.preventDefault();
                 const input = fileInput.files[0];
-                readFile(input, dataField)
+                readFile(input, textField)
                 fileInput.value = '';
             });
-            dataField.parentElement.addEventListener('dragover', (event) => {
+
+            textField.parentElement.addEventListener('dragover', (event) => {
                 event.stopPropagation();
                 event.preventDefault();
                 event.dataTransfer.dropEffect = 'copy';
             });
-            dataField.parentElement.addEventListener('drop', (event) => {
+            textField.parentElement.addEventListener('drop', (event) => {
                 event.stopPropagation();
                 event.preventDefault();
                 const input = event.dataTransfer.files[0];
-                readFile(input, dataField)
+                readFile(input, textField)
             });
             return block;
         }
