@@ -49,15 +49,15 @@ class ImportTextFieldPanel(FieldPanel):
             file_input_id = f'{self.field_name}File'
             return '''
                 <div class="textarea-fileinput-container">
-                <input 
-                    type="file" 
-                    class="textarea-fileinput"
-                    id="''' + file_input_id + '''" 
-                    ''' + self.accepts + ''' 
-                />
-                <span class="help">
-                    ''' + self.msg['file_label'] + '''
-                </span> 
+                    <input 
+                        type="file" 
+                        class="textarea-fileinput"
+                        id="''' + file_input_id + '''" 
+                        ''' + self.accepts + ''' 
+                    />
+                    <span class="help">
+                        ''' + self.msg['file_label'] + '''
+                    </span> 
                 </div>
                 '''
         
