@@ -30,31 +30,38 @@ class ImportTextFieldPanel(FieldPanel):
             )
 
         msg = {
-            'file_label': _("Read data from file"),
+            'file_label': _("Use 'Choose File' or drag/drop to import data from file."),
         }
 
         def render_html(self, parent_context=None):
             html = super().render_html(parent_context)
-            if not BeautifulSoup(html, 'html.parser').find('textarea'):
+            soup = BeautifulSoup(html, 'html.parser')
+            text_area = soup.find('textarea')
+            if not text_area:
                 raise ImproperlyConfigured(_("ImportTextFieldPanel should only be used with TextFields"))
+            else:
+                text_area['class'] = text_area.get('class', []) + ['import_text_area']
             return mark_safe(
-                html + self.import_text_field_button() + self.initialise_panel()
+                str(soup) + self.import_text_field_button() + self.initialise_panel()
             )
 
         def import_text_field_button(self):
             file_input_id = f'{self.field_name}File'
             return '''
-                <label for="''' + file_input_id + '''"> 
-                    <h4 class="w-panel__heading w-panel__heading--label svg-panel-label">
-                        ''' + self.msg['file_label'] + '''
-                    </h4> 
-                </label> 
+                <div class="textarea-fileinput-container">
                 <input 
                     type="file" 
+                    class="textarea-fileinput"
                     id="''' + file_input_id + '''" 
                     ''' + self.accepts + ''' 
-                    style="border-style: none; padding: 0; display: block; width: fit-content;" 
-                />'''
+                />
+                <label for="''' + file_input_id + '''"> 
+                    <span class="help">
+                        ''' + self.msg['file_label'] + '''
+                    </span> 
+                </label> 
+                </div>
+                '''
         
         def initialise_panel(self):
             return '''
