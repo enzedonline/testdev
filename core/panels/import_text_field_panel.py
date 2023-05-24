@@ -55,11 +55,9 @@ class ImportTextFieldPanel(FieldPanel):
                     id="''' + file_input_id + '''" 
                     ''' + self.accepts + ''' 
                 />
-                <label for="''' + file_input_id + '''"> 
-                    <span class="help">
-                        ''' + self.msg['file_label'] + '''
-                    </span> 
-                </label> 
+                <span class="help">
+                    ''' + self.msg['file_label'] + '''
+                </span> 
                 </div>
                 '''
         
