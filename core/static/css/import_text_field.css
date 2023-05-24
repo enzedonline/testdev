@@ -1,0 +1,23 @@
+/* static/css/import_text_field.css */
+
+.textarea-fileinput {
+    width: 10em !important;
+    border: 0 !important;
+    padding: 0 !important;
+    margin-right: 1rem;
+}
+.textarea-fileinput::file-selector-button {
+    width: 10em;
+    padding: 0.3rem;
+    border: 0;
+    border-radius: 5px;
+}
+.textarea-fileinput-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+.import_text_area {
+    max-height: 30em !important;
+    overflow-y: auto !important;
+    width: 100%;
+}
