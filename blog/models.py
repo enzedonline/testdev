@@ -53,7 +53,7 @@ class BlogPage(Page):
     wordcount = models.IntegerField(null=True, blank=True, verbose_name="Word Count", default=0)
     some_date = models.DateTimeField(null=True, blank=True, help_text="Some helpful text")
     some_text = models.CharField(max_length=255, default="some default value")
-    some_text_area = models.TextField(default="some default value")
+    some_text_area = models.TextField(verbose_name="Air Quality")
     some_rich_text = RichTextField(null=True, blank=True)
     some_slug = models.SlugField(null=True, blank=True)
     some_choice_field = models.CharField(
@@ -110,7 +110,7 @@ class BlogPage(Page):
         ),
         FieldPanel('owner'),
         RegexPanel('some_slug'),
-        ImportTextFieldPanel('some_text_area', file_type_filter=".html"),
+        ImportTextFieldPanel('some_text_area', file_type_filter=".csv, .tsv"),
         MultiFieldPanel(
             [RestrictedInlinePanel("carousel_images", max_num=5, min_num=1)],
             heading="Carousel Images",
