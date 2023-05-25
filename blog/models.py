@@ -7,12 +7,12 @@ from wagtail.blocks import RawHTMLBlock, RichTextBlock
 from wagtail.fields import RichTextField, StreamField
 from wagtail.models import Orderable, Page
 
+from blocks.models import CSVTableBlock, ImportTextBlock
 from core.forms import RestrictedPanelsAdminPageForm
 from core.panels import (ImportTextFieldPanel, RegexPanel,
                          RestrictedFieldPanel, RestrictedInlinePanel,
                          UtilityPanel)
 from core.utils import count_words, get_streamfield_text
-from menu.models import Menu
 
 
 class CarouselImages(Orderable):
@@ -97,6 +97,8 @@ class BlogPage(Page):
         [
             ("rich_text", RichTextBlock()),
             ("html", RawHTMLBlock()),
+            ('import_text_block', ImportTextBlock()),
+            ("csv_table", CSVTableBlock()), 
         ],
         verbose_name="Page Content",
         blank=True,
