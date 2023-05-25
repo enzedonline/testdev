@@ -3,9 +3,8 @@ import importlib
 from datetime import date, datetime, time
 from html import escape
 
-from django.utils.html import format_html
-from wagtail.admin.panels import Panel
 from django.utils.safestring import mark_safe
+from wagtail.admin.panels import Panel
 
 
 class UtilityPanel(Panel):
