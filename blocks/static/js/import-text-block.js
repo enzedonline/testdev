@@ -19,9 +19,7 @@ class ImportTextBlockDefinition extends window.wagtailStreamField.blocks
                 reader.addEventListener('load', (event) => {
                     target.value = event.target.result;
                     target.style.height = textInitialHeight;
-                    target.style.height = target.scrollHeight 
-                        + parseFloat(getComputedStyle(target).paddingTop) 
-                        + parseFloat(getComputedStyle(target).paddingBottom) + 'px';
+                    target.style.height = target.scrollHeight * 1.01 + 'px';
                 });
                 reader.readAsText(source);
             }
