@@ -11,12 +11,18 @@
     {% for child in children.values %}
         <div class="w-field" data-field data-contentpath="{{ child.block.name }}">
             {{ child.render_form }}
-            <input type="file"
-                   id="{{ prefix }}-fileinput"
-                   {% if filter %}accept="{{ filter }}"{% endif %} 
-                   style="border-style: none;
-                          padding-left: 0px;
-                          padding-top: 0px" />
+            <div class="textarea-fileinput-container">
+                <input type="file"
+                    id="{{ prefix }}-fileinput"
+                    class="textarea-fileinput"
+                    {% if filter %}accept="{{ filter }}"{% endif %} 
+                    style="border-style: none;
+                            padding-left: 0px;
+                            padding-top: 0px" />
+                <span class="help">
+                    {{ instructions }}
+                </span>             
+            </div>
         </div>
     {% endfor %}
 </div>
