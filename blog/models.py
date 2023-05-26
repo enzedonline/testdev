@@ -106,17 +106,17 @@ class BlogPage(Page):
     )
 
     content_panels = Page.content_panels + [
-        UtilityPanel(
-            '<b>Word Count:</b> {{wordcount}}', {'wordcount': 'wordcount'},
-            style = 'margin-bottom: 2em;display: block;background-color: antiquewhite;padding: 1em;border-radius: 1em;'
-        ),
-        FieldPanel('owner'),
-        RegexPanel('some_slug'),
+        # UtilityPanel(
+        #     '<b>Word Count:</b> {{wordcount}}', {'wordcount': 'wordcount'},
+        #     style = 'margin-bottom: 2em;display: block;background-color: antiquewhite;padding: 1em;border-radius: 1em;'
+        # ),
+        # FieldPanel('owner'),
+        # RegexPanel('some_slug'),
         ImportTextFieldPanel('some_text_area', file_type_filter=".csv, .tsv"),
-        MultiFieldPanel(
-            [RestrictedInlinePanel("carousel_images", max_num=5, min_num=1)],
-            heading="Carousel Images",
-        ),
+        # MultiFieldPanel(
+        #     [RestrictedInlinePanel("carousel_images", max_num=5, min_num=1)],
+        #     heading="Carousel Images",
+        # ),
         # RestrictedFieldPanel('some_date'),
         # RestrictedFieldPanel('some_text'),
         # RestrictedFieldPanel('some_text_area'),
@@ -188,13 +188,13 @@ class BlogPage(Page):
         #         ]
         #     },
         # ),
-        FieldPanel('some_text_area'),
-        UtilityPanel(
-            '{{file_reader}}', 
-            {
-                'file_reader': {'module': 'core.utils', 'method': 'import_text_field_button', 'field': 'some_text_area'}
-            }
-        ),
+        # FieldPanel('some_text_area'),
+        # UtilityPanel(
+        #     '{{file_reader}}', 
+        #     {
+        #         'file_reader': {'module': 'core.utils', 'method': 'import_text_field_button', 'field': 'some_text_area'}
+        #     }
+        # ),
     ]
 
     base_form_class = RestrictedPanelsAdminPageForm
