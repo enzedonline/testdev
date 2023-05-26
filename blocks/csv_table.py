@@ -1,10 +1,6 @@
-from django import forms
-from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
-from wagtail.blocks import BooleanBlock, RichTextBlock, StructBlock, TextBlock
+from wagtail.blocks import BooleanBlock, RichTextBlock, StructBlock
 from wagtail.blocks.field_block import IntegerBlock
-from wagtail.blocks.struct_block import StructBlockAdapter
-from wagtail.telepath import register
 
 from .choices import TextAlignmentChoiceBlock
 from .heading import HeadingBlock
@@ -14,7 +10,7 @@ class CSVTableBlock(StructBlock):
     title = HeadingBlock(required=False, label=_("Table Title"))
     data = ImportTextBlock(
         label=_("Comma Separated Data"),
-        help_text=_("Paste in CSV data, drag/drop or import from .csv file"),
+        help_text=_("Paste in CSV data or import from .csv file"),
         file_type_filter='.csv'
     )
     precision = IntegerBlock(
