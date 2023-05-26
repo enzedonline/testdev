@@ -35,7 +35,7 @@ class SVGImageChooserMixin(ModelChooserMixin):
     def get_object_list(self, search_term=None, **kwargs):
         object_list = self.get_unfiltered_object_list()
         if search_term:
-            object_list = object_list.filter(label__imagetains=search_term)
+            object_list = object_list.filter(label__icontains=search_term)
         return object_list
 
 class SVGImageChooserViewSet(ModelChooserViewSet):
