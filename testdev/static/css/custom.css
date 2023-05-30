@@ -11,6 +11,12 @@
   --font-size-body: clamp(1rem, 0.9599rem + 0.169vw, 1.15rem);
   --menu-active-colour: antiquewhite;
 }
+/* ======= Scrolling ======= */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+}
+
 body {
   margin: 0;
   font-family: var(--font-family-body);
@@ -19,18 +25,8 @@ body {
   line-height: 1.5;
   text-align: justify;
 }
-.h1,
-.h2,
-.h3,
-.h4,
-.h5,
-.h6,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+.h1, .h2, .h3, .h4, .h5, .h6, 
+h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-family-headings);
   margin-bottom: 0.8rem;
   font-weight: 500;
