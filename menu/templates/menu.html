@@ -3,37 +3,34 @@
 {% comment %} replace main-menu with your menu slug {% endcomment %}
 {% load_menu 'main-menu' as menu %}
 
-{% comment %}sample css for menu{% endcomment %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/menu.css' %}"/>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark py-0 pe-md-1">
-  <div class="container-fluid">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark p-1 nav-{{ menu.slug }}">
+  
     <div class="p-0">
       <a class="navbar-brand" href="/">
         {{ menu.logo }} {{ menu.title }}
       </a>
     </div>
     <button 
-        class="navbar-toggler menu-{{ menu.slug }}" 
+        class="navbar-toggler menu-toggler-{{ menu.slug }}" 
         type="button" 
         data-bs-toggle="collapse" 
-        data-bs-target=".menu-bar-collapse"  
-        aria-controls="navbarSupportedContent" 
+        data-bs-target="#navbar-{{ menu.slug }}"  
+        aria-controls="navbar-{{ menu.slug }}" 
         aria-expanded="false" 
         aria-label="Toggle navigation" 
         onclick="document.activeElement.blur();">
-        <span class="navbar-toggler-image menu-{{ menu.slug }}"></span>
+        <span class="navbar-toggler-icon menu-toggler-{{ menu.slug }}"></span>
     </button>
-    <div 
-      class="collapse navbar-collapse dual-collapse2 justify-content-end menu-bar-collapse" 
-      id="navbar-{{ menu.slug }}"
-    >
-      <ul class="navbar-nav mb-2 mb-lg-0 menu-{{ menu.slug }}">
+    <div class="collapse navbar-collapse justify-content-end pe-4" id="navbar-{{ menu.slug }}">
+      <ul class="navbar-nav menu-item-{{ menu.slug }} ps-2 ps-lg-0">
         {% for item in menu.items %}
           {% include_block item with context=context link_type='nav-item' %}
         {% endfor %}
       </ul>
     </div>
-  </div>
+  
 </nav>
 
+<div style="height: 3rem;"></div>

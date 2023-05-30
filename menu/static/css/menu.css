@@ -1,46 +1,64 @@
 .navbar {
-    font-family: var(--font-family-headings);
-    font-size: var(--font-size-5);
-    font-weight: 500;
-  }
-  .navbar-brand {
-    font-family: var(--font-family-headings);
-    font-size: var(--font-size-4);
-    font-weight: 600;
-  
-  }
-  .dropdown-item a.nav-link {
-    color: var(--bs-dark);
-    font-weight: 500;
-  }
-  .dropdown-menu {
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  }
-  .nav-item .nav-link.active {
-    color: antiquewhite;
-    border-bottom-width: 2px;
-    border-bottom-style: solid;
-  }
-  .dropdown-item .nav-link.active {
-    color: unset;
-    border-bottom-style: unset;
-  }
-  .nav-item .nav-link {
-    color: linen;
-  }
-  .nav-item .nav-link:hover {
-    color: white;
-  }
-  .dropdown-item .nav-link:hover {
-    color: unset;
-  }
-  .nav-link svg {
-    height: 1.2em;
-    width: auto;
-    margin: 0 0.2em 0.2em 0;
-  }
-  .navbar-brand svg {
-    height: 1.4em;
-    width: auto;
-    margin: 0 0.2em 0.2em 0;
-  }
+  font-family: var(--font-family-headings) !important;
+  font-size: var(--font-size-5) !important;
+  font-weight: 500 !important;
+}
+
+.navbar-brand {
+  font-family: var(--font-family-headings);
+  font-size: var(--font-size-4);
+  font-weight: 600;
+}
+
+.dropdown-item a.nav-link {
+  color: var(--bs-dark);
+  font-weight: 500;
+}
+
+.dropdown-menu {
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+}
+
+.nav-item .nav-link.active {
+  color: antiquewhite;
+  border-bottom-width: 2px;
+  border-bottom-style: solid;
+}
+
+.dropdown-item .nav-link.active {
+  color: unset;
+  border-bottom-style: unset;
+}
+
+.nav-item .nav-link {
+  color: linen;
+}
+
+.nav-item .nav-link:hover {
+  color: white;
+}
+
+.dropdown-item .nav-link:hover {
+  color: unset;
+}
+
+.nav-link svg {
+  height: 1.2em;
+  width: auto;
+  margin: 0 0.2em 0.2em 0;
+}
+
+.navbar-brand svg {
+  height: 1.4em;
+  width: auto;
+  margin: 0 0.2em 0.2em 0;
+}
+
+/* main menu css */
+
+.nav-main-menu {
+  position: fixed;
+  top: 0 ;
+  z-index: 1020;
+  width: 100vw;
+}
