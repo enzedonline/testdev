@@ -24,54 +24,49 @@ body {
   text-align: justify;
 }
 
-.h1,
-.h2,
-.h3,
-.h4,
-.h5,
-.h6,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+.Draftail-block--h1_class ,
+.Draftail-block--h2_class ,
+.Draftail-block--h3_class ,
+.Draftail-block--h4_class ,
+.Draftail-block--h5_class ,
+.Draftail-block--h6_class ,
+h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-family-headings);
   margin-bottom: 0.8rem;
   font-weight: 500;
   line-height: 1.2;
 }
 
-.h1,
+.Draftail-block--h1_class ,
 h1 {
   font-size: var(--font-size-1);
 }
 
-.h2,
+.Draftail-block--h2_class ,
 h2 {
   font-size: var(--font-size-2);
   padding: 0.35rem 0;
 }
 
-.h3,
+.Draftail-block--h3_class,
 h3 {
   font-size: var(--font-size-3);
   padding: 0.25rem 0;
 }
 
-.h4,
+.Draftail-block--h4_class ,
 h4 {
   font-size: var(--font-size-4);
   padding: 0.15rem 0;
 }
 
-.h5,
+.Draftail-block--h5_class ,
 h5 {
   font-size: var(--font-size-5);
   padding: 0.125rem 0 !important;
 }
 
-.h6,
+.Draftail-block--h6_class ,
 h6 {
   font-size: var(--font-size-6);
   padding: 0.1rem 0 !important;
@@ -85,10 +80,15 @@ p {
 
 .Draftail-Toolbar {
   position: sticky !important;
-  top: calc(1rem + 51px) !important;
+  top: calc(0.2rem + 51px) !important;
   z-index: 2 !important;
 }
-
+@media screen and (max-width: 800px) {
+  .Draftail-Toolbar {
+    /* double top height when top menu wraps at 800px */
+    top: calc(0.2rem + 100px) !important;
+  }
+}
 .text-start,
 .Draftail-block--left-align .public-DraftStyleDefault-ltr {
   text-align: start;
@@ -104,9 +104,9 @@ p {
   text-align: end;
 }
 
-.Draftail-ToolbarGroup {
+.Draftail-ToolbarGroup, .Draftail-CommentControl {
   /* allow toolbar button groups to wrap */
-  display: contents;
+  display: contents !important;
 }
 
 .w-panel.title:first-child input:not(:hover, :focus, [aria-invalid=true]) {
