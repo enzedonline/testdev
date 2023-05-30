@@ -2,9 +2,10 @@ import openai
 from django.http import JsonResponse
 from django.shortcuts import render
 
+from site_settings.models import Tokens
+
 # get key from https://platform.openai.com/account/api-keys
-openai_api_key = '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'
-openai.api_key = openai_api_key
+openai.api_key = getattr(Tokens.objects.first(), 'openai')
 
 # api documentation for chat: https://platform.openai.com/docs/guides/chat
 def ask_openai(message):

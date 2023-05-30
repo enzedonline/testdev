@@ -33,6 +33,12 @@ class Tokens(BaseSiteSetting):
         blank=True,
         verbose_name=_("FontAwesome Kit ID")
     )    
+    openai = models.CharField(
+        max_length=100,
+        null=True,
+        blank=True,
+        verbose_name=_("OpenAI Key")
+    )    
 
 
 @register_snippet
