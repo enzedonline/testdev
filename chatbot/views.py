@@ -4,11 +4,10 @@ from django.shortcuts import render
 
 from site_settings.models import Tokens
 
-# get key from https://platform.openai.com/account/api-keys
-openai.api_key = getattr(Tokens.objects.first(), 'openai')
-
 # api documentation for chat: https://platform.openai.com/docs/guides/chat
 def ask_openai(message):
+    # get key from https://platform.openai.com/account/api-keys
+    openai.api_key = getattr(Tokens.objects.first(), 'openai')
     response = openai.ChatCompletion.create(
         model = "gpt-3.5-turbo",
         messages=[
