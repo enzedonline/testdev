@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load static %}
+{% block extra_css %}
+  <link rel="stylesheet"
+        type="text/css"
+        href="{% static 'css/chatbot.css' %}"/>
+{% endblock extra_css %}
+{% block content %}
+  <div class="chat-container">
+    <div class="card flex-grow-1 p-2 m-2">
+      <div class="card-header bg-primary text-white">Chat</div>
+      <div class="card-body messages-box">
+        <ul class="list-unstyled messages-list">
+          <li class="message">
+            <div class="message-text received">
+              <div class="message-sender">
+                <b>AI Chatbot</b>
+              </div>
+              <div class="message-content">Hi {{ user.username }}, I am your AI Chatbot, you can ask me anything.</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div style="height: 1rem;"></div> {% comment "lift the bottom of chat messages to display above form" %}{% endcomment %}
+      <div class="message-form-container py-2">
+        <form class="message-form">
+          {% csrf_token %}
+          <div class="input-group">
+            <input type="text"
+                   class="form-control message-input"
+                   placeholder="Type your message..."/>
+            <div class="input-group-append">
+              <button type="submit" class="btn btn-primary btn-send rounded-end">Send</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
+{% block extra_js %}
+  <script src="{% static 'js/chatbot.js'%}"></script>
+{% endblock extra_js %}

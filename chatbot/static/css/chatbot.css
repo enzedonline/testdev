@@ -1,0 +1,143 @@
+:root {
+    --chat-sent: #bae1ff;
+    --chat-received: #ffdfba;
+}
+
+.messages-box {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.messages-list {
+    padding-left: 0;
+}
+
+.message {
+    margin-bottom: 15px;
+    list-style: none;
+}
+
+.message-text {
+    padding: 15px 20px;
+    width: fit-content;
+    min-width: 25%;
+    max-width: 90%;
+    position: relative;
+}
+.message-text::after {
+    content:"";
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-top: 0 solid transparent;
+    border-bottom: 22px solid transparent;
+    top: 0;
+}
+
+.sent {
+    background-color: var(--chat-sent);
+    margin-left: auto;
+    border-radius: 15px 0 15px 15px;
+}
+.sent::after {
+    border-left: 20px solid var(--chat-sent);
+    right: -15px
+    }
+
+.received {
+    background-color: var(--chat-received);
+    border-radius: 0 15px 15px 15px;
+}
+.received::after {
+    border-right: 20px solid var(--chat-received);
+    left: -15px
+    }
+
+.input-group {
+    width: 100%;
+}
+
+.message-form {
+    background-color: #f8f9fa;
+}
+
+.message-form-container {
+    position: absolute;
+    bottom: 0.2rem;
+    left: 0.6rem;
+    right: 0.6rem;
+}
+
+.message-input {
+    flex: 1;
+    width: 100%;
+}
+
+.message-input:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.btn-send {
+    border-radius: 0;
+}
+
+.chat-container {
+    height: calc(100vh - 3rem);
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+.message-spinner {
+    --spinner-color: var(--color, #000);
+    --spinner-color-secondary: var(--color-secondary, currentColor);
+    --spinner-duration: 1.25s;
+    --spinner-size: 64px;
+    --spinner-stroke-width: 0.075;
+    display: inline-flex;
+    color: var(--spinner-color);
+    font-size: var(--spinner-size);
+    width: 1em;
+    height: 1em;
+    max-width: 1em;
+    max-height: 1em;
+    position: relative;
+    margin: auto;
+}
+
+.message-spinner:after,
+.message-spinner:before {
+    border: calc(var(--spinner-size)*var(--spinner-stroke-width)) solid currentColor
+}
+
+.message-spinner:after {
+    animation-delay: calc(var(--spinner-duration)/-2)
+}
+
+.message-spinner:after,
+.message-spinner:before {
+    content: "";
+    border-radius: 50%;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    animation-name: message-spinner-animation;
+    animation-iteration-count: infinite;
+    animation-duration: var(--spinner-duration);
+    animation-timing-function: cubic-bezier(0, .2, .8, 1)
+}
+
+@keyframes message-spinner-animation {
+    0% {
+        opacity: 1;
+        transform: scale(0)
+    }
+
+    to {
+        opacity: 0;
+        transform: scale(100%);
+        border-color: var(--spinner-color-secondary)
+    }
+}
