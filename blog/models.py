@@ -54,7 +54,7 @@ class BlogPage(Page):
     some_date = models.DateTimeField(null=True, blank=True, help_text="Some helpful text")
     some_text = models.CharField(max_length=255, default="some default value")
     some_text_area = models.TextField(verbose_name="Air Quality")
-    some_rich_text = RichTextField(null=True, blank=True)
+    some_rich_text = RichTextField(null=True, blank=True, editor='basic')
     some_slug = models.SlugField(null=True, blank=True)
     some_choice_field = models.CharField(
         max_length=255, 
@@ -121,7 +121,7 @@ class BlogPage(Page):
         # RestrictedFieldPanel('some_text'),
         # RestrictedFieldPanel('some_text_area'),
         # RestrictedFieldPanel('some_choice_field'),
-        # RestrictedFieldPanel('some_rich_text'),
+        RestrictedFieldPanel('some_rich_text'),
         # RestrictedFieldPanel('some_image'),
         # RestrictedFieldPanel('some_document'),
         # RestrictedFieldPanel('some_product'),
