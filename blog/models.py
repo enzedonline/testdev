@@ -1,8 +1,10 @@
 from django import forms
 from django.db import models
 from django.utils.functional import cached_property
-from modelcluster.fields import ParentalKey
-from wagtail.admin.panels import FieldPanel, InlinePanel, MultiFieldPanel
+from django.utils.translation import gettext_lazy as _
+from modelcluster.fields import ParentalKey, ParentalManyToManyField
+from wagtail.admin.panels import (FieldPanel, InlinePanel, MultiFieldPanel,
+                                  MultipleChooserPanel)
 from wagtail.blocks import RawHTMLBlock, RichTextBlock
 from wagtail.fields import RichTextField, StreamField
 from wagtail.models import Orderable, Page
@@ -13,7 +15,8 @@ from core.panels import (ImportTextFieldPanel, RegexPanel,
                          RestrictedFieldPanel, RestrictedInlinePanel,
                          UtilityPanel)
 from core.utils import count_words, get_streamfield_text
-
+from .categories import BlogCategory
+from wagtail.snippets.widgets import AdminSnippetChooser
 
 class CarouselImages(Orderable):
     """Between 1 and 5 images for the blog page carousel."""
@@ -103,6 +106,11 @@ class BlogPage(Page):
         verbose_name="Page Content",
         blank=True,
         use_json_field=True,
+    )
+    categories = ParentalManyToManyField(
+        'blog.BlogCategory',
+        verbose_name=_("Blog Categories"),
+        related_name='categories',
     )
 
     content_panels = Page.content_panels + [
@@ -195,6 +203,9 @@ class BlogPage(Page):
         #         'file_reader': {'module': 'core.utils', 'method': 'import_text_field_button', 'field': 'some_text_area'}
         #     }
         # ),
+        FieldPanel(
+            'categories'
+        ),
     ]
 
     base_form_class = RestrictedPanelsAdminPageForm
