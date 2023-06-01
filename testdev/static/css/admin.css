@@ -104,7 +104,7 @@ p {
   text-align: end;
 }
 
-.Draftail-ToolbarGroup, .Draftail-CommentControl {
+.Draftail-ToolbarGroup, .tab-content--comments-enabled .Draftail-CommentControl {
   /* allow toolbar button groups to wrap */
   display: contents !important;
 }
