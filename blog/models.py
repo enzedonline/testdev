@@ -118,7 +118,7 @@ class BlogPage(Page):
         #     '<b>Word Count:</b> {{wordcount}}', {'wordcount': 'wordcount'},
         #     style = 'margin-bottom: 2em;display: block;background-color: antiquewhite;padding: 1em;border-radius: 1em;'
         # ),
-        # FieldPanel('owner'),
+        FieldPanel('owner'),
         # RegexPanel('some_slug'),
         ImportTextFieldPanel('some_text_area', file_type_filter=".csv, .tsv"),
         # MultiFieldPanel(
