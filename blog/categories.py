@@ -15,7 +15,7 @@ class BlogCategory(models.Model):
     )
 
     panels = [
-        FieldPanel("title"),
+        FieldPanel("title", classname="title"),
         FieldPanel("slug"),
     ]
 
