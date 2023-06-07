@@ -129,11 +129,4 @@
     text-align: left;
 }
 
-.m2m-chooser-modal-option.button-secondary {
-    opacity: 0.9;
-}
-
-.m2m-chooser-modal-option.button-secondary:hover {
-    opacity: 1;
-}
 
