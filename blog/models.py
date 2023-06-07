@@ -13,7 +13,7 @@ from blocks.models import CSVTableBlock, ImportTextBlock
 from core.forms import RestrictedPanelsAdminPageForm
 from core.panels import (ImportTextFieldPanel, RegexPanel,
                          RestrictedFieldPanel, RestrictedInlinePanel,
-                         UtilityPanel)
+                         UtilityPanel, M2MFieldPanel)
 from core.utils import count_words, get_streamfield_text
 from .categories import BlogCategory
 from wagtail.snippets.widgets import AdminSnippetChooser
@@ -120,7 +120,7 @@ class BlogPage(Page):
         # ),
         FieldPanel('owner'),
         # RegexPanel('some_slug'),
-        ImportTextFieldPanel('some_text_area', file_type_filter=".csv, .tsv"),
+        # ImportTextFieldPanel('some_text_area', file_type_filter=".csv, .tsv"),
         # MultiFieldPanel(
         #     [RestrictedInlinePanel("carousel_images", max_num=5, min_num=1)],
         #     heading="Carousel Images",
@@ -129,12 +129,12 @@ class BlogPage(Page):
         # RestrictedFieldPanel('some_text'),
         # RestrictedFieldPanel('some_text_area'),
         # RestrictedFieldPanel('some_choice_field'),
-        RestrictedFieldPanel('some_rich_text'),
+        # RestrictedFieldPanel('some_rich_text'),
         # RestrictedFieldPanel('some_image'),
         # RestrictedFieldPanel('some_document'),
         # RestrictedFieldPanel('some_product'),
         # RestrictedFieldPanel('some_page'),
-        RestrictedFieldPanel("content"),
+        # RestrictedFieldPanel("content"),
         # UtilityPanel('<span class="editor-reminder">Some important notice to display</span>'),
         # UtilityPanel(
         #     '<h5><a target="_blank" href="{{url}}" style="color: blue; text-decoration: underline;">News Article Editors Guide</a></h5>',
@@ -203,7 +203,7 @@ class BlogPage(Page):
         #         'file_reader': {'module': 'core.utils', 'method': 'import_text_field_button', 'field': 'some_text_area'}
         #     }
         # ),
-        FieldPanel(
+        M2MFieldPanel(
             'categories'
         ),
     ]
