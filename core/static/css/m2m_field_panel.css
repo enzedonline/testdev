@@ -1,0 +1,139 @@
+.m2m-chooser-chosen {
+    min-height: 2.5rem;
+    margin-bottom: 0.6rem;
+}
+
+.m2m-chooser-selected-item {
+    font-size: large;
+    border-radius: 0.5rem;
+    background-color: var(--w-color-surface-button-default);
+    color: var(--w-color-text-button);
+    padding: 0.2em 0.8em 0.2em 0.8em !important;
+}
+
+.m2m-chooser-open-modal-button-container {
+    text-align: right;
+}
+
+.m2m-chooser-button {
+    font-size: large;
+    cursor: pointer;
+}
+
+/* CSS styles for the modal form */
+.m2m-chooser-modal {
+    display: none;
+}
+
+.m2m-chooser-modal-form {
+    width: 80%;
+    left: 10%;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 0;
+}
+
+.m2m-chooser-modal-heading {
+    padding: 1rem;
+}
+
+.m2m-chooser-modal-heading-icon {
+    display: inline;
+    max-width: 1.4em;
+    max-height: 1.4em;
+    margin: 0.5em 1.2em -0.3em 0.5em;
+}
+
+.m2m-chooser-modal-body {
+    padding: 1.5rem;
+    border-radius: 0;
+    margin-top: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.m2m-chooser-modal-search {
+    margin-bottom: 0.6rem;
+    font-size: large;
+    width: 100vw;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    border-width: 1px;
+}
+
+.m2m-chooser-modal-content-container {
+    border: 1px solid var(--w-color-border-field-default);
+    border-radius: 0.3125rem;
+    background-color: #fefefe;
+    overflow: hidden;
+    display: flex;
+    margin-bottom: 0.6rem;
+}
+
+.m2m-chooser-modal-content {
+    background-color: var(--w-color-surface-field);
+    padding: 20px;
+    overflow-y: auto;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    max-height: calc(80vh - 250px);
+}
+
+.m2m-chooser-modal-option-container {
+    padding: 0.5rem;
+}
+
+.m2m-chooser-modal-columns {
+    column-count: 1;
+    column-gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .m2m-chooser-modal-columns {
+        column-count: 2;
+    }
+}
+
+@media (min-width: 992px) {
+    .m2m-chooser-modal-columns {
+        column-count: 3;
+    }
+}
+
+@media (min-width: 1200px) {
+    .m2m-chooser-modal-columns {
+        column-count: 4;
+    }
+}
+
+@media (min-width: 1400px) {
+    .m2m-chooser-modal-columns {
+        column-count: 5;
+    }
+}
+
+.m2m-chooser-modal-option {
+    cursor: pointer;
+    font-size: large;
+    padding: 0.5rem 0.8rem;
+    break-inside: avoid-column;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    border-radius: 0.5rem;
+    width: 100%;
+    height: auto;
+    line-height: normal;
+    text-align: left;
+}
+
+.m2m-chooser-modal-option.button-secondary {
+    opacity: 0.9;
+}
+
+.m2m-chooser-modal-option.button-secondary:hover {
+    opacity: 1;
+}
+
