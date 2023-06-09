@@ -35,7 +35,6 @@ const initialiseM2MFieldPanel = (m2m_field_panel) => {
 			const newListItem = document.createElement('LI');
 			newListItem.innerText = option.text;
 			newListItem.value = option.value;
-			// newListItem.selected = option.selected;
 			newListItem.classList.add("button", "m2m-chooser-modal-option");
 			if (!option.selected) {
 				newListItem.classList.add("button-secondary");
