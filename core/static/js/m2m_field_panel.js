@@ -1,7 +1,9 @@
 const initialiseM2MFieldPanel = (m2m_field_panel) => {
+    // Wagtail admin form elements
     const originalSelect = document.getElementById(m2m_field_panel.field_id);
-    const modal = document.getElementById(`m2m-chooser-modal-${m2m_field_panel.field_id}`);
     const openModalBtn = document.getElementById(`m2m-chooser-open-modal-button-${m2m_field_panel.field_id}`);
+    // modal form elements
+    const modal = document.getElementById(`m2m-chooser-modal-${m2m_field_panel.field_id}`);
     const modalSelect = document.getElementById(`m2m-chooser-modal-select-${m2m_field_panel.field_id}`);
     const chosenItems = document.getElementById(`m2m-chooser-chosen-${m2m_field_panel.field_id}`);
     const searchInput = document.getElementById(`m2m-chooser-modal-search-${m2m_field_panel.field_id}`);
@@ -63,12 +65,12 @@ const initialiseM2MFieldPanel = (m2m_field_panel) => {
     submitModalBtn.addEventListener('click', event => {
         event.preventDefault();
         // set selected attributes on Wagtail select option elements
-        Array.from(modalSelect.getElementsByClassName("m2m-chooser-modal-option")).forEach(option => {
-            const newOption = originalSelect.querySelector(`option[value="${option.value}"]`);
-            if (newOption && !option.classList.contains("button-secondary")) {
-                newOption.setAttribute('selected', "");
-            } else if (newOption && option.classList.contains("button-secondary")) {
-                newOption.removeAttribute('selected');
+        Array.from(modalSelect.getElementsByClassName("m2m-chooser-modal-option")).forEach(modalItem => {
+            const originalOption = originalSelect.querySelector(`option[value="${modalItem.value}"]`);
+            if (originalOption && !modalItem.classList.contains("button-secondary")) {
+                originalOption.setAttribute('selected', "");
+            } else if (originalOption && modalItem.classList.contains("button-secondary")) {
+                originalOption.removeAttribute('selected');
             }
         });
         // rebuild displayed selected items on underlying admin form
