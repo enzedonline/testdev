@@ -10,6 +10,44 @@ from django.utils.translation import gettext_lazy as _
 from wagtail.blocks.stream_block import StreamValue
 from wagtail.models import Page
 
+from urllib.parse import urlparse, parse_qs
+
+def validate_email(email):
+    email_pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
+    emails = email.split(',')
+
+    for email in emails:
+        if not re.match(email_pattern, email.strip()):
+            return False
+
+    return True
+
+def validate_email_query_string(query_string):
+    query_params = parse_qs(unescape(query_string))
+    valid_params = {'to', 'cc', 'bcc', 'subject', 'body'}
+
+    for key, values in query_params.items():
+        if not (key in valid_params and re.match(r'^\w+=.+$', f"{key}={values[0]}")):
+            return False
+
+    return True
+
+def validate_email_with_query_string(string):
+    url_parts = urlparse(string)
+
+    if not url_parts.path:
+        return False
+
+    email = url_parts.path
+    query_string = url_parts.query
+
+    if validate_email(email):
+        if query_string:
+            return validate_email_query_string(query_string)
+        else:
+            return True
+
+    return False
 
 def page_url(slug, target=None):
     pg = Page.objects.filter(slug=slug).first()
