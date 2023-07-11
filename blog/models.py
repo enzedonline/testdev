@@ -9,7 +9,7 @@ from wagtail.blocks import RawHTMLBlock, RichTextBlock
 from wagtail.fields import RichTextField, StreamField
 from wagtail.models import Orderable, Page
 
-from blocks.models import CSVTableBlock, ImportTextBlock
+from blocks.models import CSVTableBlock, ImportTextBlock, CollapsibleCardBlock
 from core.forms import RestrictedPanelsAdminPageForm
 from core.panels import (ImportTextFieldPanel, RegexPanel,
                          RestrictedFieldPanel, RestrictedInlinePanel,
@@ -102,6 +102,7 @@ class BlogPage(Page):
             ("html", RawHTMLBlock()),
             ('import_text_block', ImportTextBlock()),
             ("csv_table", CSVTableBlock()), 
+            ("accordian_block", CollapsibleCardBlock()), 
         ],
         verbose_name="Page Content",
         blank=True,
@@ -118,7 +119,7 @@ class BlogPage(Page):
         #     '<b>Word Count:</b> {{wordcount}}', {'wordcount': 'wordcount'},
         #     style = 'margin-bottom: 2em;display: block;background-color: antiquewhite;padding: 1em;border-radius: 1em;'
         # ),
-        FieldPanel('owner'),
+        # FieldPanel('owner'),
         # RegexPanel('some_slug'),
         # ImportTextFieldPanel('some_text_area', file_type_filter=".csv, .tsv"),
         # MultiFieldPanel(
@@ -134,7 +135,7 @@ class BlogPage(Page):
         # RestrictedFieldPanel('some_document'),
         # RestrictedFieldPanel('some_product'),
         # RestrictedFieldPanel('some_page'),
-        # RestrictedFieldPanel("content"),
+        RestrictedFieldPanel("content"),
         # UtilityPanel('<span class="editor-reminder">Some important notice to display</span>'),
         # UtilityPanel(
         #     '<h5><a target="_blank" href="{{url}}" style="color: blue; text-decoration: underline;">News Article Editors Guide</a></h5>',
