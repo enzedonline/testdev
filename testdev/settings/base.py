@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     "blocks",
     "core",
     "chatbot",
+    # "custom_user",
     "home",
     "blog",
     "menu",
@@ -103,6 +104,10 @@ DATABASES = {
     }
 }
 
+# AUTH_USER_MODEL = 'custom_user.CustomUser'
+# WAGTAIL_USER_EDIT_FORM = 'custom_user.forms.CustomUserEditForm'
+# WAGTAIL_USER_CREATION_FORM = 'custom_user.forms.CustomUserCreationForm'
+# WAGTAIL_USER_CUSTOM_FIELDS = ['address']
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
