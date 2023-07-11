@@ -177,3 +177,30 @@ def import_text_field_button(field):
             }); 
         </script>'''    
 
+def check_variable_existence(data, variable_name):
+    if isinstance(data, dict):
+        if variable_name in data:
+            return data[variable_name]
+        for value in data.values():
+            result = check_variable_existence(value, variable_name)
+            if result is not None:
+                return result
+    elif isinstance(data, list):
+        for item in data:
+            result = check_variable_existence(item, variable_name)
+            if result is not None:
+                return result
+    return None
+
+def block_exists(stream_data, search_value):
+    if isinstance(stream_data, dict):
+        if 'type' in stream_data and stream_data['type'] == search_value:
+            return True
+        for value in stream_data.values():
+            if block_exists(value, search_value):
+                return True
+    elif isinstance(stream_data, (list, StreamValue.RawDataView)):
+        for item in stream_data:
+            if block_exists(item, search_value):
+                return True
+    return False
