@@ -1,4 +1,5 @@
 {% comment %} source: https://docs.wagtail.org/en/stable/advanced_topics/customisation/streamfield_blocks.html {% endcomment %}
+{# templates/blocks/forms/import_text_block_form.html #}
 {% load wagtailadmin_tags %}
 <div class="{{ classname }} import-text-block">
     {% if help_text %}
@@ -12,18 +13,15 @@
     {% for child in children.values %}
         <div class="w-field" data-field data-contentpath="{{ child.block.name }}">
             {{ child.render_form }}
-            <div class="textarea-fileinput-container">
+            {# -- Begin custom code for file input and instructions -- #}
+            <div class="import-text-block-fileinput-container">
                 <input type="file"
-                    id="{{ prefix }}-fileinput"
-                    class="textarea-fileinput"
-                    {% if filter %}accept="{{ filter }}"{% endif %} 
-                    style="border-style: none;
-                            padding-left: 0px;
-                            padding-top: 0px" />
-                <span class="help">
-                    {{ instructions }}
-                </span>             
+                       id="{{ prefix }}-fileinput"
+                       class="import-text-block-fileinput"
+                       {% if accept %}accept="{{ accept }}"{% endif %} />
+                <span class="help">{{ instructions }}</span>
             </div>
+            {# -- Begin custom code -- #}
         </div>
     {% endfor %}
 </div>

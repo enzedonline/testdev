@@ -20,8 +20,10 @@ class ImportTextBlock(StructBlock):
 
     def get_form_context(self, value, prefix="", errors=None):
         context = super().get_form_context(value, prefix, errors)
-        context['instructions'] = _("Use 'Choose File' or drag/drop to import data from file.")
-        context["filter"] = self.accept
+        context["instructions"] = _(
+            "Use 'Choose File' or drag/drop to import data from file."
+        )
+        context["accept"] = self.accept
         return context
 
 
