@@ -58,7 +58,6 @@ ChooserWidget.prototype.openModal = function() {
 };
 
 ChooserWidget.prototype.setStateFromModalData = function(data) {
-    console.log('setStateFromModalData', data)
     this.setState({
         'value': data.id,
         'title': data.string,
@@ -69,7 +68,6 @@ ChooserWidget.prototype.setStateFromModalData = function(data) {
 
 ChooserWidget.prototype.setState = function(newState) {
     if (newState && newState.value !== null && newState.value !== '') {
-        console.log('setState', newState);
         this.inputElement.val(newState.value);
         this.titleElement.text(newState.title);
         this.imageElement.html(newState.image);
@@ -88,7 +86,6 @@ ChooserWidget.prototype.setState = function(newState) {
 };
 
 ChooserWidget.prototype.getState = function() {
-    console.log('getState');
     return {
         'value': this.inputElement.val(),
         'title': this.titleElement.text(),
