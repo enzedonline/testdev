@@ -1,5 +1,5 @@
 from django.utils.translation import gettext_lazy as _
-from wagtail.blocks import CharBlock, StructBlock, StreamBlock, RichTextBlock
+from wagtail.blocks import CharBlock, StructBlock, RichTextBlock, ListBlock
 
 from .choices import ColourThemeChoiceBlock
 
@@ -13,9 +13,6 @@ class CollapsibleCard(StructBlock):
         help_text=_("Body text for this card."),
     )
 
-class CollapsibleCardStreamBlock(StreamBlock):
-    collapsible_card = CollapsibleCard()
-
 class CollapsibleCardBlock(StructBlock):
     header_colour  = ColourThemeChoiceBlock(
         default='bg-dark',
@@ -25,10 +22,10 @@ class CollapsibleCardBlock(StructBlock):
         default='bg-light',
         label=_("Card Body Background Colour")
     )
-    cards = CollapsibleCardStreamBlock(min_num=2)
+    cards = ListBlock(CollapsibleCard, min_num=2)
 
     class Meta:
         template='blocks/collapsible_card_block.html'
         icon="collapse-down"
-        label = _("collapsible Text Block")
+        label = _("Collapsible Text Block")
 
