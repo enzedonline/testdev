@@ -7,7 +7,7 @@ from django.template import Context, Template
 from django.forms.models import ModelMultipleChoiceField
 
 
-class M2MFieldPanel(FieldPanel):
+class M2MChooser(FieldPanel):
     """
     FieldPanel with pop-over chooser style form to select options in ParentalManyToManyField.
     """
@@ -22,7 +22,7 @@ class M2MFieldPanel(FieldPanel):
     class BoundPanel(FieldPanel.BoundPanel):
         def __init__(self, **kwargs):
             super().__init__(**kwargs)
-            self.m2m_field_panel = {
+            self.opts = {
                 "field_id": str(self.id_for_label()),
                 "heading": self.heading,
                 "select_button_text": _("Select"),
@@ -35,7 +35,7 @@ class M2MFieldPanel(FieldPanel):
             context = super().get_context_data(parent_context)
             context.update(
                 {
-                    "m2m_field_panel": self.m2m_field_panel,
+                    "opts": self.opts,
                 }
             )
             return context
@@ -48,7 +48,7 @@ class M2MFieldPanel(FieldPanel):
                 select and self.bound_field.field.__class__ == ModelMultipleChoiceField
             ):
                 raise ImproperlyConfigured(
-                    _("M2MFieldPanel should only be used with ParentalManyToManyFields")
+                    _("M2MChooser should only be used with ParentalManyToManyFields")
                 )
             else:
                 # hide default select element
@@ -56,11 +56,11 @@ class M2MFieldPanel(FieldPanel):
             # create uid on wrapper element
             wrapper = soup.find(class_="w-field__wrapper")
             wrapper["class"] = wrapper.get("class", []) + [
-                f'm2mfieldpanel-{self.m2m_field_panel["field_id"]}'
+                f'm2mchooser-{self.opts["field_id"]}'
             ]
             # add rendered chooser html to wrapper element
             chooser_html = Template(
-                '{% include "panels/m2m_field_panel.html" %}'
+                '{% include "panels/m2m_chooser.html" %}'
             ).render(Context(self.get_context_data()))
             wrapper.append(BeautifulSoup(chooser_html, "html.parser"))
             return mark_safe(str(soup))

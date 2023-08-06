@@ -1,24 +1,24 @@
-class M2MPanel {
-    constructor(m2m_field_panel) {
-        // Wagtail admin form elements
-        this.initHTMLElements(m2m_field_panel.field_id);
+class M2MChooser {
+    constructor(id) {
+        this.initHTMLElements(id);
         this.showChosenItems()
-
     }
 
     initHTMLElements(id) {
-        this.wrapper = document.querySelector(`.m2mfieldpanel-${id}`);
+        // Wagtail admin form elements
+        this.wrapper = document.querySelector(`.m2mchooser-${id}`);
         this.formSelect = this.wrapper.querySelector(`#${id}`)
+        this.chosenItems = this.wrapper.querySelector('.m2m-chooser-chosen');
         this.openModalBtn = this.wrapper.querySelector('.m2m-chooser-open-modal-button');
         // modal form elements
         this.modal = this.wrapper.querySelector('.m2m-chooser-modal');
+        this.modalForm = this.wrapper.querySelector('.m2m-chooser-modal-form');
         this.modalSelect = this.wrapper.querySelector('.m2m-chooser-modal-select');
-        this.chosenItems = this.wrapper.querySelector('.m2m-chooser-chosen');
         this.searchInput = this.wrapper.querySelector('.m2m-chooser-modal-search');
         this.submitModalBtn = this.wrapper.querySelector('.m2m-chooser-modal-submit');
         this.dismissModalBtn = this.wrapper.querySelector('.m2m-chooser-modal-dismiss');
         this.listItems = null;
-        
+
         // open modal form method
         this.openModalBtn.addEventListener('click', () => {
             this.updateModalSelectOptions();
@@ -50,13 +50,19 @@ class M2MPanel {
             // rebuild displayed selected items on underlying admin form
             this.showChosenItems();
             // hide modal
-            this.modal.style.display = 'none';
+            this.dismissModal();
         });
 
         this.dismissModalBtn.addEventListener('click', () => {
             // hide modal with no actions
-            this.modal.style.display = 'none';
-            this.modalSelect.innerHTML = "";
+            this.dismissModal();
+        });
+
+        // Dismiss modal if clicked outside of form area
+        this.modal.addEventListener("click", (event) => {
+            if (!this.modalForm.contains(event.target)) {
+                this.dismissModal();
+            }
         });
 
         this.searchInput.addEventListener('input', () => {
@@ -100,6 +106,11 @@ class M2MPanel {
         });
         this.modalSelect.innerHTML = '';
         this.modalSelect.appendChild(fragment);
+    }
+
+    dismissModal() {
+        this.modal.style.display = 'none';
+        this.modalSelect.innerHTML = "";
     }
 
 }
