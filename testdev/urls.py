@@ -5,6 +5,7 @@ from django.views import defaults as default_views
 from wagtail import urls as wagtail_urls
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.documents import urls as wagtaildocs_urls
+from core.views import SitemapView
 
 from search import views as search_views
 
@@ -13,6 +14,7 @@ urlpatterns = [
     path("admin/", include(wagtailadmin_urls)),
     path("documents/", include(wagtaildocs_urls)),
     path("search/", search_views.search, name="search"),
+    path('sitemap.xml', SitemapView.as_view(), name='sitemap'),
 ]
 
 
