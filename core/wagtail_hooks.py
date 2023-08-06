@@ -9,7 +9,7 @@ from wagtail.models import Page
 from .draftail_extensions import (DRAFTAIL_ICONS, register_block_feature,
                                   register_inline_styling)
 from .utils import has_role
-
+from .sitemap import SiteMap
 
 @hooks.register('register_rich_text_features')
 def register_align_left_feature(features):
@@ -195,3 +195,15 @@ def register_admin_css():
         f'<link rel="stylesheet" href="{import_text_field_css}">' +
         f'<link rel="stylesheet" href="{m2m_field_panel_css}">'
     )
+
+@hooks.register('after_publish_page')
+def add_page_sitemap_entry(request, page):
+    if page.live and not page.view_restrictions.exists():
+        SiteMap().add_page(page)
+    else:
+        SiteMap().remove_page(page)    
+
+@hooks.register('after_unpublish_page')
+@hooks.register('after_delete_page')
+def remove_page_sitemap_entry(request, page):
+    SiteMap().remove_page(page)    
