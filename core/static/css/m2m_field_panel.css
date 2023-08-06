@@ -15,7 +15,7 @@
     text-align: right;
 }
 
-.m2m-chooser-button {
+.m2m-chooser-open-modal-button, .m2m-chooser-modal-submit {
     font-size: large;
     cursor: pointer;
 }
@@ -86,31 +86,31 @@
     padding: 0.5rem;
 }
 
-.m2m-chooser-modal-columns {
+.m2m-chooser-modal-select {
     column-count: 1;
     column-gap: 1.5rem;
 }
 
 @media (min-width: 768px) {
-    .m2m-chooser-modal-columns {
+    .m2m-chooser-modal-select {
         column-count: 2;
     }
 }
 
 @media (min-width: 992px) {
-    .m2m-chooser-modal-columns {
+    .m2m-chooser-modal-select {
         column-count: 3;
     }
 }
 
 @media (min-width: 1200px) {
-    .m2m-chooser-modal-columns {
+    .m2m-chooser-modal-select {
         column-count: 4;
     }
 }
 
 @media (min-width: 1400px) {
-    .m2m-chooser-modal-columns {
+    .m2m-chooser-modal-select {
         column-count: 5;
     }
 }

@@ -1,17 +1,11 @@
-<ul id="m2m-chooser-chosen-{{ self.id_for_label }}"
-    class="tagit ui-widget ui-widget-content ui-corner-all m2m-chooser-chosen">
+<ul class="tagit ui-widget ui-widget-content ui-corner-all m2m-chooser-chosen">
 </ul>
 <div class="m2m-chooser-open-modal-button-container">
-    <button id="m2m-chooser-open-modal-button-{{ self.id_for_label }}"
-            class="button m2m-chooser-button"
-            type="button">
-        {{ m2m_field_panel.select_button_text }}
-    </button>
+    <button class="button m2m-chooser-open-modal-button" type="button">{{ m2m_field_panel.select_button_text }}</button>
 </div>
 <!-- M2M Field Panel Modal form -->
-<div id="m2m-chooser-modal-{{ self.id_for_label }}"
-     class="modal-backdrop m2m-chooser-modal">
-    <div id="m2m-chooser-modal-form-{{ self.id_for_label }}"
+<div class="modal-backdrop m2m-chooser-modal">
+    <div id="m2m-chooser-modal-form"
          class="modal-content modal-body m2m-chooser-modal-form">
         <header class="w-header w-header--merged">
             <div>
@@ -26,10 +20,9 @@
                     </div>
                 </div>
                 <div class="right">
-                    <button type="button"
-                            class="button close button--icon text-replace"
-                            id="m2m-chooser-modal-dismiss-{{ self.id_for_label }}"
-							title={{ m2m_field_panel.cancel_text }}>
+                    <button type="button" 
+                            class="button close button--icon text-replace m2m-chooser-modal-dismiss" 
+                            title={{ m2m_field_panel.cancel_text }}>
                         <svg class="icon icon-cross" aria-hidden="true">
                             <use href="#icon-cross"></use>
                         </svg>
@@ -40,27 +33,22 @@
         </header>
         <div class="modal-body m2m-chooser-modal-body">
             <input type="text"
-                   id="m2m-chooser-modal-search-{{ self.id_for_label }}"
                    placeholder="{{ m2m_field_panel.search_text }} {{ self.heading }}"
-                   class="m2m-chooser-modal-search"/>
+                   class="m2m-chooser-modal-search" />
             <div class="m2m-chooser-modal-content-container">
                 <div class="m2m-chooser-modal-content">
-                    <div id="m2m-chooser-modal-select-{{ self.id_for_label }}"
-                         class="m2m-chooser-modal-columns"></div>
+                    <div class="m2m-chooser-modal-select"></div>
                 </div>
             </div>
             <div style="text-align: right;">
-                <button type="submit"
-                        class="button m2m-chooser-button"
-                        id="m2m-chooser-modal-submit-{{ self.id_for_label }}">
-                    {{ m2m_field_panel.submit_button_text }}
-                </button>
+                <button type="submit" class="button m2m-chooser-modal-submit">{{ m2m_field_panel.submit_button_text }}</button>
             </div>
         </div>
     </div>
 </div>
 <script>
 	{% autoescape off %}
-	initialiseM2MFieldPanel({{m2m_field_panel}});
+	//initialiseM2MFieldPanel({{m2m_field_panel}});
+	new M2MPanel({{m2m_field_panel}});
 	{% endautoescape %}
 </script>
