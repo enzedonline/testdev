@@ -11,6 +11,7 @@
   --font-size-body: clamp(1rem, 0.9599rem + 0.169vw, 1.15rem);
   --menu-active-colour: antiquewhite;
 }
+
 /* ======= Scrolling ======= */
 html {
   scroll-behavior: smooth;
@@ -25,47 +26,66 @@ body {
   line-height: 1.5;
   text-align: justify;
 }
-.h1, .h2, .h3, .h4, .h5, .h6, 
-h1, h2, h3, h4, h5, h6 {
+
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-family-headings);
   margin-bottom: 0.8rem;
   font-weight: 500;
   line-height: 1.2;
 }
+
 .h1,
 h1 {
   font-size: var(--font-size-1);
 }
+
 .h2,
 h2 {
   font-size: var(--font-size-2);
   padding: 0.35rem 0;
 }
+
 .h3,
 h3 {
   font-size: var(--font-size-3);
   padding: 0.25rem 0;
 }
+
 .h4,
 h4 {
   font-size: var(--font-size-4);
   padding: 0.15rem 0;
 }
+
 .h5,
 h5 {
   font-size: var(--font-size-5);
   padding: 0.125rem 0 !important;
 }
+
 .h6,
 h6 {
   font-size: var(--font-size-6);
   padding: 0.1rem 0 !important;
 }
+
 .p,
 p {
   font-size: var(--font-size-body);
   font-family: var(--font-family-body);
 }
+
 code {
   font-family: var(--font-family-monospace);
   font-size: var(--font-size-6);
@@ -74,20 +94,45 @@ code {
   background-color: wheat;
   padding: 0.06rem 0.3rem;
 }
+
 code {
   border-radius: 0.3rem;
-  white-space: pre!important;
+  white-space: pre !important;
 }
+
+.bg-black {
+  background-color: rgb(0, 0, 0) !important;
+  color: white !important;
+}
+
+.bg-transparent,
+.bg-light {
+  color: black !important;
+}
+
+.bg-primary,
+.bg-secondary,
+.bg-success,
+.bg-info,
+.bg-warning,
+.bg-danger,
+.bg-dark {
+  color: white !important;
+}
+
 .check-list-wrapper {
   list-style: none;
 }
+
 .check-list {
   margin-bottom: 0.1em;
 }
+
 .check-list::marker {
   content: '🗹';
   letter-spacing: 0.5em;
 }
+
 .code-block {
   font-size: var(--font-size-6);
   font-family: var(--font-family-monospace);
@@ -97,6 +142,7 @@ code {
   text-align: left !important;
   line-height: 1.6;
 }
+
 .code-block-wrapper {
   background-color: #272822;
   padding: 0.8em 1em;
@@ -104,6 +150,7 @@ code {
   border-radius: 0.4em;
   list-style: none;
 }
+
 .quoteblock {
   font-size: var(--font-size-5);
   font-family: var(--font-family-headings);
@@ -113,6 +160,7 @@ code {
   text-align: left !important;
   line-height: 1.6;
 }
+
 .quoteblock-wrapper {
   border-inline-start: 0.5rem solid lightseagreen;
   background-color: lightblue;
