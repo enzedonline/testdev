@@ -1,3 +1,4 @@
+import os
 import threading
 
 from bs4 import BeautifulSoup
@@ -81,13 +82,16 @@ class SiteMap:
         Add or ammend page entry using page get_sitemap_urls
         thread=True passes execution back immediately without waiting for completion
         """
-        if thread:
-            threading.Thread(
-                target=self.add_url,
-                kwargs=page.get_sitemap_urls()[0],
-            ).start()
+        if os.path.exists(self.sitemap_path):
+            if thread:
+                threading.Thread(
+                    target=self.add_url,
+                    kwargs=page.get_sitemap_urls()[0],
+                ).start()
+            else:
+                self.add_url(**page.get_sitemap_urls()[0])
         else:
-            self.add_url(**page.get_sitemap_urls()[0])
+            self.generate_sitemap_from_page(page, thread)
 
     def remove_url(self, location):
         """
@@ -105,10 +109,13 @@ class SiteMap:
         Remove page entry
         thread=True passes execution back immediately without waiting for completion
         """
-        if thread:
-            threading.Thread(target=self.remove_url, args=(page.full_url,)).start()
+        if os.path.exists(self.sitemap_path):
+            if thread:
+                threading.Thread(target=self.remove_url, args=(page.full_url,)).start()
+            else:
+                self.remove_url(page.full_url)
         else:
-            self.remove_url(page.full_url)
+            self.generate_sitemap_from_page(page, thread)
 
     def save(self):
         """
@@ -118,13 +125,28 @@ class SiteMap:
             with open(self.sitemap_path, "w") as file:
                 file.write(str(self.soup))
 
-    def generate_sitemap_from_page(self, page):
+    def generate_sitemap_from_page(self, page, thread=True):
         """
-        Creates a new sitemap for the site that the passed page is on
+        Generate sitemap for site that passed page is on, thread=true will run in background
+        """
+        self.generate_sitemap_from_site(page.get_site(), thread)
+
+    def generate_sitemap_from_site(self, site, thread=True):
+        """
+        Generate sitemap for site, thread=true will run in background
+        """
+        if thread:
+            threading.Thread(target=self.generate_sitemap, args=(site,)).start()
+        else:
+            self.generate_sitemap(site)
+
+    def generate_sitemap(self, site):
+        """
+        Creates a new sitemap for the passed site 
         For multi-lingual, repeat for each of page.get_site().root_page.siblings
         """
         urlset = []
-        home = page.get_site().root_page
+        home = site.root_page
         for child_page in (
             home.get_descendants(inclusive=True).defer_streamfields().live().public().specific()
         ):
