@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     "home",
     "blog",
     "menu",
+    "product",
     "search",
     "site_settings",
     'svg',
