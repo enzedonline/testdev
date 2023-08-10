@@ -3,6 +3,8 @@ import importlib
 import io
 import re
 from html import unescape
+from html.parser import HTMLParser
+from urllib.parse import parse_qs, urlparse
 
 from bs4 import BeautifulSoup
 from django.utils.encoding import force_str
@@ -10,7 +12,6 @@ from django.utils.translation import gettext_lazy as _
 from wagtail.blocks.stream_block import StreamValue
 from wagtail.models import Page
 
-from urllib.parse import urlparse, parse_qs
 
 def validate_email(email):
     email_pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
@@ -204,3 +205,18 @@ def block_exists(stream_data, search_value):
             if block_exists(item, search_value):
                 return True
     return False
+
+class MyHTMLParser(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.is_html = False
+
+    def handle_starttag(self, tag, attrs):
+        self.is_html = True
+
+def is_html(input_string):
+    parser = MyHTMLParser()
+    parser.feed(input_string)
+    return parser.is_html
+
+
