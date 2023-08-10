@@ -42,6 +42,10 @@ class PreviewMixin:
 
 
 class SnippetPreviewChooser(PreviewMixin, AdminSnippetChooser):
+    """
+    Extends the default snippet chooser to include a dynamic preview icon.
+    Add preview method to snippet class to return image, icon name or rendered image HTML
+    """
     template_name = "widgets/snippet_preview_chooser.html"
     js_constructor = "SnippetPreviewChooser"
     classname = "snippet-preview-chooser"
@@ -69,6 +73,7 @@ class SnippetPreviewChooser(PreviewMixin, AdminSnippetChooser):
         return value_data
 
     def get_chooser_modal_url(self):
+        # override snippet chooser modal url -default url overrides custom view classes
         return reverse(f"{self.url_prefix}:choose")
 
     @cached_property
@@ -81,6 +86,7 @@ class SnippetPreviewChooser(PreviewMixin, AdminSnippetChooser):
 
 
 class SnippetPreviewChooserAdapter(SnippetChooserAdapter):
+    """Register SnippetPreviewChooser for use in blocks"""
     js_constructor = "core.widgets.choosers.SnippetPreviewChooser"
 
     @cached_property
@@ -91,11 +97,11 @@ class SnippetPreviewChooserAdapter(SnippetChooserAdapter):
             ]
         )
 
-
 register(SnippetPreviewChooserAdapter(), SnippetPreviewChooser)
 
 
 class SnippetPreviewChosenView(PreviewMixin, ChosenView):
+    # add preview to returned chosen data
     def get_chosen_response(self, item):
         return self._wrap_chosen_response_data(
             {
@@ -108,6 +114,17 @@ class SnippetPreviewChosenView(PreviewMixin, ChosenView):
 
 
 class SnippetPreviewChooserViewSet(ChooserViewSet):
+    """
+    Abstract ViewSet class helper. Name and url prefix default to model name.
+    Example usage:
+        class ProductChooserViewSet(SnippetPreviewChooserViewSet):
+            model = Product
+        product_chooser_viewset = ProductChooserViewSet()
+    """
+    def __init__(self, name=None, *args, **kwargs):
+        if not name: name = self.model._meta.model_name
+        super().__init__(name=name, *args, **kwargs)
+
     chosen_view_class = SnippetPreviewChosenView
 
     @cached_property
@@ -116,4 +133,7 @@ class SnippetPreviewChooserViewSet(ChooserViewSet):
 
     @cached_property
     def widget_class(self):
-        return SnippetPreviewChooser(self.model)
+        return SnippetPreviewChooser(model=self.model, url_prefix=self.name)
+
+    class Meta:
+        abstract = True
