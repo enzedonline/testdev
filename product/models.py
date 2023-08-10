@@ -25,13 +25,10 @@ class Product(models.Model):
         FieldPanel("image"),
     ]
     
-    def get_icon(self):
-        return self.icon
-
     def __str__(self):
         return f"{self.sku} - {self.title}"
     
     @property
     def preview(self):
         if self.image:
-            return self.image #.get_rendition("height-60").img_tag()
+            return self.image
