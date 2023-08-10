@@ -47,4 +47,4 @@ class ProductChooserViewSet(SnippetPreviewChooserViewSet):
     choose_view_class = ProductChooseView
     choose_results_view_class = ProductChooseResultsView
 
-product_chooser_viewset = ProductChooserViewSet(ProductChooserViewSet.model._meta.model_name)
+product_chooser_viewset = ProductChooserViewSet()
