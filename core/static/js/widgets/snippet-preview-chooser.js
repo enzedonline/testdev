@@ -15,17 +15,9 @@ const declareSnippetPreviewChooser = async () => {
     await waitForSnippetChooser();
 
     class SnippetPreviewChooser extends window.SnippetChooser {
-        constructor(id, opts = {}) {
-            console.log('constructor: ' + id)
-            super(id, opts);
-            this.previewStateKey = 'preview';
-            if (this.state) {
-                this.getPreviewStateFromHTML();
-            }
-        }
+        previewStateKey = 'preview';
 
         initHTMLElements(id) {
-            console.log('initHTMLElements: ' + id)
             super.initHTMLElements(id);
             this.previewElement = this.chooserElement.querySelector(
                 '.chooser__preview',
@@ -40,8 +32,8 @@ const declareSnippetPreviewChooser = async () => {
 
         getStateFromHTML() {
             const state = super.getStateFromHTML();
-            if (state) {
-                this.getPreviewStateFromHTML()
+            if (this.previewElement && this.previewStateKey) {
+                state[this.previewStateKey] = this.previewElement.innerHTML || '';
             }
             return state;
         }
@@ -51,11 +43,13 @@ const declareSnippetPreviewChooser = async () => {
             if (this.previewElement && this.previewStateKey) {
                 this.previewElement.innerHTML = newState[this.previewStateKey];
             }
-        }
+        }    
     }
     window.SnippetPreviewChooser = SnippetPreviewChooser;
-    window.telepath.register('core.widgets.choosers.SnippetPreviewChooser', SnippetPreviewChooser);
 };
 
 declareSnippetPreviewChooser();
+
+
+
 
