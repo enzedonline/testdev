@@ -3,20 +3,31 @@ from django.db import models
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey, ParentalManyToManyField
-from wagtail.admin.panels import (FieldPanel, InlinePanel, MultiFieldPanel,
-                                  MultipleChooserPanel)
+from wagtail.admin.panels import (
+    FieldPanel,
+    InlinePanel,
+    MultiFieldPanel,
+    MultipleChooserPanel,
+)
 from wagtail.blocks import RawHTMLBlock, RichTextBlock
 from wagtail.fields import RichTextField, StreamField
 from wagtail.models import Orderable, Page
 
 from blocks.models import CSVTableBlock, ImportTextBlock, CollapsibleCardBlock
 from core.forms import RestrictedPanelsAdminPageForm
-from core.panels import (ImportTextFieldPanel, RegexPanel,
-                         RestrictedFieldPanel, RestrictedInlinePanel,
-                         UtilityPanel, M2MFieldPanel)
+from core.panels import (
+    ImportTextFieldPanel,
+    RegexPanel,
+    RestrictedFieldPanel,
+    RestrictedInlinePanel,
+    UtilityPanel,
+    M2MChooser,
+)
 from core.utils import count_words, get_streamfield_text
+# from core.widgets.icon_snippet_chooser import IconPreviewSnippetChooser
 from .categories import BlogCategory
-from wagtail.snippets.widgets import AdminSnippetChooser
+from product.blocks import ProductChooserBlock
+
 
 class CarouselImages(Orderable):
     """Between 1 and 5 images for the blog page carousel."""
@@ -28,20 +39,22 @@ class CarouselImages(Orderable):
         blank=True,
         on_delete=models.SET_NULL,
         related_name="+",
-        verbose_name="Image"
+        verbose_name="Image",
     )
     caption = RichTextField(null=True, blank=True)
-    some_date = models.DateTimeField(null=True, blank=True, help_text="Some helpful text")
+    some_date = models.DateTimeField(
+        null=True, blank=True, help_text="Some helpful text"
+    )
     some_text = models.CharField(max_length=255, default="some default value")
     some_text_area = models.TextField(default="some default value")
     some_choice_field = models.CharField(
-        max_length=255, 
+        max_length=255,
         default="a",
-        choices=[('a', 'Choice A'), ('b', 'Choice B'), ('c', 'Choice C')]
-        )
+        choices=[("a", "Choice A"), ("b", "Choice B"), ("c", "Choice C")],
+    )
 
     panels = [
-        FieldPanel("carousel_image"), 
+        FieldPanel("carousel_image"),
         FieldPanel("caption"),
         FieldPanel("some_date"),
         FieldPanel("some_text"),
@@ -50,68 +63,74 @@ class CarouselImages(Orderable):
     ]
 
     class Meta(Orderable.Meta):
-        verbose_name = 'Carousel Image'
+        verbose_name = "Carousel Image"
+
 
 class BlogPage(Page):
-    wordcount = models.IntegerField(null=True, blank=True, verbose_name="Word Count", default=0)
-    some_date = models.DateTimeField(null=True, blank=True, help_text="Some helpful text")
+    wordcount = models.IntegerField(
+        null=True, blank=True, verbose_name="Word Count", default=0
+    )
+    some_date = models.DateTimeField(
+        null=True, blank=True, help_text="Some helpful text"
+    )
     some_text = models.CharField(max_length=255, default="some default value")
     some_text_area = models.TextField(verbose_name="Air Quality")
-    some_rich_text = RichTextField(null=True, blank=True, editor='basic')
+    some_rich_text = RichTextField(null=True, blank=True, editor="basic")
     some_slug = models.SlugField(null=True, blank=True)
     some_choice_field = models.CharField(
-        max_length=255, 
+        max_length=255,
         default="a",
-        choices=[('a', 'Choice A'), ('b', 'Choice B'), ('c', 'Choice C')]
-        )
+        choices=[("a", "Choice A"), ("b", "Choice B"), ("c", "Choice C")],
+    )
     some_image = models.ForeignKey(
-        'wagtailimages.Image',
+        "wagtailimages.Image",
         null=True,
         blank=True,
-        related_name='+',
+        related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name='Some Image',
+        verbose_name="Some Image",
     )
     some_document = models.ForeignKey(
-        'wagtaildocs.Document',
+        "wagtaildocs.Document",
         null=True,
         blank=True,
-        related_name='+',
+        related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name='Some Document',
+        verbose_name="Some Document",
     )
     some_product = models.ForeignKey(
-        'site_settings.Product',
+        "product.Product",
         null=True,
         blank=True,
-        related_name='+',
+        related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name='Some Snippet',
+        verbose_name="Product",
     )
     some_page = models.ForeignKey(
-        'wagtailcore.Page',
+        "wagtailcore.Page",
         null=True,
         blank=True,
-        related_name='+',
+        related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name='Some Page',
+        verbose_name="Some Page",
     )
     content = StreamField(
         [
             ("rich_text", RichTextBlock()),
             ("html", RawHTMLBlock()),
-            ('import_text_block', ImportTextBlock()),
-            ("csv_table", CSVTableBlock()), 
-            ("accordian_block", CollapsibleCardBlock()), 
+            ("import_text_block", ImportTextBlock()),
+            ("csv_table", CSVTableBlock()),
+            ("accordian_block", CollapsibleCardBlock()),
+            ("product", ProductChooserBlock())
         ],
         verbose_name="Page Content",
         blank=True,
         use_json_field=True,
     )
     categories = ParentalManyToManyField(
-        'blog.BlogCategory',
+        "blog.BlogCategory",
         verbose_name=_("Blog Categories"),
-        related_name='categories',
+        related_name="categories",
     )
 
     content_panels = Page.content_panels + [
@@ -119,7 +138,7 @@ class BlogPage(Page):
         #     '<b>Word Count:</b> {{wordcount}}', {'wordcount': 'wordcount'},
         #     style = 'margin-bottom: 2em;display: block;background-color: antiquewhite;padding: 1em;border-radius: 1em;'
         # ),
-        # FieldPanel('owner'),
+        FieldPanel('owner'),
         # RegexPanel('some_slug'),
         # ImportTextFieldPanel('some_text_area', file_type_filter=".csv, .tsv"),
         # MultiFieldPanel(
@@ -133,7 +152,7 @@ class BlogPage(Page):
         # RestrictedFieldPanel('some_rich_text'),
         # RestrictedFieldPanel('some_image'),
         # RestrictedFieldPanel('some_document'),
-        # RestrictedFieldPanel('some_product'),
+        FieldPanel("some_product"),
         # RestrictedFieldPanel('some_page'),
         RestrictedFieldPanel("content"),
         # UtilityPanel('<span class="editor-reminder">Some important notice to display</span>'),
@@ -199,26 +218,22 @@ class BlogPage(Page):
         # ),
         # FieldPanel('some_text_area'),
         # UtilityPanel(
-        #     '{{file_reader}}', 
+        #     '{{file_reader}}',
         #     {
         #         'file_reader': {'module': 'core.utils', 'method': 'import_text_field_button', 'field': 'some_text_area'}
         #     }
         # ),
-        M2MFieldPanel(
-            'categories'
-        ),
+        M2MChooser("categories"),
     ]
 
     base_form_class = RestrictedPanelsAdminPageForm
 
     class Meta:
-        verbose_name = 'Blog Page'
+        verbose_name = "Blog Page"
 
     @cached_property
     def corpus(self):
-        return get_streamfield_text(
-            self.content
-        )
+        return get_streamfield_text(self.content)
 
     @cached_property
     def words(self, corpus=None):
