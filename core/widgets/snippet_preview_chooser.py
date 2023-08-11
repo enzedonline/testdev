@@ -101,8 +101,9 @@ class SnippetPreviewChooserAdapter(SnippetChooserAdapter):
 
     @cached_property
     def media(self):
+        widget_media = super().media
         return forms.Media(
-            js=[
+            js=widget_media._js + [
                 "js/widgets/snippet-preview-chooser-telepath.js",
             ]
         )
