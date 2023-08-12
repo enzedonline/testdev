@@ -1,18 +1,5 @@
-const waitForSnippetChooser = () => {
-    return new Promise((resolve) => {
-        if (window.SnippetChooser) {
-            resolve();
-        } else {
-            // If SnippetChooser is not available, wait for it to be loaded
-            window.addEventListener('load', () => {
-                resolve();
-            });
-        }
-    });
-};
-
 const declareSnippetPreviewChooser = async () => {
-    await waitForSnippetChooser();
+    await waitForObject(window.SnippetChooser);
 
     class SnippetPreviewChooser extends window.SnippetChooser {
         previewStateKey = 'preview';
@@ -43,13 +30,9 @@ const declareSnippetPreviewChooser = async () => {
             if (this.previewElement && this.previewStateKey) {
                 this.previewElement.innerHTML = newState[this.previewStateKey];
             }
-        }    
+        }
     }
     window.SnippetPreviewChooser = SnippetPreviewChooser;
 };
 
 declareSnippetPreviewChooser();
-
-
-
-
