@@ -1,40 +1,51 @@
-const initialiseImportTextFieldPanel = (fileInputId, textAreaId) => {
+class ImportTextFieldPanel {
+    constructor(id) {
+        this.wrapper = document.querySelector(`[data-field-wrapper="${id}"]`);
+        this.fileInput = this.wrapper.querySelector('input');
+        this.textArea = this.wrapper.querySelector('textarea');
 
-        const fileInput = document.getElementById(fileInputId);
-        const textArea = document.getElementById(textAreaId);
-        const textInitialHeight = textArea.style.height
-        if (textArea.style.maxHeight == '') {textArea.style.maxHeight = '30em';}
-        textArea.style.overflowY='auto';
-
-        const readFile = (source, target) => {
-            const reader = new FileReader();
-            reader.addEventListener('load', (event) => {
-                target.value = event.target.result;
-                target.style.height = textInitialHeight;
-                target.style.height = target.scrollHeight 
-                    + parseFloat(getComputedStyle(target).paddingTop) 
-                    + parseFloat(getComputedStyle(target).paddingBottom) + 'px';
-            });
-            reader.readAsText(source);
+        this.textInitialHeight = this.textArea.style.height;
+        if (this.textArea.style.maxHeight === '') {
+            this.textArea.style.maxHeight = '30em';
         }
+        this.textArea.style.overflowY = 'auto';
 
-        fileInput.addEventListener('change', (event) => {
-            event.preventDefault();
-            const input = fileInput.files[0];
-            readFile(input, textArea)
-            fileInput.value = '';
-            fileInput.blur();
-        });
+        this.fileInput.addEventListener('change', this.handleFileInputChange.bind(this));
         
-        textArea.parentElement.addEventListener('dragover', (event) => {
-            event.stopPropagation();
-            event.preventDefault();
-            event.dataTransfer.dropEffect = 'copy';
+        this.textArea.parentElement.addEventListener('dragover', this.handleDragOver.bind(this));
+        this.textArea.parentElement.addEventListener('drop', this.handleDrop.bind(this));
+    }
+
+    readFile(source, target) {
+        const reader = new FileReader();
+        reader.addEventListener('load', (event) => {
+            target.value = event.target.result;
+            target.style.height = this.textInitialHeight;
+            target.style.height = target.scrollHeight 
+                + parseFloat(getComputedStyle(target).paddingTop) 
+                + parseFloat(getComputedStyle(target).paddingBottom) + 'px';
         });
-        textArea.parentElement.addEventListener('drop', (event) => {
-            event.stopPropagation();
-            event.preventDefault();
-            const input = event.dataTransfer.files[0];
-            readFile(input, textArea)
-        });
+        reader.readAsText(source);
+    }
+
+    handleFileInputChange(event) {
+        event.preventDefault();
+        const input = this.fileInput.files[0];
+        this.readFile(input, this.textArea);
+        this.fileInput.value = '';
+        this.fileInput.blur();
+    }
+
+    handleDragOver(event) {
+        event.stopPropagation();
+        event.preventDefault();
+        event.dataTransfer.dropEffect = 'copy';
+    }
+
+    handleDrop(event) {
+        event.stopPropagation();
+        event.preventDefault();
+        const input = event.dataTransfer.files[0];
+        this.readFile(input, this.textArea);
+    }
 }
