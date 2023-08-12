@@ -140,7 +140,7 @@ class BlogPage(Page):
         # ),
         FieldPanel('owner'),
         # RegexPanel('some_slug'),
-        # ImportTextFieldPanel('some_text_area', file_type_filter=".csv, .tsv"),
+        ImportTextFieldPanel('some_text_area', file_type_filter=".csv, .tsv"),
         # MultiFieldPanel(
         #     [RestrictedInlinePanel("carousel_images", max_num=5, min_num=1)],
         #     heading="Carousel Images",
