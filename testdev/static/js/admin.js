@@ -1,6 +1,18 @@
+// wait for an object to load, pass back resolved object
+const waitForObject = async (object) => {
+  const resolvedObject = await Promise.resolve(object);
+  if (!resolvedObject) {
+    return new Promise((resolve) => {
+      window.addEventListener('load', () => {
+        resolve(resolvedObject);
+      });
+    });
+  }
+  return resolvedObject;
+};
 
 // include js script only if not already included
-let include_js = (js, id) => {
+const include_js = (js, id) => {
   let script_tag = document.getElementById(`${id}`)
   if (!script_tag) {
     let target_tag = document.getElementsByTagName("head")[0];
@@ -22,7 +34,7 @@ let include_js = (js, id) => {
 }
 
 // include css only if not already included
-let include_css = (css, id) => {
+const include_css = (css, id) => {
   let link_tag = document.getElementById(`${id}`)
   if (!link_tag) {
     let target_tag = document.getElementsByTagName("head")[0];
