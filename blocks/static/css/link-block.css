@@ -1,0 +1,59 @@
+.link-block {
+    margin-block-start: 1em;
+    margin-inline-start: 1em;
+}
+
+.block-tablist {
+    padding-inline-start: 0;
+    position: relative;
+    flex-wrap: wrap;
+    z-index: 0;
+}
+
+.block-tablist> :not([hidden])~:not([hidden]) {
+    margin-inline-start: calc(0.5rem*(1 - var(--tw-space-x-reverse)));
+}
+
+.block-tab {
+    padding: 0 1rem;
+    margin-top: 1rem;
+    color: var(--w-color-text-label);
+    border-width: 0.0625rem 0.0625rem 0 0.0625rem;
+    border-color: var(--w-color-border-furniture);
+    border-radius: 0.5rem 0.5rem 0 0;
+    cursor: pointer;
+    background-color: var(--w-color-surface-field-inactive);
+    opacity: .8;
+}
+
+.block-tab.active {
+    background-color: var(--w-color-surface-field-active);
+    border-bottom-style: solid;
+    border-bottom-width: 2px;
+    border-bottom-color: var(--w-color-text-context);
+    box-shadow: 4px 0px 4px var(--w-color-border-furniture);
+    opacity: 1;
+}
+
+.block-tab>label {
+    padding: 0.5rem;
+    margin-bottom: -1px !important;
+    margin: 0;
+    cursor: inherit;
+    opacity: .8;
+    color: inherit;
+}
+
+.block-tab.active label {
+    opacity: 1;
+}
+
+.block-tab:hover, .block-tab>label:hover {
+    color: var(--w-color-text-link-hover);
+    opacity: 1;
+}
+
+.block-tab>label>input {
+    position: absolute;
+    clip: rect(0, 0, 0, 0);
+}
