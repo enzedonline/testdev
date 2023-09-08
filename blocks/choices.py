@@ -1,32 +1,26 @@
 from django.utils.translation import gettext_lazy as _
-from wagtail.blocks import ChoiceBlock
+from django.forms import RadioSelect
+from blocks.wagtail.blocks import ChoiceBlock
 
-class DefaultChoiceBlock(ChoiceBlock):
-
+class LinkTypeChoiceBlock(ChoiceBlock):
     def __init__(self, *args, **kwargs):
+        super().__init__(widget=RadioSelect, *args, **kwargs)
+    
+    choices=[
+        ('page', _('Page Link')),
+        ('url', _('URL Link')),
+        ('document', _('Document Link')),
+    ]
 
-        default = kwargs.pop("default", getattr(self, "default", None))
-        label = kwargs.pop("label", getattr(self, "label", None))
-        help_text = kwargs.pop("help_text", getattr(self, "help_text", None))
-        required = kwargs.pop("required", getattr(self, "required", True))
-
-        super().__init__(
-            *args,
-            default=default,
-            label=label,
-            help_text=help_text,
-            required=required,
-            **kwargs
-        )
         
-class AlignmentChoiceBlock(DefaultChoiceBlock):
+class AlignmentChoiceBlock(ChoiceBlock):
     choices=[
         ('start', _('Left')), 
         ('center', _('Centre')), 
         ('end', _('Right'))
     ]
 
-class TextAlignmentChoiceBlock(DefaultChoiceBlock):
+class TextAlignmentChoiceBlock(ChoiceBlock):
     choices=[
         ('justify', _('Justified')), 
         ('start', _('Left')), 
@@ -34,7 +28,7 @@ class TextAlignmentChoiceBlock(DefaultChoiceBlock):
         ('end', _('Right'))
     ]
 
-class ColourThemeChoiceBlock(DefaultChoiceBlock):
+class ColourThemeChoiceBlock(ChoiceBlock):
     choices=[
         ('bg-transparent', _("Transparent")),
         ('bg-primary', _("Primary")),
@@ -48,7 +42,7 @@ class ColourThemeChoiceBlock(DefaultChoiceBlock):
         ('bg-black', _("Black")),
     ]
 
-class ButtonChoiceBlock(DefaultChoiceBlock):
+class ButtonChoiceBlock(ChoiceBlock):
     choices=[
         ('btn-primary', _("Standard Button")),
         ('btn-secondary', _("Secondary Button")),
@@ -62,7 +56,7 @@ class ButtonChoiceBlock(DefaultChoiceBlock):
     ]
     label=_("Button Appearance")
     
-class ButtonSizeChoiceBlock(DefaultChoiceBlock):
+class ButtonSizeChoiceBlock(ChoiceBlock):
     choices=[
         ('btn-sm', _("Small")),
         (' ', _("Standard")),
@@ -71,7 +65,7 @@ class ButtonSizeChoiceBlock(DefaultChoiceBlock):
     default=' '
     label=_("Button Size")
     
-class HeadingSizeChoiceBlock(DefaultChoiceBlock):
+class HeadingSizeChoiceBlock(ChoiceBlock):
     choices=[
         ('h2', 'H2'), 
         ('h3', 'H3'), 
@@ -80,7 +74,7 @@ class HeadingSizeChoiceBlock(DefaultChoiceBlock):
         ('h6', 'H6'), 
     ]
 
-class ImageFormatChoiceBlock(DefaultChoiceBlock):
+class ImageFormatChoiceBlock(ChoiceBlock):
     choices=[
         ('4-1', _("4:1 Horizontal Letterbox Banner")),
         ('3-1', _("3:1 Horizontal Panorama Banner")),
@@ -90,7 +84,7 @@ class ImageFormatChoiceBlock(DefaultChoiceBlock):
         ('1-3', _("1:3 Vertical Panorama Banner")),
     ]
 
-class RouteOptionChoiceBlock(DefaultChoiceBlock):
+class RouteOptionChoiceBlock(ChoiceBlock):
      choices=[
         ('no-route', "None"),
         ('walking', "Walking"),
@@ -99,24 +93,27 @@ class RouteOptionChoiceBlock(DefaultChoiceBlock):
         ('driving-traffic', "Driving (with traffic conditions)")
      ]
 
-class FlexCardLayoutChoiceBlock(DefaultChoiceBlock):
+class FlexCardLayoutChoiceBlock(ChoiceBlock):
     choices=[
-        ('image-left-responsive', _("Responsive Horizontal (Image left of text on widescreen only)")),
-        ('image-right-responsive', _("Responsive Horizontal (Image right of text on widescreen only)")),
-        ('image-left-fixed', _("Fixed Horizontal (Image left of text on all screen sizes)")),
-        ('image-right-fixed', _("Fixed Horizontal (Image right of text on all screen sizes)")),
+        ('left-responsive', _("Responsive Horizontal (Image left of text on widescreen only)")),
+        ('right-responsive', _("Responsive Horizontal (Image right of text on widescreen only)")),
+        ('left-fixed', _("Fixed Horizontal (Image left of text on all screen sizes)")),
+        ('right-fixed', _("Fixed Horizontal (Image right of text on all screen sizes)")),
         ('vertical', _("Vertical (Image above text on on all screen sizes)")),
     ]
 
-class BreakpointChoiceBlock(DefaultChoiceBlock):
+class BreakpointChoiceBlock(ChoiceBlock):
     choices=[
         ('sm', _("Small screen only")),
         ('md', _("Small and medium screens")),
+        ('lg', _("Small, medium and large screens")),
+        ('none', _("No breakpoint")),
     ]
 
-class CodeChoiceBlock(DefaultChoiceBlock):
+class CodeChoiceBlock(ChoiceBlock):
     choices=[
         ('python', 'Python'),
+        ('django', 'Django Template'),
         ('css', 'CSS'),
         ('html', 'HTML'),
         ('sql', 'SQL'),
@@ -133,7 +130,7 @@ class CodeChoiceBlock(DefaultChoiceBlock):
         ('bash', 'Bash/Shell'),
     ]
 
-class VerticalAlignmentChoiceBlock(DefaultChoiceBlock):
+class VerticalAlignmentChoiceBlock(ChoiceBlock):
     choices = [
         ('align-items-top', _('Top')), 
         ('align-items-center', _('Middle')), 
@@ -142,7 +139,7 @@ class VerticalAlignmentChoiceBlock(DefaultChoiceBlock):
     label=_("Vertical Alignment")
     default='align-items-top'
     
-class DocumentListSortChoiceBlock(DefaultChoiceBlock):
+class DocumentListSortChoiceBlock(ChoiceBlock):
     choices = [
         ('created_at', _('Date (newest first)')), 
         ('title', _('Document Title')), 
@@ -154,7 +151,7 @@ class DocumentListSortChoiceBlock(DefaultChoiceBlock):
 # GridStream options
 #-----------------------------------------------------
     
-class TwoColumnCollapseOrderChoiceBlock(DefaultChoiceBlock):
+class TwoColumnCollapseOrderChoiceBlock(ChoiceBlock):
     default='left-first'
     choices=[
         ('left-first', _("Left column is first on mobile")),
@@ -163,7 +160,7 @@ class TwoColumnCollapseOrderChoiceBlock(DefaultChoiceBlock):
     label=_("Column order on mobile")
     help_text=_("Select which column will appear above the other on mobile screen")
     
-class TwoColumnHideChoiceBlock(DefaultChoiceBlock):
+class TwoColumnHideChoiceBlock(ChoiceBlock):
     default='hide-none'
     choices=[
         ('hide-none', _("Display both column contents on mobile (one above the other)")),
@@ -172,7 +169,7 @@ class TwoColumnHideChoiceBlock(DefaultChoiceBlock):
     ]
     label=_("Hide contents on mobile")
 
-class TwoColumnLayoutChoiceBlock(DefaultChoiceBlock):
+class TwoColumnLayoutChoiceBlock(ChoiceBlock):
     choices = [
         ('auto-', _("Left column width determined by content (care needed, test on all screen sizes)")),
         ('-auto', _("Right column width determined by content (care needed, test on all screen sizes)")),
@@ -191,7 +188,7 @@ class TwoColumnLayoutChoiceBlock(DefaultChoiceBlock):
     default = '6-6',
     label = _("Select column size ratio")
 
-class ThreeColumnHideChoiceBlock(DefaultChoiceBlock):
+class ThreeColumnHideChoiceBlock(ChoiceBlock):
     default='hide-none'
     choices=[
         ('hide-none', _("Display all columns on mobile (one above the other)")),
@@ -199,7 +196,7 @@ class ThreeColumnHideChoiceBlock(DefaultChoiceBlock):
     ]
     label=_("Hide contents on mobile")
     
-class ThreeColumnLayoutChoiceBlock(DefaultChoiceBlock):
+class ThreeColumnLayoutChoiceBlock(ChoiceBlock):
     choices = [
         ('-auto-', _("Centre column width determined by content (care needed, test on all screen sizes)")),
         ('4-4-4', _("Equal Width Columns")),
@@ -208,7 +205,7 @@ class ThreeColumnLayoutChoiceBlock(DefaultChoiceBlock):
         ('1-10-1', _("Left 1, Centre 10, Right 1")),
     ]
 
-class BreakPointChoiceBlock(DefaultChoiceBlock):
+class BreakPointChoiceBlock(ChoiceBlock):
     choices = [
         ('-', _("Columns side by side on all screen sizes (best for uneven column sizes)")),
         ('-lg', _("Columns side by side on large screen only")),
