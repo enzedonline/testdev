@@ -6,6 +6,7 @@ from wagtail import urls as wagtail_urls
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.documents import urls as wagtaildocs_urls
 from core.views import SitemapView
+from blocks.views import ExternalContentProxy, check_image_url
 
 from search import views as search_views
 
@@ -15,6 +16,8 @@ urlpatterns = [
     path("documents/", include(wagtaildocs_urls)),
     path("search/", search_views.search, name="search"),
     path('sitemap.xml', SitemapView.as_view(), name='sitemap'),
+    path('external-content-proxy/', ExternalContentProxy.as_view(), name='external-content-proxy'),
+    path('check-image-url/', check_image_url, name='check_image_url'),
 ]
 
 
