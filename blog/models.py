@@ -3,30 +3,24 @@ from django.db import models
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey, ParentalManyToManyField
-from wagtail.admin.panels import (
-    FieldPanel,
-    InlinePanel,
-    MultiFieldPanel,
-    MultipleChooserPanel,
-)
+from wagtail.admin.panels import (FieldPanel, InlinePanel, MultiFieldPanel,
+                                  MultipleChooserPanel)
 from wagtail.blocks import RawHTMLBlock, RichTextBlock
 from wagtail.fields import RichTextField, StreamField
 from wagtail.models import Orderable, Page
 
-from blocks.models import CSVTableBlock, ImportTextBlock, CollapsibleCardBlock
+from blocks.models import (CollapsibleCardBlock, CSVTableBlock,
+                           ExternalLinkEmbedBlock, FlexCardBlock, ImportTextBlock,
+                           LinkBlock)
 from core.forms import RestrictedPanelsAdminPageForm
-from core.panels import (
-    ImportTextFieldPanel,
-    RegexPanel,
-    RestrictedFieldPanel,
-    RestrictedInlinePanel,
-    UtilityPanel,
-    M2MChooser,
-)
+from core.panels import (ImportTextFieldPanel, M2MChooserPanel, RegexPanel,
+                         RestrictedFieldPanel, RestrictedInlinePanel,
+                         UtilityPanel)
 from core.utils import count_words, get_streamfield_text
+from product.blocks import ProductChooserBlock
+
 # from core.widgets.icon_snippet_chooser import IconPreviewSnippetChooser
 from .categories import BlogCategory
-from product.blocks import ProductChooserBlock
 
 
 class CarouselImages(Orderable):
@@ -120,8 +114,11 @@ class BlogPage(Page):
             ("html", RawHTMLBlock()),
             ("import_text_block", ImportTextBlock()),
             ("csv_table", CSVTableBlock()),
-            ("accordian_block", CollapsibleCardBlock()),
-            ("product", ProductChooserBlock())
+            ("collapsible_card_block", CollapsibleCardBlock()),
+            ("product", ProductChooserBlock()),
+            ("external_link", ExternalLinkEmbedBlock()),
+            ("link", LinkBlock()),
+            ("flex_card", FlexCardBlock()),
         ],
         verbose_name="Page Content",
         blank=True,
@@ -138,9 +135,9 @@ class BlogPage(Page):
         #     '<b>Word Count:</b> {{wordcount}}', {'wordcount': 'wordcount'},
         #     style = 'margin-bottom: 2em;display: block;background-color: antiquewhite;padding: 1em;border-radius: 1em;'
         # ),
-        FieldPanel('owner'),
+        # FieldPanel('owner'),
         # RegexPanel('some_slug'),
-        ImportTextFieldPanel('some_text_area', file_type_filter=".csv, .tsv"),
+        # ImportTextFieldPanel('some_text_area', file_type_filter=".csv, .tsv"),
         # MultiFieldPanel(
         #     [RestrictedInlinePanel("carousel_images", max_num=5, min_num=1)],
         #     heading="Carousel Images",
@@ -152,7 +149,7 @@ class BlogPage(Page):
         # RestrictedFieldPanel('some_rich_text'),
         # RestrictedFieldPanel('some_image'),
         # RestrictedFieldPanel('some_document'),
-        FieldPanel("some_product"),
+        # FieldPanel("some_product"),
         # RestrictedFieldPanel('some_page'),
         RestrictedFieldPanel("content"),
         # UtilityPanel('<span class="editor-reminder">Some important notice to display</span>'),
@@ -223,7 +220,7 @@ class BlogPage(Page):
         #         'file_reader': {'module': 'core.utils', 'method': 'import_text_field_button', 'field': 'some_text_area'}
         #     }
         # ),
-        M2MChooser("categories"),
+        M2MChooserPanel("categories"),
     ]
 
     base_form_class = RestrictedPanelsAdminPageForm
