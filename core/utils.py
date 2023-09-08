@@ -2,53 +2,18 @@ import base64
 import importlib
 import io
 import re
+from collections import OrderedDict
 from html import unescape
 from html.parser import HTMLParser
-from urllib.parse import parse_qs, urlparse
 
 from bs4 import BeautifulSoup
 from django.utils.encoding import force_str
 from django.utils.translation import gettext_lazy as _
+from PIL.ExifTags import GPSTAGS, TAGS
+from wagtail.blocks import ListBlock
 from wagtail.blocks.stream_block import StreamValue
 from wagtail.models import Page
 
-
-def validate_email(email):
-    email_pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
-    emails = email.split(',')
-
-    for email in emails:
-        if not re.match(email_pattern, email.strip()):
-            return False
-
-    return True
-
-def validate_email_query_string(query_string):
-    query_params = parse_qs(unescape(query_string))
-    valid_params = {'to', 'cc', 'bcc', 'subject', 'body'}
-
-    for key, values in query_params.items():
-        if not (key in valid_params and re.match(r'^\w+=.+$', f"{key}={values[0]}")):
-            return False
-
-    return True
-
-def validate_email_with_query_string(string):
-    url_parts = urlparse(string)
-
-    if not url_parts.path:
-        return False
-
-    email = url_parts.path
-    query_string = url_parts.query
-
-    if validate_email(email):
-        if query_string:
-            return validate_email_query_string(query_string)
-        else:
-            return True
-
-    return False
 
 def page_url(slug, target=None):
     pg = Page.objects.filter(slug=slug).first()
@@ -220,3 +185,107 @@ def is_html(input_string):
     return parser.is_html
 
 
+
+
+def decode_exif(exif_data):
+    decoded_data = {}
+    for tag, value in exif_data.items():
+        tag_name = TAGS.get(tag, tag)
+        if isinstance(value, bytes):
+            value = value.decode(errors='replace')
+        decoded_data[tag_name] = value
+    return decoded_data
+
+
+def list_block_instances(streamfield):
+    def list_bound_blocks(data):
+        list = []
+        bound_blocks = None
+
+        if isinstance(data, StreamValue):
+            bound_blocks = data._bound_blocks
+        else:
+            value = getattr(data, "value", None)
+            if value:
+                bound_blocks = getattr(value, "bound_blocks", getattr(value, "_bound_blocks", None))
+
+        if not bound_blocks:
+            return None
+
+        if isinstance(bound_blocks, OrderedDict):
+            for key, value in bound_blocks.items():
+                child_blocks = list_bound_blocks(value)
+                item = {
+                    "type": key,
+                    "class": f"{value.block.__class__.__module__}.{value.block.__class__.__name__}",
+                }
+                if child_blocks:
+                    item["child_blocks"] = child_blocks
+                list += [item]
+        else:
+            for bound_block in bound_blocks:
+                if bound_block:
+                    item = {
+                        "type": bound_block.block.name,
+                        "class": f"{bound_block.block.__class__.__module__}.{bound_block.block.__class__.__name__}",
+                    }
+                    child_blocks = list_bound_blocks(bound_block)
+                    if child_blocks:
+                        item["child_blocks"] = child_blocks
+                    list += [item]
+        return list
+    
+    if streamfield.is_lazy: r = streamfield.render_as_block() # force lazy object to load
+    return list_bound_blocks(streamfield)
+
+def block_instances_by_class(streamfield, block_class):
+    def find_blocks(data, block_class):
+        list = []
+        bound_blocks = None
+
+        if isinstance(data, StreamValue):
+            bound_blocks = data._bound_blocks
+        else:
+            value = getattr(data, "value", None)
+            if value:
+                bound_blocks = getattr(value, "bound_blocks", getattr(value, "_bound_blocks", None))
+
+        if not bound_blocks:
+            return []
+
+        if isinstance(bound_blocks, OrderedDict):
+            bound_blocks = bound_blocks.values()
+    
+        for bound_block in bound_blocks:
+            if type(bound_block.block) is block_class: list += [bound_block]
+            list += find_blocks(bound_block, block_class)
+        return list
+
+    if type(block_class)==str:
+        try:
+            module_name, class_name = block_class.rsplit('.', 1)
+            module = importlib.import_module(module_name)
+            block_class = getattr(module, class_name)().__class__
+        except:
+            return ['Unable to parse class path. Try passing the class object instead.']    
+    if streamfield.is_lazy: r = streamfield.render_as_block() # force lazy object to load
+
+    return find_blocks(streamfield, block_class)
+
+def list_streamfield_blocks(streamfield):
+    def list_child_blocks(child_blocks):
+        list = []
+        for key, value in child_blocks.items():
+            item = {
+                "type": key,
+                "class": f"{value.__class__.__module__}.{value.__class__.__name__}",
+            }
+            if getattr(value, 'child_blocks', False):
+                item["child_blocks"] = list_child_blocks(value.child_blocks)
+            elif isinstance(value, ListBlock):
+                item["child_blocks"] = list_child_blocks({value.child_block.name: value.child_block})
+            list += [item]
+        return list
+    
+    return list_child_blocks(streamfield.stream_block.child_blocks)
+    
