@@ -8,8 +8,10 @@ from wagtail.models import Page
 
 from .draftail_extensions import (DRAFTAIL_ICONS, register_block_feature,
                                   register_inline_styling)
-from .utils import has_role
 from .sitemap import SiteMap
+from .thumbnails import ThumbnailOperation
+from .utils import has_role
+
 
 @hooks.register('register_rich_text_features')
 def register_align_left_feature(features):
@@ -207,3 +209,9 @@ def add_page_sitemap_entry(request, page):
 @hooks.register('after_delete_page')
 def remove_page_sitemap_entry(request, page):
     SiteMap().remove_page(page)    
+
+@hooks.register('register_image_operations')
+def register_image_operations():
+    return [
+        ('thumbnail', ThumbnailOperation)
+    ]
