@@ -1,3 +1,14 @@
+$(document).ready(() => {
+  const newTabElement = document.querySelector('[data-preview-new-tab]');
+  const pagePreview = document.querySelector('[data-tippy-content="Preview"]');
+  
+  if (newTabElement && pagePreview) {
+    const clonedNewTabElement = newTabElement.cloneNode(true);
+    clonedNewTabElement.setAttribute("custom-tooltip", ""); 
+    pagePreview.insertAdjacentElement('afterend', clonedNewTabElement);
+  }
+});
+
 // wait for an object to load, pass back resolved object
 const waitForObject = async (object) => {
   const resolvedObject = await Promise.resolve(object);
