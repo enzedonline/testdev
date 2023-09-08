@@ -7,7 +7,7 @@ from django.template import Context, Template
 from django.forms.models import ModelMultipleChoiceField
 
 
-class M2MChooser(FieldPanel):
+class M2MChooserPanel(FieldPanel):
     """
     FieldPanel with pop-over chooser style form to select options in ParentalManyToManyField.
     """
