@@ -7,9 +7,9 @@ from django.core.exceptions import ValidationError
 
 
 class RequiredMixin:
-    def __init__(self, **kwargs):
+    def __init__(self, *args, **kwargs):
         self._required = kwargs.get('required', True)
-        super().__init__(**kwargs)
+        super().__init__(*args, **kwargs)
 
     @property
     def required(self):
