@@ -32,3 +32,6 @@ class ImportTextBlock(TextBlock):
         }
         field_kwargs.update(self.field_options)
         return forms.CharField(**field_kwargs)
+
+    class Meta:
+        icon = "copy"
