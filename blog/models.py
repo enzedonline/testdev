@@ -21,7 +21,7 @@ from product.blocks import ProductChooserBlock
 
 # from core.widgets.icon_snippet_chooser import IconPreviewSnippetChooser
 from .categories import BlogCategory
-
+from core.widgets.import_textarea_widget import ImportTextAreaWidget
 
 class CarouselImages(Orderable):
     """Between 1 and 5 images for the blog page carousel."""
@@ -144,7 +144,7 @@ class BlogPage(Page):
         # ),
         # RestrictedFieldPanel('some_date'),
         # RestrictedFieldPanel('some_text'),
-        # RestrictedFieldPanel('some_text_area'),
+        # FieldPanel('some_text_area', widget=ImportTextAreaWidget),
         # RestrictedFieldPanel('some_choice_field'),
         # RestrictedFieldPanel('some_rich_text'),
         # RestrictedFieldPanel('some_image'),

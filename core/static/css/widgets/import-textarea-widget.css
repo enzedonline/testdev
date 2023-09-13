@@ -14,6 +14,7 @@ div.w-field--import_text_area_widget textarea {
 
 .import-textarea-fileinput-container>label {
     cursor: pointer;
+    font-weight: 600;
 }
 
 .import-textarea-fileinput-container>span {
