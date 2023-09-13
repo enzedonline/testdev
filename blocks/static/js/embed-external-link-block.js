@@ -35,7 +35,7 @@ class ExternalLinkEmbedBlockDefinition extends window.wagtailStreamField.blocks
 
             if (url) {
                 try {
-                    block.getMetadataButton.classList.toggle('spinner');
+                    block.getMetadataButton.classList.toggle('spinner', true);
                     const response = await fetch(`/external-content-proxy/?url=${encodeURIComponent(url)}`);
                     const metadata = await response.json();
 
@@ -58,7 +58,6 @@ class ExternalLinkEmbedBlockDefinition extends window.wagtailStreamField.blocks
                         (metadata.title ? `<h3>${metadata.title}</h3>` : '') + 
                         (metadata.description || '')
                     );
-                    console.log(metadata.description);
                     block.childBlocks.description.setState(new rtbState.constructor.createWithContent(
                         new rtbState._immutable.currentContent.constructor.createFromBlockArray(
                             blocksFromHTML.contentBlocks,
@@ -73,7 +72,7 @@ class ExternalLinkEmbedBlockDefinition extends window.wagtailStreamField.blocks
                 } catch (error) {
                     console.error('Error retrieving metadata:', error);
                 }
-                block.getMetadataButton.classList.toggle('spinner');
+                block.getMetadataButton.classList.toggle('spinner', false);
             }
         }
 
