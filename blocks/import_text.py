@@ -1,42 +1,16 @@
 from django import forms
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
-from wagtail.blocks import StructBlock, TextBlock
-from wagtail.blocks.struct_block import StructBlockAdapter
-from wagtail.telepath import register
+from wagtail.blocks import TextBlock
+from core.widgets import ImportTextAreaWidget
 
-
-class ImportTextBlock(StructBlock):
-    def __init__(self, local_blocks=None, file_type_filter="", **kwargs):
-        super().__init__(local_blocks, **kwargs)
-        self.accept = file_type_filter
-
-    text = TextBlock()
-
-    class Meta:
-        icon = "collapse-down"
-        label = "Import Text"
-        form_template = "blocks/forms/import_text_block_form.html"
-
-    def get_form_context(self, value, prefix="", errors=None):
-        context = super().get_form_context(value, prefix, errors)
-        context["instructions"] = _(
-            "Use 'Choose File' or drag/drop to import data from file."
-        )
-        context["accept"] = self.accept
-        return context
-
-
-class ImportTextBlockAdapter(StructBlockAdapter):
-    js_constructor = "blocks.models.ImportTextBlock"
+class ImportTextBlock(TextBlock):
+    def __init__(self, required=True, help_text=None, rows=1, max_length=None, min_length=None, file_type_filter="", validators=(), **kwargs):
+        super().__init__(required, help_text, rows, max_length, min_length, validators, **kwargs)
+        self.file_type_filter = file_type_filter
 
     @cached_property
-    def media(self):
-        structblock_media = super().media
-        return forms.Media(
-            js=structblock_media._js + ["js/import-text-block.js"],
-            css={"all": ("css/import-text-block.css",)},
-        )
-
-
-register(ImportTextBlockAdapter(), ImportTextBlock)
+    def field(self):
+        field_kwargs = {"widget": ImportTextAreaWidget(self.file_type_filter, attrs={"rows": self.rows})}
+        field_kwargs.update(self.field_options)
+        return forms.CharField(**field_kwargs)

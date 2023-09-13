@@ -1,0 +1,9 @@
+<div class="import-textarea-fileinput-container">
+    <label class="button" for="{{ id }}-file-input">{{ label }}</label>
+    <input type="file"
+           hidden=""
+           id="{{ id }}-file-input"
+           {{ accepts|safe }}>
+    <span class="help">{{ help }}</span>
+    <script>new ImportTextAreaWidget('{{ id }}')</script>
+</div>
