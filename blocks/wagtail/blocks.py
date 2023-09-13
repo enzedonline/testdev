@@ -97,4 +97,5 @@ class CharBlock(RequiredMixin, blocks.CharBlock):
 class ImageChooserBlock(RequiredMixin, image_blocks.ImageChooserBlock):
     pass
 
-
+class TextBlock(RequiredMixin, blocks.TextBlock):
+    pass
