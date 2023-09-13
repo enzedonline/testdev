@@ -1,2 +1,2 @@
 from .import_textarea_widget import ImportTextAreaWidget
-from .snippet_preview_chooser import SnippetPreviewChooser
+from .snippet_preview_chooser import SnippetPreviewChooserViewSet
