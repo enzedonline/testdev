@@ -9,7 +9,7 @@ class ExternalLinkEmbedBlockDefinition extends window.wagtailStreamField.blocks
             initialState,
             initialError,
         );
-        window.block = block;
+
         const updateImagePreview = async () => {
             const imageUrl = block.imageInput.value;
             if (imageUrl) {
