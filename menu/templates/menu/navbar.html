@@ -4,8 +4,7 @@
 
 <link rel="stylesheet" type="text/css" href="{% static 'css/menu.css' %}"/>
 
-{% with "lg" as breakpoint %}
-<nav class="navbar navbar-expand-{{ breakpoint }} navbar-dark bg-dark p-1 menustream menustream-{{ menu.slug }}">
+<nav class="navbar navbar-expand-{{ menu.breakpoint }} navbar-dark bg-dark p-1 menustream menustream-{{ menu.slug }}">
   
     <div class="p-0">
       <a class="navbar-brand menustream menustream-{{ menu.slug }}" href="{{ self.get_site.root_url }}">
@@ -26,10 +25,9 @@
     <div class="collapse navbar-collapse justify-content-end pe-4" id="navbar-{{ menu.slug }}">
       <ul class="navbar-nav menustream menustream-{{ menu.slug }} ps-2 ps-lg-0">
         {% for item in menu.items %}
-          {% include_block item with context=context link_type='nav-item' breakpoint=breakpoint %}
+          {% include_block item with link_type='nav-item' %}
         {% endfor %}
       </ul>
     </div>
   
 </nav>
-{% endwith %}

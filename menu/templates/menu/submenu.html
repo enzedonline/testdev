@@ -12,9 +12,9 @@
             {% endif %}
             <div>{{ self.title }}</div>
         </a>
-        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-{{ breakpoint }}-w20 menustream menustream--{{ menu.slug }}">
+        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-{{ menu.breakpoint }}-w20 menustream menustream--{{ menu.slug }}">
             {% for item in self.links %}
-                {% include_block item with context=context link_type="dropdown-item" link_colour="link-dark" breakpoint=breakpoint submenu=True %}
+                {% include_block item with link_type="dropdown-item" link_colour="link-dark" submenu=True %}
             {% endfor %}
         </ul>
     </li>
