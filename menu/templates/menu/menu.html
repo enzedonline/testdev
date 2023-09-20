@@ -1,36 +1,3 @@
-{% load static wagtailcore_tags wagtailimages_tags menu_tags %}
-
-{% comment %} pass menu_slug in context {% endcomment %}
+{% load menu_tags %}
 {% load_menu menu_slug as menu %}
-
-<link rel="stylesheet" type="text/css" href="{% static 'css/menu.css' %}"/>
-
-{% with "lg" as breakpoint %}
-<nav class="navbar navbar-expand-{{ breakpoint }} navbar-dark bg-dark p-1 menustream menustream-{{ menu.slug }}">
-  
-    <div class="p-0">
-      <a class="navbar-brand menustream menustream-{{ menu.slug }}" href="{{ self.get_site.root_url }}">
-        {% if menu.logo %}{% image menu.logo height-30 %}{% endif %}<span>{{ menu.title }}</span>
-      </a>
-    </div>
-    <button 
-        class="navbar-toggler menu-toggler-{{ menu.slug }}" 
-        type="button" 
-        data-bs-toggle="collapse" 
-        data-bs-target="#navbar-{{ menu.slug }}"  
-        aria-controls="navbar-{{ menu.slug }}" 
-        aria-expanded="false" 
-        aria-label="Toggle navigation" 
-        onclick="document.activeElement.blur();">
-        <span class="navbar-toggler-icon menustream menustream-{{ menu.slug }}"></span>
-    </button>
-    <div class="collapse navbar-collapse justify-content-end pe-4" id="navbar-{{ menu.slug }}">
-      <ul class="navbar-nav menustream menustream-{{ menu.slug }} ps-2 ps-lg-0">
-        {% for item in menu.items %}
-          {% include_block item with context=context link_type='nav-item' breakpoint=breakpoint %}
-        {% endfor %}
-      </ul>
-    </div>
-  
-</nav>
-{% endwith %}
+{% include "menu/navbar.html" with menu=menu %}
