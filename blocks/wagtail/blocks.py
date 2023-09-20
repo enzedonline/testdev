@@ -28,7 +28,34 @@ class StructBlock(RequiredMixin, blocks.StructBlock):
     def __init__(self, **kwargs):
         super().__init__(local_blocks=None, **kwargs)
 
-class URLBlock(RequiredMixin, blocks.URLBlock):
+class ChoiceBlock(RequiredMixin, blocks.ChoiceBlock):
+
+    def __init__(self, *args, **kwargs):
+
+        default = kwargs.pop("default", getattr(self, "default", None))
+        label = kwargs.pop("label", getattr(self, "label", None))
+        help_text = kwargs.pop("help_text", getattr(self, "help_text", None))
+        required = kwargs.pop("required", getattr(self, "required", True))
+
+        super().__init__(
+            *args,
+            default=default,
+            label=label,
+            help_text=help_text,
+            required=required,
+            **kwargs
+        )
+
+class CharBlock(RequiredMixin, blocks.CharBlock):
+    pass
+
+class ImageChooserBlock(RequiredMixin, image_blocks.ImageChooserBlock):
+    pass
+
+class TextBlock(RequiredMixin, blocks.TextBlock):
+    pass
+
+class URLBlock(CharBlock):
     def __init__(
         self,
         required=True,
@@ -71,31 +98,4 @@ class URLBlock(RequiredMixin, blocks.URLBlock):
         return super().clean(value)
     
     class Meta:
-        icon = "link-external"
-
-class ChoiceBlock(RequiredMixin, blocks.ChoiceBlock):
-
-    def __init__(self, *args, **kwargs):
-
-        default = kwargs.pop("default", getattr(self, "default", None))
-        label = kwargs.pop("label", getattr(self, "label", None))
-        help_text = kwargs.pop("help_text", getattr(self, "help_text", None))
-        required = kwargs.pop("required", getattr(self, "required", True))
-
-        super().__init__(
-            *args,
-            default=default,
-            label=label,
-            help_text=help_text,
-            required=required,
-            **kwargs
-        )
-
-class CharBlock(RequiredMixin, blocks.CharBlock):
-    pass
-
-class ImageChooserBlock(RequiredMixin, image_blocks.ImageChooserBlock):
-    pass
-
-class TextBlock(RequiredMixin, blocks.TextBlock):
-    pass
+        icon = "link"
