@@ -93,6 +93,7 @@ def is_valid_href(
         "mailto",
         "tel",
     ],
+    relative=True # allow relative links
 ):
 
     result = False
@@ -100,37 +101,43 @@ def is_valid_href(
 
     try:
         parsed_uri = ParsedURI(uri)
-        if not parsed_uri.scheme and parsed_uri.path.startswith("/"):
-            result = validators.url(f"https://example.com/{uri}")
-            raise ParsedError(_("Invalid relative path."))
-        elif not parsed_uri.scheme:
-            # handle missing protocol
-            path = parsed_uri.path.split("/")
-            if validators.domain(path[0]):
-                # uri has domain before any '/' character, assume https
-                parsed_uri.scheme = "https"
-                parsed_uri.netloc = path.pop(0)
-                parsed_uri.path = "/".join(path)
-                uri = parsed_uri.unparse
-            elif validators.email(parsed_uri.path):
-                # path is email address, assume mailto link
-                parsed_uri.scheme = "mailto"
-                uri = parsed_uri.unparse
-            elif parsed_uri.path and re.match(r"^[+\[\] \(\)\-\d,]*$", parsed_uri.path):
-                # path matches phone number, assume tel link
-                parsed_uri.scheme = "tel"
-                uri = parsed_uri.unparse
-            elif parsed_uri.scheme and not parsed_uri.scheme in protocols:
-                raise ParsedError(_(f"{parsed_uri.scheme}: Protocol not supported."))
+
+        if not parsed_uri.scheme:
+            if parsed_uri.path.startswith("/"):
+                # handle relative link - assume http/https
+                if not (relative and any(scheme in ['http', 'https'] for scheme in protocols)): 
+                    raise ParsedError(_("Relative link not permitted."))
+                result = validators.url(f"https://example.com{uri}")
+                if not result:
+                    raise ParsedError(_("Invalid relative path."))
             else:
-                raise ParsedError(
-                    _(
-                        "Unable to determine link type. Please include full link including URI protocol."
+                # handle missing protocol, try https > mailto > tel
+                path = parsed_uri.path.split("/")
+                if validators.domain(path[0]):
+                    # uri has domain before any '/' character, assume https
+                    parsed_uri.scheme = "https"
+                    parsed_uri.netloc = path.pop(0)
+                    parsed_uri.path = "/".join(path)
+                    uri = parsed_uri.unparse
+                elif validators.email(parsed_uri.path):
+                    # path is email address, assume mailto link
+                    parsed_uri.scheme = "mailto"
+                    uri = parsed_uri.unparse
+                elif parsed_uri.path and re.match(r"^[+\[\] \(\)\-\d,]*$", parsed_uri.path):
+                    # path matches phone number, assume tel link
+                    parsed_uri.scheme = "tel"
+                    uri = parsed_uri.unparse
+                elif parsed_uri.scheme and not parsed_uri.scheme in protocols:
+                    raise ParsedError(_(f"{parsed_uri.scheme}: Link type not permitted."))
+                else:
+                    raise ParsedError(
+                        _(
+                            "Unable to determine link type. Please include full link including URI protocol."
+                        )
                     )
-                )
 
         match parsed_uri.scheme:
-            case url if url in ["http", "https", "ftp", "ftps"]:
+            case scheme if scheme in ["http", "https", "ftp", "ftps"]:
                 result = validators.url(uri)
                 if not result:
                     raise ParsedError(_("Invalid URL"))
