@@ -1,20 +1,25 @@
 from django import forms
 from django.utils.functional import cached_property
-from django.utils.translation import gettext_lazy as _
 
 from blocks.wagtail import TextBlock
 from core.widgets import ImportTextAreaWidget
 
 
 class ImportTextBlock(TextBlock):
+    """
+    TextArea block with option to import from file or drag/drop.
+    file_type_filter: any valid accept string
+    https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/accept
+    """
+
     def __init__(
         self,
         required=True,
         help_text=None,
-        rows=1,
+        rows=5,
         max_length=None,
         min_length=None,
-        file_type_filter="",
+        file_type_filter=None,
         validators=(),
         **kwargs
     ):
