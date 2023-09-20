@@ -2,14 +2,29 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import FieldPanel
 from wagtail.fields import StreamField
-from wagtail.models import PreviewableMixin
+from wagtail.models import (
+    PreviewableMixin,
+    DraftStateMixin,
+    RevisionMixin,
+    LockableMixin,
+    WorkflowMixin,
+    TranslatableMixin,
+)
 from wagtail.snippets.models import register_snippet
 
 from .blocks import MenuStreamBlock
 
 
 @register_snippet
-class Menu(PreviewableMixin, models.Model):
+class Menu(
+    PreviewableMixin,
+    WorkflowMixin,
+    DraftStateMixin,
+    LockableMixin,
+    RevisionMixin,
+    TranslatableMixin,
+    models.Model,
+):
     title = models.CharField(max_length=255, verbose_name=_("Menu Title"))
     slug = models.SlugField(unique=True)
     logo = models.ForeignKey(
@@ -18,17 +33,17 @@ class Menu(PreviewableMixin, models.Model):
         blank=True,
         related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name=_("Optional Menu Title Logo")
+        verbose_name=_("Optional Menu Title Logo"),
     )
     items = StreamField(
         MenuStreamBlock(), verbose_name="Menu Items", blank=True, use_json_field=True
     )
 
     panels = [
-        FieldPanel('title'),
-        FieldPanel('slug'),
-        FieldPanel('logo'),
-        FieldPanel('items')
+        FieldPanel("title"),
+        FieldPanel("slug"),
+        FieldPanel("logo"),
+        FieldPanel("items"),
     ]
 
     def __str__(self) -> str:
@@ -36,7 +51,7 @@ class Menu(PreviewableMixin, models.Model):
 
     def get_preview_template(self, request, mode_name):
         return "menu/previews/menu.html"
-    
-    class Meta:
-        verbose_name = _('Menu')
 
+    class Meta:
+        verbose_name = _("Menu")
+        unique_together = ("translation_key", "locale")
