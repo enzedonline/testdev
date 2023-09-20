@@ -8,7 +8,7 @@ register = template.Library()
 @register.filter
 def render_html_table(table_block):
     df = pd.read_csv(
-        StringIO(table_block["data"]["text"]),
+        StringIO(table_block["data"]),
         header=("infer" if table_block["column_headers"] else None),
     )
     # Note: NaN is considered float by pandas, any int column with NaN's will be interpreted as float
