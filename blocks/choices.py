@@ -109,6 +109,7 @@ class BreakpointChoiceBlock(ChoiceBlock):
         ('lg', _("Small, medium and large screens")),
         ('none', _("No breakpoint")),
     ]
+    label = _("Select responsive layout behaviour")
 
 class CodeChoiceBlock(ChoiceBlock):
     choices=[
@@ -205,7 +206,7 @@ class ThreeColumnLayoutChoiceBlock(ChoiceBlock):
         ('1-10-1', _("Left 1, Centre 10, Right 1")),
     ]
 
-class BreakPointChoiceBlock(ChoiceBlock):
+class ColumnBreakPointChoiceBlock(ChoiceBlock):
     choices = [
         ('-', _("Columns side by side on all screen sizes (best for uneven column sizes)")),
         ('-lg', _("Columns side by side on large screen only")),
