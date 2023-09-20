@@ -1,11 +1,8 @@
 from django.db import models
-from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import FieldPanel
 from wagtail.fields import StreamField
 from wagtail.snippets.models import register_snippet
-
-from svg.chooser.widget import SVGChooser
 
 from .blocks import MenuStreamBlock
 
@@ -14,12 +11,12 @@ from .blocks import MenuStreamBlock
 class Menu(models.Model):
     title = models.CharField(max_length=255, verbose_name=_("Menu Title"))
     slug = models.SlugField(unique=True)
-    image = models.ForeignKey(
-        'svg.SVGImage',
+    logo = models.ForeignKey(
+        "wagtailimages.Image",
         null=True,
         blank=True,
+        related_name="+",
         on_delete=models.SET_NULL,
-        related_name='+', 
         verbose_name=_("Optional Menu Title Logo")
     )
     items = StreamField(
@@ -29,17 +26,13 @@ class Menu(models.Model):
     panels = [
         FieldPanel('title'),
         FieldPanel('slug'),
-        FieldPanel('image', widget=SVGChooser),
+        FieldPanel('logo'),
         FieldPanel('items')
     ]
 
     def __str__(self) -> str:
         return self.title
 
-    @property
-    def logo(self):
-        return mark_safe(self.image.svg) if self.image else ''
-    
     class Meta:
         verbose_name = _('Menu')
 

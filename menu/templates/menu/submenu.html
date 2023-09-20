@@ -1,0 +1,21 @@
+{% load wagtailcore_tags wagtailimages_tags menu_tags %}
+{% display_item as show %}
+{% if show %}
+    <li class="nav-item dropdown menustream menustream-{{ menu.slug }}">
+        <a class="nav-link dropdown-toggle menustream menustream-{{ menu.slug }}"
+           href="#"
+           role="button"
+           data-bs-toggle="dropdown"
+           aria-expanded="false">
+            {% if self.icon %}
+                {% image self.icon fill-25x25 %}
+            {% endif %}
+            <div>{{ self.title }}</div>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-{{ breakpoint }}-w20 menustream menustream--{{ menu.slug }}">
+            {% for item in self.links %}
+                {% include_block item with context=context link_type="dropdown-item" link_colour="link-dark" breakpoint=breakpoint submenu=True %}
+            {% endfor %}
+        </ul>
+    </li>
+{% endif %}

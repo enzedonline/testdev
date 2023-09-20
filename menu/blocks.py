@@ -1,30 +1,11 @@
-from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
-from wagtail.blocks import (BooleanBlock, CharBlock, ChoiceBlock, IntegerBlock,
+from wagtail.blocks import (BooleanBlock, CharBlock, IntegerBlock,
                             PageChooserBlock, StreamBlock, StructBlock,
                             StructValue, URLBlock)
+from wagtail.images.blocks import ImageChooserBlock
+from blocks.wagtail import ChoiceBlock
 
-from svg.chooser.block import SVGChooserBlock
-
-class DefaultChoiceBlock(ChoiceBlock):
-
-    def __init__(self, *args, **kwargs):
-
-        default = kwargs.pop("default", getattr(self, "default", None))
-        label = kwargs.pop("label", getattr(self, "label", None))
-        help_text = kwargs.pop("help_text", getattr(self, "help_text", None))
-        required = kwargs.pop("required", getattr(self, "required", True))
-
-        super().__init__(
-            *args,
-            default=default,
-            label=label,
-            help_text=help_text,
-            required=required,
-            **kwargs
-        )
-        
-class DisplayWhenChoiceBlock(DefaultChoiceBlock):        
+class DisplayWhenChoiceBlock(ChoiceBlock):        
     choices=[
         ('ALWAYS', _("Always")),
         ('True', _("When logged in")),
@@ -33,23 +14,14 @@ class DisplayWhenChoiceBlock(DefaultChoiceBlock):
     default='ALWAYS'
     help_text=_("Determines if menu item is only shown if user logged in, logged out or always")
 
-class MenuItemValue(StructValue):
-    @property
-    def svg(self):
-        image = self.get("image")
-        return mark_safe(image.svg) if image else ''
-    
 class MenuStructBlock(StructBlock):
-    image = SVGChooserBlock(
+    icon = ImageChooserBlock(
         required=False,
         label=_("Optional image for display")
     )
     display_when = DisplayWhenChoiceBlock(required=False)
 
-    class Meta:
-        value_class = MenuItemValue
-
-class InternalLinkValue(MenuItemValue):
+class InternalLinkValue(StructValue):
     @property
     def url(self) -> str:
         internal_page = self.get("page")
@@ -71,12 +43,12 @@ class InternalLinkBlock(MenuStructBlock):
     )
 
     class Meta:
-        image = 'doc-empty'
-        template = "link_block.html"
+        icon = 'doc-empty'
+        template = "menu/link_block.html"
         label = _("Link to Internal Page")
         value_class = InternalLinkValue
 
-class ExternalLinkValue(MenuItemValue):
+class ExternalLinkValue(StructValue):
     @property
     def url(self) -> str:
         return self.get("url")
@@ -93,16 +65,20 @@ class ExternalLinkBlock(MenuStructBlock):
     )
 
     class Meta:
-        image = 'link'
-        template = "link_block.html"
+        icon = 'link'
+        template = "menu/link_block.html"
         label = _("Link to External URL")
         value_class = ExternalLinkValue
 
-class AutoFillLinkBlock(StructBlock):
+class AutoFillMenuBlock(MenuStructBlock):
     # @TODO - look at autofilling from routable pages
+    title = CharBlock(
+        max_length=255, 
+        label="Text to Display on Menu"
+    )
     parent_page = PageChooserBlock()
     include_parent_page = BooleanBlock(
-        verbose_name = _("Include Parent Page in Menu"),
+        verbose_name = _("Include Parent Page in Sub-Menu"),
         default=False,
         required=False,
         help_text=_("If selected, linked page will included before auto-filled items followed by dividing line")
@@ -121,7 +97,7 @@ class AutoFillLinkBlock(StructBlock):
             ("title", _("Title (A-Z)")),
         ],
         default="-first_published_at",
-        help_text=_("Choose the order in which to take results")
+        help_text=_("Choose the order in which to show results")
     )
     max_items = IntegerBlock(
         default=4,
@@ -129,19 +105,33 @@ class AutoFillLinkBlock(StructBlock):
         blank=False,
         help_text=_("Maximum results to display in the menu")
     )
-    display_when = DisplayWhenChoiceBlock(required=False)
 
     class Meta:
-        image = 'list-ul'
-        template = "autolink_block.html"
-        label = _("Auto-fill Internal Page Links")
+        icon = 'list-ul'
+        template = "menu/autolink_menu.html"
+        label = _("Auto-fill Page Links Sub-Menu")
+
+class AutoFillSubmenuBlock(AutoFillMenuBlock):
+    open_direction = ChoiceBlock(
+        choices=[
+            ("end", _("Open items to the right")),
+            ("start", _("Open items to the left")),
+        ],
+        default="start",
+        help_text=_("Choose submenu direction.")
+    )
+
+    class Meta:
+        icon = 'list-ul'
+        template = "menu/autolink_submenu.html"
+        label = _("Auto-fill Page Links Sub-Menu")
 
 class LinksBlock(StreamBlock):
     internal_link = InternalLinkBlock()
     external_link = ExternalLinkBlock()
-    autofill_links = AutoFillLinkBlock()
+    autofill_submenu = AutoFillSubmenuBlock()
 
-class SubMenuStructBlock(MenuStructBlock):
+class SubMenuBlock(MenuStructBlock):
     title = CharBlock(
         max_length=255, 
         label="Text to Display on Menu"
@@ -149,13 +139,12 @@ class SubMenuStructBlock(MenuStructBlock):
     links = LinksBlock()
 
     class Meta:
-        image = 'folder-open-1'
-        template = "submenu.html"
+        icon = 'folder-open-1'
+        template = "menu/submenu.html"
         label = _("Sub Menu")
 
 class MenuStreamBlock(StreamBlock):
     internal_link = InternalLinkBlock()
     external_link = ExternalLinkBlock()
-    autofill_links = AutoFillLinkBlock()
-    sub_menu = SubMenuStructBlock()
-
+    autofill_menu = AutoFillMenuBlock()
+    sub_menu = SubMenuBlock()
