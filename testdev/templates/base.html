@@ -34,7 +34,7 @@
     <body class="{% block body_class %}{% endblock body_class %}">
         {% comment %} {% wagtailuserbar %} {% endcomment %}
 
-        {% include "menu/menu.html" %}
+        {% include "menu/menu.html" with menu_slug="main-menu" %}
 
         {% block content %}{% endblock content %}
 

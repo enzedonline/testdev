@@ -1,7 +1,7 @@
 {% load static wagtailcore_tags wagtailimages_tags menu_tags %}
 
-{% comment %} replace main-menu with your menu slug {% endcomment %}
-{% load_menu 'main-menu' as menu %}
+{% comment %} pass menu_slug in context {% endcomment %}
+{% load_menu menu_slug as menu %}
 
 <link rel="stylesheet" type="text/css" href="{% static 'css/menu.css' %}"/>
 
