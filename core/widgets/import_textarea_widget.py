@@ -1,15 +1,15 @@
+# core/widgets/import_textarea_widget.py
+
 from django import forms
 from django.template.loader import render_to_string
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.widgets import AdminAutoHeightTextInput
 
+
 class ImportTextAreaWidget(AdminAutoHeightTextInput):
-    def __init__(self, file_type_filter="", attrs={}):
-        self.file_type_filter = file_type_filter
-        self.accepts = (
-            f'accept="{self.file_type_filter}"' if self.file_type_filter else ""
-        )
+    def __init__(self, file_type_filter=None, attrs={}):
+        self.accept = file_type_filter
         if not attrs.get("rows"):
             attrs["rows"] = 5
         super().__init__(attrs)
@@ -24,13 +24,11 @@ class ImportTextAreaWidget(AdminAutoHeightTextInput):
             "id": f'{attrs.get("id")}',
             "label": self.msg["button_label"],
             "help": self.msg["help"],
-            "accepts": self.accepts,
+            "accept": self.accept,
         }
-        return super().render(
-                name, value, attrs, renderer
-            ) + render_to_string(
-                "widgets/import_textarea_widget.html", context
-            )
+        return super().render(name, value, attrs, renderer) + render_to_string(
+            "widgets/import_textarea_widget.html", context
+        )
 
     @cached_property
     def media(self):
