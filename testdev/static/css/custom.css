@@ -18,6 +18,12 @@ html {
   scroll-padding-top: 5rem;
 }
 
+article::before {
+  content: '';
+  display: block;
+  height: 2rem;
+}
+
 body {
   margin: 0;
   font-family: var(--font-family-body);
