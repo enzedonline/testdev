@@ -122,9 +122,7 @@ class AutoFillSubmenuBlock(AutoFillMenuBlock):
     )
 
     class Meta:
-        icon = 'list-ul'
         template = "menu/autolink_submenu.html"
-        label = _("Auto-fill Page Links Sub-Menu")
 
 class LinksBlock(StreamBlock):
     internal_link = InternalLinkBlock()
@@ -134,7 +132,7 @@ class LinksBlock(StreamBlock):
 class SubMenuBlock(MenuStructBlock):
     title = CharBlock(
         max_length=255, 
-        label="Text to Display on Menu"
+        label=_("Text to Display on Menu")
     )
     links = LinksBlock()
 
