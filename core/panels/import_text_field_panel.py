@@ -1,74 +1,49 @@
-from bs4 import BeautifulSoup
 from django.core.exceptions import ImproperlyConfigured
-from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import FieldPanel
+from core.widgets import ImportTextAreaWidget
+from django.db.models.fields import TextField
 
-
-class ImportTextFieldPanel(FieldPanel):
+class ImportTextAreaPanel(FieldPanel):
     """
     TextArea form field with option to import from file or drag/drop.
     file_type_filter: any valid accept string
     https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/accept
     """
 
-    def __init__(self, field_name, file_type_filter=None, *args, **kwargs):
+    def __init__(
+        self,
+        field_name,
+        disable_comments=None,
+        permission=None,
+        read_only=False,
+        file_type_filter=None,
+        **kwargs,
+    ):
+        kwargs.update({'widget': ImportTextAreaWidget(file_type_filter=file_type_filter)})
         self.file_type_filter = file_type_filter
-        super().__init__(field_name, *args, **kwargs)
+        super().__init__(
+            field_name = field_name, 
+            disable_comments = disable_comments,
+            permission = permission,
+            read_only = read_only,
+            **kwargs
+            )
 
     def clone_kwargs(self):
         kwargs = super().clone_kwargs()
         kwargs.update(
-            file_type_filter=self.file_type_filter,
+            field_name=self.field_name,
+            disable_comments=self.disable_comments,
+            permission=self.permission,
+            read_only=self.read_only,
+            file_type_filter = self.file_type_filter,
         )
-        return kwargs
+        return kwargs        
 
-    class BoundPanel(FieldPanel.BoundPanel):
-        def __init__(self, **kwargs):
-            super().__init__(**kwargs)
-            self.accepts = (
-                f'accept="{self.panel.file_type_filter}" '
-                if self.panel.file_type_filter
-                else ""
+    def on_model_bound(self):
+        if not isinstance(self.db_field, TextField):
+            raise ImproperlyConfigured(
+                _("ImportTextFieldPanel should only be used with TextFields")
             )
-
-        msg = {
-            "file_label": _("Use 'Choose File' or drag/drop to import data from file."),
-        }
-
-        @mark_safe
-        def render_html(self, parent_context=None):
-            html = super().render_html(parent_context)
-            soup = BeautifulSoup(html, "html.parser")
-            text_area = soup.find("textarea")
-            if not text_area:
-                raise ImproperlyConfigured(
-                    _("ImportTextFieldPanel should only be used with TextFields")
-                )
-            text_area["class"] = text_area.get("class", []) + ["import_text_area"]
-            wrapper = soup.find(attrs={"data-field-wrapper": True})
-            wrapper["data-field-wrapper"] = self.id_for_label()
-            wrapper.append(self.import_text_field_button())
-            wrapper.append(self.initialise_panel())
-            return str(soup)
-
-        def import_text_field_button(self):
-            return BeautifulSoup(
-                """
-                <div class="textarea-fileinput-container">
-                    <input type="file" class="textarea-fileinput"
-                     """ + self.accepts + """ 
-                    />
-                    <span class="help">
-                    """ + self.msg["file_label"] + """
-                    </span> 
-                </div>
-                """,
-                "html.parser",
-            )
-
-        def initialise_panel(self):
-            return BeautifulSoup(
-                f'<script>new ImportTextFieldPanel("{self.id_for_label()}")</script>',
-                "html.parser",
-            )
+        return super().on_model_bound()
