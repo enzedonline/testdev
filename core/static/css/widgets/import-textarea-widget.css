@@ -1,7 +1,7 @@
 /* static/css/import_textarea_widget.css */
 
-div.w-field--import_text_area_widget textarea {
-    overflow-x: hidden !important;
+.import-textarea {
+    overflow: hidden auto !important;
     max-height: 25em;
 }
 
@@ -9,14 +9,14 @@ div.w-field--import_text_area_widget textarea {
     padding-top: 1em;
     display: flex;
     align-items: center;
-    flex-wrap: wrap;
 }
 
-.import-textarea-fileinput-container>label {
+.import-textarea-fileinput-container > label {
     cursor: pointer;
     font-weight: 600;
+    flex-shrink: 0;
 }
 
-.import-textarea-fileinput-container>span {
+.import-textarea-fileinput-container > span {
     margin-left: 2em;
 }
