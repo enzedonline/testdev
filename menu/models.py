@@ -3,17 +3,17 @@ from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import FieldPanel
 from wagtail.fields import StreamField
 from wagtail.models import (DraftStateMixin, LockableMixin, PreviewableMixin,
-                            RevisionMixin, TranslatableMixin, WorkflowMixin)
+                            RevisionMixin, WorkflowMixin)
 from wagtail.snippets.models import register_snippet
 
 from .blocks import MenuStreamBlock
 
 BREAKPOINT_CHOICES = (
-    # ('none', _("No breakpoint (always collapsed)")),
-    # ('sm', _("Mobile screens only (<576px)")),
-    ('md', _("Small Screens (<768px)")),
-    ('lg', _("Medium Screens (<992px)")),
-    # ('xl', _("Extra Large (<1200px)")),
+    # ("none", _("No breakpoint (always collapsed)")),
+    # ("sm", _("Mobile screens only (<576px)")),
+    ("md", _("Small Screens (<768px)")),
+    ("lg", _("Medium Screens (<992px)")),
+    # ("xl", _("Extra Large (<1200px)")),
 )
 
 @register_snippet
@@ -23,7 +23,6 @@ class Menu(
     DraftStateMixin,
     LockableMixin,
     RevisionMixin,
-    TranslatableMixin,
     models.Model,
 ):
     title = models.CharField(max_length=255, verbose_name=_("Menu Title"))
@@ -42,10 +41,10 @@ class Menu(
     breakpoint = models.CharField(
         max_length=4,
         choices=BREAKPOINT_CHOICES,
-        default='lg', 
-        blank=False, 
-        null=True,  
-        verbose_name=_("Mobile Layout Breakpoint")
+        default="lg",
+        blank=False,
+        null=True,
+        verbose_name=_("Mobile Layout Breakpoint"),
     )
 
     panels = [
@@ -64,4 +63,3 @@ class Menu(
 
     class Meta:
         verbose_name = _("Menu")
-        unique_together = ("translation_key", "locale")
