@@ -2,8 +2,8 @@
 {% display_item as show %}
 {% if show %}
     {% get_autofill_pages as links %}
-    <li class="nav-item dropdown menustream menustream-{{ menu.slug }}">
-        <a class="nav-link dropdown-toggle menustream menustream-{{ menu.slug }}"
+    <li class="nav-item dropdown menustream menustream-{{ menu.breakpoint }} menustream-{{ menu.slug }}">
+        <a class="nav-link dropdown-toggle menustream menustream-{{ menu.breakpoint }} menustream-{{ menu.slug }}"
            href="#"
            role="button"
            data-bs-toggle="dropdown"
@@ -13,7 +13,7 @@
             {% endif %}
             <div>{{ self.title }}</div>
         </a>
-        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-{{ menu.breakpoint }}-w20 menustream menustream-{{ menu.slug }}">
+        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-w20 menustream menustream-{{ menu.breakpoint }} menustream-{{ menu.slug }}">
             {% include "menu/autolink_block.html" %}
         </ul>
     </li>

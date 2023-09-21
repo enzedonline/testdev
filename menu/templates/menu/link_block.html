@@ -1,8 +1,8 @@
 {% load menu_tags wagtailimages_tags %}
 {% link_appearance as link %}
 {% if link.show %}
-    <li class="{{ link_type }} menustream menustream-{{ menu.slug }} {{ link.active }}">
-        <a class="nav-link menustream menustream-{{ menu.slug }} {{ link.active }}"
+    <li class="{{ link_type }} menustream menustream-{{ menu.breakpoint }} menustream-{{ menu.slug }} {{ link.active }}">
+        <a class="nav-link menustream menustream-{{ menu.breakpoint }} menustream-{{ menu.slug }} {{ link.active }}"
            href="{{ self.url }}" title="{{ self.title }}">
             {% if self.icon %}
                 {% image self.icon fill-25x25 %}

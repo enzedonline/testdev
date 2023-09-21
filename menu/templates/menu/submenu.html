@@ -1,8 +1,8 @@
 {% load wagtailcore_tags wagtailimages_tags menu_tags %}
 {% display_item as show %}
 {% if show %}
-    <li class="nav-item dropdown menustream menustream-{{ menu.slug }}">
-        <a class="nav-link dropdown-toggle menustream menustream-{{ menu.slug }}"
+    <li class="nav-item dropdown menustream menustream-{{ menu.breakpoint }} menustream-{{ menu.slug }}">
+        <a class="nav-link dropdown-toggle menustream menustream-{{ menu.breakpoint }} menustream-{{ menu.slug }}"
            href="#"
            role="button"
            data-bs-toggle="dropdown"
@@ -12,7 +12,7 @@
             {% endif %}
             <div>{{ self.title }}</div>
         </a>
-        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-{{ menu.breakpoint }}-w20 menustream menustream--{{ menu.slug }}">
+        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-w20 menustream menustream-{{ menu.breakpoint }} menustream-{{ menu.slug }}">
             {% for item in self.links %}
                 {% include_block item with link_type="dropdown-item" link_colour="link-dark" submenu=True %}
             {% endfor %}

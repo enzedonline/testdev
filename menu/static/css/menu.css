@@ -35,12 +35,12 @@
   color: linen;
 }
 
-.nav-link.menustream img {
-  margin: 0 0.2em 0.2em 0;
-}
-
 .nav-link.menustream div {
   display: inline-block;
+}
+
+.nav-link.menustream img {
+  margin-right: .5em;
 }
 
 /* dropdown-menu */
@@ -49,60 +49,42 @@
   width: auto;
 }
 
-@media (min-width: 768px) {
-  .dropdown-menu-md-w20 {
-    width: max-content !important;
-    max-width: 20rem;
-  }
-}
-
-@media (min-width: 992px) {
-  .dropdown-menu-lg-w20 {
-    width: max-content !important;
-    max-width: 20rem;
-  }
-}
-
 /* dropdown-item */
 .dropdown-item.menustream {
   white-space: unset;
   padding-bottom: 0.5em;
+  padding-left: 1.5rem;
   line-height: 1.2;
   font-weight: 500;
+  display:flex;
+  align-items: center;
 }
 
 .dropdown-item.menustream.active {
   background-color: lightslategray;
 }
 
-.dropdown-item.menustream .nav-link img {
-  margin-right: 0.8rem;
-}
-
-.dropdown-item.menustream a.nav-link {
+.dropdown-item.menustream .nav-link {
   color: var(--bs-dark);
   padding: unset;
-}
-
-.dropdown-item.menustream a.nav-link.active {
-  color: unset;
-  border-bottom-style: unset;
-}
-
-.dropdown-item.menustream .nav-link {
   display: flex;
   align-items: center;
+}
+
+.dropdown-item.menustream .nav-link.active {
+  color: unset;
+  border-bottom-style: unset;
 }
 
 .dropdown-item.menustream .nav-link:hover {
   color: unset;
 }
 
-/* dropend dropstart */
-.dropend.menustream .dropdown-toggle::after {
-  position: absolute;
-  right: 1rem;
+.dropdown-item.menustream img {
+  margin-right: 0.5em;
 }
+
+/* dropend dropstart */
 
 .dropstart.menustream a[role="button"],
 .dropend.menustream a[role="button"] {
@@ -110,121 +92,127 @@
   align-items: center;
 }
 
-.dropstart.menustream a[role="button"] img,
-.dropend.menustream a[role="button"] img {
-  margin-right: 0.8rem;
-}
-
 .dropstart.menustream a[role="button"] div,
 .dropend.menustream a[role="button"] div {
   display: inline-block;
 }
 
+/* pre-breakpoint */
+.dropstart.menustream .dropdown-toggle::before {
+  display: none;
+}
 
+.dropstart.menustream .dropdown-toggle::after,
+.dropend.menustream .dropdown-toggle::after {
+  display: inline-block;
+  border-top: .4em solid;
+  border-right: .4em solid transparent;
+  border-bottom: 0;
+  border-left: .4em solid transparent;
+}
+
+.dropstart.menustream .dropdown-menu,
+.dropend.menustream .dropdown-menu {
+  width: 90%;
+  margin-left: 5%;
+  margin-bottom: 1em;
+}
+
+/* above breakpoint */
 @media (min-width: 768px) {
 
-  .dropstart-md .dropdown-toggle::before {
-    margin-left: -0.7rem;
+  .nav-item.menustream-md {
+    display: flex;
+  }
+
+  .nav-link.menustream-md {
+    display: flex;
+    align-items: center;
+    line-height: 1.2;
+  }
+
+  .dropstart.menustream-md .dropdown-toggle::before {
+    margin-right: 10px;
+    margin-left: -18px;
     width: 0.5em;
     height: 0.5em;
     border-top: 0.4em solid transparent;
     border-right: 0.4em solid;
     border-bottom: 0.4em solid transparent;
+    display: inline-block;
   }
 
-  
-  .dropend-md .dropdown-toggle::after {
+  .dropstart.menustream-md .dropdown-toggle::after {
+    display: none;
+  }
+
+  .dropend.menustream-md .dropdown-toggle::after {
     border-top: 0.4em solid transparent;
     border-right: 0;
     border-bottom: 0.4em solid transparent;
     border-left: 0.4em solid;
   }
 
-  .dropstart-md .dropdown-menu[data-bs-popper] {
+  .dropstart.menustream-md .dropdown-menu[data-bs-popper] {
     margin-right: -5px;
   }
 
-  .dropend-md .dropdown-menu[data-bs-popper] {
+  .dropend.menustream-md .dropdown-menu[data-bs-popper] {
     margin-left: -5px;
+  }
+
+  .menustream.dropdown-menu-w20 {
+    width: max-content !important;
+    max-width: 20rem;
   }
 
 }
 
 @media (min-width: 992px) {
 
-  .dropstart-lg .dropdown-toggle::before {
-    margin-left: -0.7rem;
+  .nav-item.menustream-lg {
+    display: flex;
+  }
+
+  .nav-link.menustream.menustream-lg {
+    display: flex;
+    align-items: center;
+    line-height: 1.2;
+  }
+
+  .dropstart.menustream-lg .dropdown-toggle::before {
+    margin-right: 10px;
+    margin-left: -18px;
     width: 0.5em;
     height: 0.5em;
     border-top: 0.4em solid transparent;
     border-right: 0.4em solid;
     border-bottom: 0.4em solid transparent;
+    display: inline-block;
   }
 
-  
-  .dropend-lg .dropdown-toggle::after {
+  .dropstart.menustream-lg .dropdown-toggle::after {
+    display: none;
+  }
+
+  .dropend.menustream-lg .dropdown-toggle::after {
     border-top: 0.4em solid transparent;
     border-right: 0;
     border-bottom: 0.4em solid transparent;
     border-left: 0.4em solid;
   }
 
-  .dropstart-lg .dropdown-menu[data-bs-popper] {
+  .dropstart.menustream-lg .dropdown-menu[data-bs-popper] {
     margin-right: -5px;
   }
 
-  .dropend-lg .dropdown-menu[data-bs-popper] {
+  .dropend.menustream-lg .dropdown-menu[data-bs-popper] {
     margin-left: -5px;
   }
 
-}
-
-@media (max-width: 767.98px) {
-  .dropstart-md .dropdown-toggle::before {
-    display: none;
+  .menustream-lg.dropdown-menu-w20 {
+    width: max-content !important;
+    max-width: 20rem;
   }
 
-  .dropstart-md .dropdown-toggle::after,
-  .dropend-md .dropdown-toggle::after {
-    display: inline-block;
-    margin-left: .255em;
-    vertical-align: .255em;
-    content: "";
-    border-top: .3em solid;
-    border-right: .3em solid transparent;
-    border-bottom: 0;
-    border-left: .3em solid transparent;
-  }
-
-  .dropstart .dropdown-menu-md-w20,
-  .dropend .dropdown-menu-md-w20 {
-    width: 90% !important;
-    margin-left: 5% !important;
-    margin-bottom: 1rem;
-  }
-}
-
-@media (max-width: 991.98px) {
-  .dropstart-lg .dropdown-toggle::before {
-    display: none;
-  }
-
-  .dropstart-lg .dropdown-toggle::after,
-  .dropend-lg .dropdown-toggle::after {
-    display: inline-block;
-    margin-left: .255em;
-    vertical-align: .255em;
-    content: "";
-    border-top: .3em solid;
-    border-right: .3em solid transparent;
-    border-bottom: 0;
-    border-left: .3em solid transparent;
-  }
-
-  .dropstart .dropdown-menu-lg-w20,
-  .dropend .dropdown-menu-lg-w20 {
-    width: 90% !important;
-    margin-left: 5% !important;
-    margin-bottom: 1rem;
-  }
 }
