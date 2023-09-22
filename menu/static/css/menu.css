@@ -52,8 +52,7 @@
 /* dropdown-item */
 .dropdown-item.menustream {
   white-space: unset;
-  padding-bottom: 0.5em;
-  padding-left: 1.5rem;
+  padding: 0.25em 1em 0.25em 1.5rem;
   line-height: 1.2;
   font-weight: 500;
   display:flex;
@@ -161,7 +160,7 @@
     margin-left: -5px;
   }
 
-  .menustream.dropdown-menu-w20 {
+  .menustream-md.dropdown-menu-w20 {
     width: max-content !important;
     max-width: 20rem;
   }
