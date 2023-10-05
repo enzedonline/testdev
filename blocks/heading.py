@@ -1,7 +1,7 @@
-from django.utils.translation import gettext_lazy as _
 import unidecode
 from django.forms.utils import ErrorList
 from django.utils.text import slugify
+from django.utils.translation import gettext_lazy as _
 from wagtail.blocks import CharBlock, StructBlock
 from wagtail.blocks.struct_block import StructBlockValidationError
 
