@@ -10,18 +10,28 @@ from wagtail.fields import RichTextField, StreamField
 from wagtail.models import Orderable, Page
 
 from blocks.models import (CollapsibleCardBlock, CSVTableBlock,
-                           ExternalLinkEmbedBlock, FlexCardBlock, ImportTextBlock,
-                           LinkBlock)
+                           ExternalLinkEmbedBlock, FlexCardBlock,
+                           ImportTextBlock, LinkBlock)
 from core.forms import RestrictedPanelsAdminPageForm
-from core.panels import (ImportTextFieldPanel, M2MChooserPanel, RegexPanel,
+from core.panels import (ImportTextAreaPanel, M2MChooserPanel, RegexPanel,
                          RestrictedFieldPanel, RestrictedInlinePanel,
                          UtilityPanel)
 from core.utils import count_words, get_streamfield_text
+from core.widgets.import_textarea_widget import ImportTextAreaWidget
 from product.blocks import ProductChooserBlock
 
-# from core.widgets.icon_snippet_chooser import IconPreviewSnippetChooser
 from .categories import BlogCategory
-from core.widgets.import_textarea_widget import ImportTextAreaWidget
+
+class BlogIndex(Page):
+    parent_page_types = ['home.HomePage']
+    subpage_types = ['blog.BlogPage']
+    max_count = 1
+
+    intro = RichTextField()
+
+    content_panels = Page.content_panels + [
+        FieldPanel("intro"),
+    ]
 
 class CarouselImages(Orderable):
     """Between 1 and 5 images for the blog page carousel."""
@@ -59,8 +69,9 @@ class CarouselImages(Orderable):
     class Meta(Orderable.Meta):
         verbose_name = "Carousel Image"
 
-
 class BlogPage(Page):
+    parent_page_types = ['blog.BlogIndex']
+    subpage_types = []
     wordcount = models.IntegerField(
         null=True, blank=True, verbose_name="Word Count", default=0
     )
@@ -144,7 +155,8 @@ class BlogPage(Page):
         # ),
         # RestrictedFieldPanel('some_date'),
         # RestrictedFieldPanel('some_text'),
-        # FieldPanel('some_text_area', widget=ImportTextAreaWidget),
+        # FieldPanel('some_text_area', widget=ImportTextAreaWidget(file_type_filter='.csv')),
+        # ImportTextAreaPanel('some_text_area', file_type_filter='.csv'),
         # RestrictedFieldPanel('some_choice_field'),
         # RestrictedFieldPanel('some_rich_text'),
         # RestrictedFieldPanel('some_image'),
