@@ -4,6 +4,10 @@ from wagtail.models import Page
 from blocks.models import CSVTableBlock, ParsedRichTextBlock, ImportTextBlock
 
 class HomePage(Page):
+    template = 'home/home_page.html'
+    parent_page_types = []
+    max_count = 1
+	
     intro = RichTextField(blank=True, null=True)
     content = StreamField(
         [
