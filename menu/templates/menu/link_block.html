@@ -1,6 +1,6 @@
 {% load menu_tags wagtailimages_tags %}
 {% link_appearance as link %}
-{% if link.show %}
+{% if link.show and self.url %}
     <li class="{{ link_type }} menustream menustream-{{ menu.breakpoint }} menustream-{{ menu.slug }} {{ link.active }}">
         <a class="nav-link menustream menustream-{{ menu.breakpoint }} menustream-{{ menu.slug }} {{ link.active }}"
            href="{{ self.url }}" title="{{ self.title }}">

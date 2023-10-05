@@ -1,9 +1,8 @@
 from django.utils.translation import gettext_lazy as _
 from wagtail.blocks import (BooleanBlock, CharBlock, IntegerBlock,
-                            PageChooserBlock, StreamBlock, StructBlock,
+                            StreamBlock, StructBlock,
                             StructValue, URLBlock)
-from wagtail.images.blocks import ImageChooserBlock
-from blocks.wagtail import ChoiceBlock
+from blocks.wagtail import ChoiceBlock, ImageChooserBlock, PageChooserBlock
 
 class DisplayWhenChoiceBlock(ChoiceBlock):        
     choices=[
@@ -17,6 +16,7 @@ class DisplayWhenChoiceBlock(ChoiceBlock):
 class MenuStructBlock(StructBlock):
     icon = ImageChooserBlock(
         required=False,
+        widget_attrs={"show_edit_link":False},
         label=_("Optional image for display")
     )
     display_when = DisplayWhenChoiceBlock(required=False)
@@ -24,17 +24,17 @@ class MenuStructBlock(StructBlock):
 class InternalLinkValue(StructValue):
     @property
     def url(self) -> str:
-        internal_page = self.get("page")
-        return internal_page.localized.url
+        page = self.get("page")
+        return page.url if page else ''
 
     @property
     def title(self) -> str:
         display_title = self.get("display_title")
         page = self.get("page")
-        return display_title or page.localized.title
+        return display_title or page.title if page else ''
     
 class InternalLinkBlock(MenuStructBlock):
-    page = PageChooserBlock()
+    page = PageChooserBlock(widget_attrs={"show_edit_link":False})
     display_title = CharBlock(
         max_length=255, 
         required=False,
@@ -45,8 +45,9 @@ class InternalLinkBlock(MenuStructBlock):
     class Meta:
         icon = 'doc-empty'
         template = "menu/link_block.html"
-        label = _("Link to Internal Page")
         value_class = InternalLinkValue
+        label = _("Link to Internal Page")
+        label_format = label + ": {page}"
 
 class ExternalLinkValue(StructValue):
     @property
@@ -68,6 +69,7 @@ class ExternalLinkBlock(MenuStructBlock):
         icon = 'link'
         template = "menu/link_block.html"
         label = _("Link to External URL")
+        label_format = label + ": {title} ({url})"
         value_class = ExternalLinkValue
 
 class AutoFillMenuBlock(MenuStructBlock):
@@ -109,13 +111,15 @@ class AutoFillMenuBlock(MenuStructBlock):
     class Meta:
         icon = 'list-ul'
         template = "menu/autolink_menu.html"
-        label = _("Auto-fill Page Links Sub-Menu")
+        label = _("Auto Links Sub-Menu")
+        label_format = label + ": {title} ({parent_page})"
 
 class AutoFillSubmenuBlock(AutoFillMenuBlock):
     open_direction = ChoiceBlock(
         choices=[
             ("end", _("Open items to the right")),
             ("start", _("Open items to the left")),
+            ("inline", _("Expand submenu inline (accordian)")),
         ],
         default="start",
         help_text=_("Choose submenu direction.")
@@ -123,7 +127,7 @@ class AutoFillSubmenuBlock(AutoFillMenuBlock):
 
     class Meta:
         template = "menu/autolink_submenu.html"
-
+    
 class LinksBlock(StreamBlock):
     internal_link = InternalLinkBlock()
     external_link = ExternalLinkBlock()
@@ -140,6 +144,7 @@ class SubMenuBlock(MenuStructBlock):
         icon = 'folder-open-1'
         template = "menu/submenu.html"
         label = _("Sub Menu")
+        label_format = label + ": {title}"
 
 class MenuStreamBlock(StreamBlock):
     internal_link = InternalLinkBlock()

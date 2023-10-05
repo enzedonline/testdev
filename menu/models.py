@@ -7,6 +7,8 @@ from wagtail.models import (DraftStateMixin, LockableMixin, PreviewableMixin,
 from wagtail.snippets.models import register_snippet
 
 from .blocks import MenuStreamBlock
+from wagtail.images.widgets import AdminImageChooser
+
 
 BREAKPOINT_CHOICES = (
     # ("none", _("No breakpoint (always collapsed)")),
@@ -50,7 +52,7 @@ class Menu(
     panels = [
         FieldPanel("title"),
         FieldPanel("slug"),
-        FieldPanel("logo"),
+        FieldPanel("logo", widget=AdminImageChooser(show_edit_link=False)),
         FieldPanel("breakpoint"),
         FieldPanel("items"),
     ]

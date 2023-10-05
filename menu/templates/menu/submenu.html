@@ -14,7 +14,7 @@
         </a>
         <ul class="dropdown-menu dropdown-menu-end dropdown-menu-w20 menustream menustream-{{ menu.breakpoint }} menustream-{{ menu.slug }}">
             {% for item in self.links %}
-                {% include_block item with link_type="dropdown-item" link_colour="link-dark" submenu=True %}
+                {% include_block item with link_type="dropdown-item" link_colour="link-dark" %}
             {% endfor %}
         </ul>
     </li>
