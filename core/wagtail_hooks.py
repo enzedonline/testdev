@@ -191,9 +191,11 @@ def register_admin_js():
 
 @hooks.register('insert_global_admin_css')
 def register_admin_css():
+    admin_css = static('css/admin.css')
     import_text_field_css = static('css/import_text_field.css')
     m2m_chooser_css = static('css/m2m_chooser.css')
     return mark_safe(
+        f'<link rel="stylesheet" href="{admin_css}">' +
         f'<link rel="stylesheet" href="{import_text_field_css}">' +
         f'<link rel="stylesheet" href="{m2m_chooser_css}">'
     )
