@@ -2,8 +2,9 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import FieldPanel
 from wagtail.fields import StreamField
-from wagtail.models import (DraftStateMixin, LockableMixin, PreviewableMixin,
-                            RevisionMixin, WorkflowMixin)
+from wagtail.models import (DraftStateMixin, Locale, LockableMixin,
+                            PreviewableMixin, RevisionMixin,
+                            WorkflowMixin)
 from wagtail.snippets.models import register_snippet
 
 from .blocks import MenuStreamBlock
