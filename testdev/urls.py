@@ -27,6 +27,7 @@ if settings.DEBUG:
 
     # Serve static and media files from development server
     urlpatterns += staticfiles_urlpatterns()
+    urlpatterns += static(r'/favicon.ico', document_root='static/favicon.ico')
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += [
         re_path(r'^403/$', default_views.permission_denied, kwargs={'exception': Exception("Permission Denied")}),
