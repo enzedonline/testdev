@@ -217,3 +217,8 @@ def register_image_operations():
     return [
         ('thumbnail', ThumbnailOperation)
     ]
+
+@hooks.register("register_icons")
+def register_icons(icons):
+    return icons + ['icons/downward-chevron.svg']
+    
