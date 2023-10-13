@@ -1,0 +1,73 @@
+<div class="product-category-chooser">
+    {% with category=self.instance.category %}
+        <div class="chooser__title product-category-chooser-chosen{% if not category %} hide{% endif %}">
+            {% if category %}{{ category.department.name }} - {{ category.name }}{% endif %}
+        </div>
+        <button type="button"
+                class="button button-small button-secondary chooser__choose-button open-modal-button">
+            <span class="select-category{% if category %} hide{% endif %}">{{ opts.select_button_text }}</span>
+            <span class="change-category{% if not category %} hide{% endif %}">{{ opts.change_button_text }}</span>
+        </button>
+    {% endwith %}
+</div>
+<!-- product-category Field Panel Modal form -->
+<div class="modal-backdrop product-category-chooser-modal">
+    <div class="modal-content modal-body modal-form">
+        <header class="w-header w-header--merged">
+            <div>
+                <div class="left">
+                    <div class="col modal-banner">
+                        <svg class="icon modal-icon" aria-hidden="true">
+                            <use href="#icon-tasks"></use>
+                        </svg>
+                        <h2 class="w-header__title modal-heading" id="header-title">{{ self.heading }}</h2>
+                    </div>
+                </div>
+                <div class="right modal-dismiss-container">
+                    <button type="button"
+                            class="button button--icon text-replace modal-dismiss"
+                            title="{{ opts.cancel_text }}">
+                        <svg class="icon icon-cross" aria-hidden="true">
+                            <use href="#icon-cross"></use>
+                        </svg>
+                        {{ opts.cancel_text }}
+                    </button>
+                </div>
+            </div>
+        </header>
+        <div class="modal-body product-category-chooser-modal-body">
+            <div class="modal-search-container">
+                <input type="text"
+                       placeholder="{{ opts.search_text }} {{ self.heading }}"
+                       class="modal-search" />
+                <a role="button" title="{{ opts.clear_filter_text }}">
+                    <svg class="modal-search-dismiss icon icon-cross" aria-hidden="true">
+                        <use href="#icon-cross"></use>
+                    </svg>
+                </a>
+            </div>
+            <div class="selection-panel-container">
+                <div class="selection-panel">
+                    {% for department in category_index %}
+                        <div class="department" aria-expanded="false" data-department-name={{ department.name }}>
+                            <div class="department-banner">
+                                <svg class="icon icon-placeholder w-panel__icon" aria-hidden="true">
+                                    <use href="#icon-downward-chevron"></use>
+                                </svg>
+                                <h2 class="department-label w-panel__heading--label">{{ department.name }}</h2>
+                            </div>
+                            <ul class="category-list">
+                                {% for category in department.categories %}
+                                    <li class="category-label" data-category-id={{ category.id }}>
+                                        {{ category.name }}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>new productCategoryChooser("{{ opts.field_id }}");</script>
