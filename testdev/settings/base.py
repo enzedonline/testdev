@@ -189,7 +189,7 @@ WAGTAILADMIN_RICH_TEXT_EDITORS = {
         'OPTIONS': {
             'features': [
                 'h2', 'h3', 'h4', 'h5', 'h6', 'bold', 'italic', 'ol', 'ul',
-                'link', 'hr', 'document-link', 
+                'link', 'hr', 'document-link', 'help-text',
                 'underline', 'small', 'code', 'fa', 'checklist', 
                 'quoteblock', 'left-align', 'centre-align', 'right-align', 'code-block'
                 ]

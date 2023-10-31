@@ -27,14 +27,18 @@ def link_appearance(context):
 @register.simple_tag(takes_context=True)
 def get_autofill_pages(context):
     autofill_block = context['self']
+    links=[]
 
     try:
         authenticated = context['request'].user.is_authenticated
     except: # 500 error has no request
         authenticated = False
 
-    parent_page = autofill_block['parent_page'].localized
-    links=[]
+    parent_page = autofill_block['parent_page']
+    if not parent_page:
+        return []
+    else:
+        parent_page = parent_page.localized
 
     # include parent page if selected and if matches restriction (just assume exists=private here)
     if autofill_block['include_parent_page']:

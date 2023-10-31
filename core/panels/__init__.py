@@ -1,3 +1,4 @@
+from .field_panel import FieldPanel
 from .utility_panel import UtilityPanel
 from .restricted_panels import RestrictedFieldPanel, RestrictedInlinePanel
 from .import_text_field_panel import ImportTextAreaPanel

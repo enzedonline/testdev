@@ -1,6 +1,9 @@
+from bs4 import BeautifulSoup
 from django import forms
+from django.contrib.auth.models import User
 from django.db import models
 from django.utils.functional import cached_property
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from wagtail.admin.panels import (FieldPanel, InlinePanel, MultiFieldPanel,
@@ -10,7 +13,7 @@ from wagtail.fields import RichTextField, StreamField
 from wagtail.models import Orderable, Page
 
 from blocks.models import (CollapsibleCardBlock, CSVTableBlock,
-                           ExternalLinkEmbedBlock, FlexCardBlock,
+                           ExternalLinkEmbedBlock, FlexCardBlock, HeadingBlock,
                            ImportTextBlock, LinkBlock)
 from core.forms import RestrictedPanelsAdminPageForm
 from core.panels import (ImportTextAreaPanel, M2MChooserPanel, RegexPanel,
@@ -22,6 +25,22 @@ from product.blocks import ProductChooserBlock
 
 from .categories import BlogCategory
 
+
+class AuthorPanel(FieldPanel):
+    class BoundPanel(FieldPanel.BoundPanel):
+        def render_html(self, parent_context=None):
+            html = super().render_html(parent_context)
+            if self.instance.id==None:
+                soup = BeautifulSoup(html, "html.parser")
+                chosen = soup.find("input")
+                chosen['value'] = self.request.user.id
+                chooser = soup.find(class_='chooser')
+                chooser['class'].remove('blank')
+                title = soup.find(class_='chooser__title')
+                title.string = self.request.user.__str__()
+                html = mark_safe(str(soup))
+            return html
+        
 class BlogIndex(Page):
     parent_page_types = ['home.HomePage']
     subpage_types = ['blog.BlogPage']
@@ -75,11 +94,18 @@ class BlogPage(Page):
     wordcount = models.IntegerField(
         null=True, blank=True, verbose_name="Word Count", default=0
     )
+    author = models.ForeignKey(
+        User,
+        null=True,
+        blank=True,
+        related_name="+",
+        on_delete=models.SET_NULL,
+    )
     some_date = models.DateTimeField(
         null=True, blank=True, help_text="Some helpful text"
     )
-    some_text = models.CharField(max_length=255, default="some default value")
-    some_text_area = models.TextField(verbose_name="Air Quality")
+    some_text = models.CharField(null=True, blank=True, max_length=255, default="some default value")
+    some_text_area = models.TextField(null=True, blank=True, verbose_name="Air Quality")
     some_rich_text = RichTextField(null=True, blank=True, editor="basic")
     some_slug = models.SlugField(null=True, blank=True)
     some_choice_field = models.CharField(
@@ -130,6 +156,7 @@ class BlogPage(Page):
             ("external_link", ExternalLinkEmbedBlock()),
             ("link", LinkBlock()),
             ("flex_card", FlexCardBlock()),
+            ("heading", HeadingBlock()),
         ],
         verbose_name="Page Content",
         blank=True,
@@ -142,6 +169,7 @@ class BlogPage(Page):
     )
 
     content_panels = Page.content_panels + [
+        AuthorPanel('author'),
         # UtilityPanel(
         #     '<b>Word Count:</b> {{wordcount}}', {'wordcount': 'wordcount'},
         #     style = 'margin-bottom: 2em;display: block;background-color: antiquewhite;padding: 1em;border-radius: 1em;'
