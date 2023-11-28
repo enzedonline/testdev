@@ -1,15 +1,18 @@
-from django import forms
-from django.forms.utils import ErrorList
-from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
-from wagtail.blocks import StructBlock, StructBlockValidationError
+from wagtail.blocks import StructBlock
 from wagtail.blocks.struct_block import StructBlockAdapter
 from wagtail.telepath import register
 
-from blocks.wagtail.blocks import CharBlock, ImageChooserBlock, RequiredMixin
+from blocks.wagtail.blocks import RequiredMixin
 
 
 class SEOImageChooserBlock(RequiredMixin, StructBlock):
+    from django.utils.functional import cached_property
+    from wagtail.blocks import DateBlock
+
+    from blocks.wagtail.blocks import (CharBlock, ImageChooserBlock,
+                                       RequiredMixin)
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         if kwargs:
@@ -23,16 +26,19 @@ class SEOImageChooserBlock(RequiredMixin, StructBlock):
             "A text description of the image for screen readers and search engines"
         ),
     )
+    date = DateBlock(required=False)
 
     class Meta:
         form_classname = "seo-image-chooser-block"
 
     @cached_property
     def image_error(self):
+        from django.forms.utils import ErrorList
         return ErrorList([_("Please select an image")])
 
     @cached_property
     def title_error(self):
+        from django.forms.utils import ErrorList
         return ErrorList([_("Please enter a descriptive SEO title for the image")])
 
     def clean(self, value):
@@ -48,16 +54,21 @@ class SEOImageChooserBlock(RequiredMixin, StructBlock):
             errors["seo_title"] = self.title_error
 
         if errors:
+            from wagtail.blocks import StructBlockValidationError
             raise StructBlockValidationError(block_errors=errors)
 
         return super().clean(value)
 
 
 class SEOImageChooserBlockAdapter(StructBlockAdapter):
+    from django.utils.functional import cached_property
+
     js_constructor = "blocks.models.SEOImageChooserBlock"
 
     @cached_property
     def media(self):
+        from django import forms
+
         structblock_media = super().media
         return forms.Media(
             js=structblock_media._js + ["js/seo-image-chooser-block.js"],

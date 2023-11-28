@@ -1,8 +1,10 @@
 from django.utils.translation import gettext_lazy as _
-from wagtail.blocks import (BooleanBlock, CharBlock, IntegerBlock,
-                            StreamBlock, StructBlock,
-                            StructValue, URLBlock)
-from blocks.wagtail import ChoiceBlock, ImageChooserBlock, PageChooserBlock
+from wagtail.blocks import (BooleanBlock, CharBlock, IntegerBlock, ListBlock,
+                            StreamBlock, StructBlock, StructValue)
+
+from blocks.wagtail.blocks import (ChoiceBlock, ImageChooserBlock,
+                                   PageChooserBlock, URLBlock)
+
 
 class DisplayWhenChoiceBlock(ChoiceBlock):        
     choices=[
@@ -19,9 +21,15 @@ class MenuStructBlock(StructBlock):
         widget_attrs={"show_edit_link":False},
         label=_("Optional image for display")
     )
-    display_when = DisplayWhenChoiceBlock(required=False)
+    display_when = DisplayWhenChoiceBlock(required=True)
 
-class InternalLinkValue(StructValue):
+class StickyOptionBlock(StructBlock):
+    sticky = BooleanBlock(
+        required=False,
+        help_text=_("Item remains on menu bar in mobile view")
+    )
+
+class PageLinkValue(StructValue):
     @property
     def url(self) -> str:
         page = self.get("page")
@@ -33,7 +41,7 @@ class InternalLinkValue(StructValue):
         page = self.get("page")
         return display_title or page.title if page else ''
     
-class InternalLinkBlock(MenuStructBlock):
+class PageLinkBlock(MenuStructBlock):
     page = PageChooserBlock(widget_attrs={"show_edit_link":False})
     display_title = CharBlock(
         max_length=255, 
@@ -45,11 +53,17 @@ class InternalLinkBlock(MenuStructBlock):
     class Meta:
         icon = 'doc-empty'
         template = "menu/link_block.html"
-        value_class = InternalLinkValue
+        value_class = PageLinkValue
         label = _("Link to Internal Page")
         label_format = label + ": {page}"
 
-class ExternalLinkValue(StructValue):
+class PageLinkMenuBlock(StickyOptionBlock, PageLinkBlock):
+    pass
+
+class PageLinkSubMenuBlock(PageLinkBlock):
+    pass
+
+class URLLinkValue(StructValue):
     @property
     def url(self) -> str:
         return self.get("url")
@@ -58,7 +72,7 @@ class ExternalLinkValue(StructValue):
     def title(self) -> str:
         return self.get("title")
 
-class ExternalLinkBlock(MenuStructBlock):
+class URLLinkBlock(MenuStructBlock):
     url = URLBlock()
     title = CharBlock(
         max_length=255, 
@@ -68,14 +82,20 @@ class ExternalLinkBlock(MenuStructBlock):
     class Meta:
         icon = 'link'
         template = "menu/link_block.html"
-        label = _("Link to External URL")
+        label = _("URL Link")
         label_format = label + ": {title} ({url})"
-        value_class = ExternalLinkValue
+        value_class = URLLinkValue
 
-class AutoFillMenuBlock(MenuStructBlock):
+class URLLinkMenuBlock(StickyOptionBlock, URLLinkBlock):
+    pass
+
+class URLLinkSubMenuBlock(URLLinkBlock):
+    pass
+
+class AutoFillBlock(MenuStructBlock):
     # @TODO - look at autofilling from routable pages
     title = CharBlock(
-        max_length=255, 
+        max_length=50, 
         label="Text to Display on Menu"
     )
     parent_page = PageChooserBlock()
@@ -114,31 +134,36 @@ class AutoFillMenuBlock(MenuStructBlock):
         label = _("Auto Links Sub-Menu")
         label_format = label + ": {title} ({parent_page})"
 
-class AutoFillSubmenuBlock(AutoFillMenuBlock):
+class AutoFillMenuBlock(StickyOptionBlock, AutoFillBlock):
+    pass
+
+class AutoFillSubMenuBlock(AutoFillBlock):
     open_direction = ChoiceBlock(
         choices=[
             ("end", _("Open items to the right")),
             ("start", _("Open items to the left")),
             ("inline", _("Expand submenu inline (accordian)")),
         ],
-        default="start",
+        default="inline",
         help_text=_("Choose submenu direction.")
     )
 
     class Meta:
         template = "menu/autolink_submenu.html"
-    
-class LinksBlock(StreamBlock):
-    internal_link = InternalLinkBlock()
-    external_link = ExternalLinkBlock()
-    autofill_submenu = AutoFillSubmenuBlock()
 
-class SubMenuBlock(MenuStructBlock):
+class SubMenuLinkBlock(StreamBlock):
+    page_link = PageLinkSubMenuBlock()
+    url_link = URLLinkSubMenuBlock()
+
+class SubMenuStreamBlock(SubMenuLinkBlock):
+    autofill_submenu = AutoFillSubMenuBlock()
+
+class SubMenuBlock(StickyOptionBlock, MenuStructBlock):
     title = CharBlock(
-        max_length=255, 
+        max_length=50, 
         label=_("Text to Display on Menu")
     )
-    links = LinksBlock()
+    items = SubMenuStreamBlock()
 
     class Meta:
         icon = 'folder-open-1'
@@ -146,8 +171,59 @@ class SubMenuBlock(MenuStructBlock):
         label = _("Sub Menu")
         label_format = label + ": {title}"
 
+class StickyValue(StructValue):
+    @property
+    def sticky(self):
+        return True
+    
+class SearchMenuBlock(StructBlock):
+    display_when = DisplayWhenChoiceBlock(required=True)
+
+    class Meta:
+        icon = 'search'
+        template = "menu/search.html"
+        label = _("Search Form")
+        label_format = label
+        value_class = StickyValue
+
+class DisplayAlwaysValue(StructValue):
+    @property
+    def display_when(self):
+        return "ALWAYS"
+        
+class UserMenuBlock(StickyOptionBlock, StructBlock):
+    logged_in_title = CharBlock(
+        max_length=50,
+        help_text=_("Menu title when user is logged in.")
+    )
+    logged_in_text = CharBlock(
+        max_length=150,
+        required=False,
+        help_text=_("Message to display to logged in users. Use @username or @display_name to display those values inline.")
+    )
+    logged_out_title = CharBlock(
+        max_length=50,
+        help_text=_("Menu title when user is not logged in.")
+    )
+    items = SubMenuLinkBlock()
+
+    class Meta:
+        icon = 'user'
+        template = "menu/user.html"
+        label = _("User Menu")
+        label_format = label
+        value_class = DisplayAlwaysValue
+
 class MenuStreamBlock(StreamBlock):
-    internal_link = InternalLinkBlock()
-    external_link = ExternalLinkBlock()
+    page_link = PageLinkMenuBlock()
+    url_link = URLLinkMenuBlock()
     autofill_menu = AutoFillMenuBlock()
     sub_menu = SubMenuBlock()
+    search_form = SearchMenuBlock(max_num=1)
+    user_menu = UserMenuBlock(max_num=1)
+
+    class Meta:
+        block_counts = {
+            'search_form': {'min_num': 0, 'max_num': 1},
+            'user_menu': {'min_num': 0, 'max_num': 1},
+        }

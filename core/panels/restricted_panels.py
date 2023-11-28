@@ -8,7 +8,7 @@ from wagtail.admin.rich_text.editors.draftail import DraftailRichTextArea
 from wagtail.blocks.base import BlockField
 from wagtail.blocks.stream_block import StreamBlock
 
-from ..forms import RestrictedPanelsAdminFormMixin
+from ..forms.restricted_panels_admin_forms import RestrictedPanelsAdminFormMixin
 
 
 class msg:

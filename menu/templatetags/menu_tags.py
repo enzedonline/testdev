@@ -11,18 +11,13 @@ def load_menu(menu_slug):
         return Menu.objects.filter(slug=menu_slug).first()
    
 @register.simple_tag(takes_context=True)
-def display_item(context):
-    display_when = context['self']['display_when']
-    is_authenticated = str(context['request'].user.is_authenticated)
-    return (display_when == 'ALWAYS' or is_authenticated == display_when)
+def show_on_menu(context, item):
+    display_when = item.get('display_when', getattr(item, 'display_when', True)) # If not specified, only show if user is authenticated.
+    return (display_when == 'ALWAYS' or str(context['request'].user.is_authenticated) == display_when)
 
 @register.simple_tag(takes_context=True)
-def link_appearance(context):
-    link_url = context['self'].url
-    return {
-        'show': display_item(context),
-        'active': 'active' if (link_url == context['request'].path) else ''
-    }
+def link_active(context, link):
+    return 'active' if (getattr(link, 'url', None) == context['request'].path) else ''
 
 @register.simple_tag(takes_context=True)
 def get_autofill_pages(context):
@@ -66,3 +61,12 @@ def get_autofill_pages(context):
         links.append(child)
 
     return links
+
+@register.simple_tag(takes_context=True)
+def render_user_info(context, msg):
+    user = context['request'].user
+    if user and "@username" in msg:
+        msg = msg.replace("@username", user.username)
+    elif user and "@display_name" in msg:
+        msg = msg.replace("@display_name", getattr(user, 'display_name', user.get_full_name()))
+    return msg

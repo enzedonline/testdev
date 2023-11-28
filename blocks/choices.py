@@ -1,9 +1,9 @@
 from django.utils.translation import gettext_lazy as _
-from django.forms import RadioSelect
 from blocks.wagtail.blocks import ChoiceBlock
 
 class LinkTypeChoiceBlock(ChoiceBlock):
     def __init__(self, *args, **kwargs):
+        from django.forms import RadioSelect
         super().__init__(widget=RadioSelect, *args, **kwargs)
     
     choices=[

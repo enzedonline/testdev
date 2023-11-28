@@ -1,24 +1,19 @@
-from django import forms
-from django.forms.utils import ErrorList
-from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
-from wagtail.blocks import (CharBlock, PageChooserBlock, 
-                            StructValue)
-from wagtail.blocks.struct_block import (StructBlockAdapter, StructBlock,
-                                         StructBlockValidationError)
-from wagtail.models import Locale
+
+from wagtail.blocks.struct_block import StructBlockAdapter
+from wagtail.blocks import StructBlock, StructValue
 from wagtail.telepath import register
-from django.conf import settings
-from wagtail.documents.blocks import DocumentChooserBlock
+
 
 from .choices import LinkTypeChoiceBlock
-from blocks.wagtail.blocks import URLBlock, RequiredMixin
+from blocks.wagtail.blocks import RequiredMixin
 
 
 class Link_Value(StructValue):
     """Additional logic for the Link class"""
 
     def url(self) -> str:
+        from django.conf import settings
         i18n_enabled = getattr(settings, "WAGTAIL_I18N_ENABLED", False)
         link_type = self.get("link_type")
         if link_type == 'page':
@@ -33,11 +28,16 @@ class Link_Value(StructValue):
             url_link = self.get("url_link")
             if url_link:
                 if i18n_enabled and url_link.startswith("/"):
+                    from wagtail.models import Locale
                     url_link = f"/{Locale.get_active().language_code}" + url_link
                 return url_link
         return None
     
 class LinkBlock(RequiredMixin, StructBlock):
+    from wagtail.blocks import CharBlock, PageChooserBlock
+    from wagtail.documents.blocks import DocumentChooserBlock
+    from blocks.wagtail.blocks import URLBlock
+
     def __init__(self, link_types=['page', 'url', 'document'], **kwargs):
         super().__init__(**kwargs)
         self.link_types = link_types
@@ -61,6 +61,9 @@ class LinkBlock(RequiredMixin, StructBlock):
 
 
     def clean(self, value):
+        from django.forms.utils import ErrorList
+        from wagtail.blocks.struct_block import StructBlockValidationError
+
         errors = {}
         match value.get("link_type"):
             case 'page':
@@ -85,6 +88,7 @@ class LinkBlock(RequiredMixin, StructBlock):
         return super().clean(value)
 
 class LinkBlockAdapter(StructBlockAdapter):
+    from django.utils.functional import cached_property
     js_constructor = "blocks.models.LinkBlock"
 
     def js_args(self, block):
@@ -99,6 +103,7 @@ class LinkBlockAdapter(StructBlockAdapter):
 
     @cached_property
     def media(self):
+        from django import forms
         structblock_media = super().media
         return forms.Media(
             js=structblock_media._js + ["js/link-block.js"],

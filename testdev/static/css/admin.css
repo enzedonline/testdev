@@ -78,6 +78,10 @@ p {
   text-align: justify;
 }
 
+.pagination > p {
+  text-align: center;
+}
+
 .Draftail-Toolbar {
   position: sticky !important;
   top: calc(0.2rem + 51px) !important;

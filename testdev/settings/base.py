@@ -39,6 +39,7 @@ INSTALLED_APPS = [
 	"wagtail.contrib.routable_page",
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
+    "wagtail.contrib.search_promotions",
     'wagtail.contrib.settings',
     "wagtail.embeds",
     "wagtail.sites",
@@ -99,12 +100,12 @@ WSGI_APPLICATION = "testdev.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
-    }
-}
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+#     }
+# }
 
 # AUTH_USER_MODEL = 'custom_user.CustomUser'
 # WAGTAIL_USER_EDIT_FORM = 'custom_user.forms.CustomUserEditForm'

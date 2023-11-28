@@ -3,32 +3,30 @@
   <link rel="stylesheet" type="text/css" href="{% static 'css/menu.css' %}" />
 {% endblock extra_css %}
 {# pass menu object variable in context #}
-<nav class="navbar navbar-expand-{{ menu.breakpoint }} bg-dark border-bottom border-body p-1 menustream menustream-{{ menu.slug }}" data-bs-theme="dark">
-  <div class="p-0">
-    <a class="navbar-brand menustream menustream-{{ menu.breakpoint }} menustream-{{ menu.slug }}"
-       href="{{ self.get_site.root_page.url }}">
-      {% if menu.logo %}
-        {% image menu.logo height-30 %}
+<nav class="navbar navbar-expand{{ menu.breakpoint }} bg-dark border-bottom border-body p-1 menustream menustream-{{ menu.slug }}"
+     data-bs-theme="dark">
+  <div class="container-fluid justify-content-end menustream-container menustream-container-{{ menu.slug }}">
+    {% include "menu/brand.html" %}
+    {% for item in menu.items %}
+      {% show_on_menu item.value as show %}
+      {% if show %}
+        <div class="{% if item.value.sticky %}d-flex{% if menu.breakpoint %} order-0{% endif %} {% else %} collapse navbar-collapse collapse-{{ menu.slug }} flex{{ menu.breakpoint }}-grow-0{% if menu.breakpoint %} order-1 order{{ menu.breakpoint }}-0{% endif %} {% endif %}">
+          <ul class="navbar-nav menustream menustream{{ menu.breakpoint }} menustream-{{ menu.slug }}">
+            {% include_block item with link_type='nav-item' %}
+          </ul>
+        </div>
       {% endif %}
-      <span>{{ menu.title }}</span>
-    </a>
-  </div>
-  <button class="navbar-toggler menu-toggler-{{ menu.slug }}"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbar-{{ menu.slug }}"
-          aria-controls="navbar-{{ menu.slug }}"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-          onclick="document.activeElement.blur();">
-    <span class="navbar-toggler-icon menustream menustream-{{ menu.breakpoint }} menustream-{{ menu.slug }}"></span>
-  </button>
-  <div class="collapse navbar-collapse justify-content-end pe-4 pe-{{ menu.breakpoint }}-1"
-       id="navbar-{{ menu.slug }}">
-    <ul class="navbar-nav menustream menustream-{{ menu.breakpoint }} menustream-{{ menu.slug }} ps-2 ps-lg-0">
-      {% for item in menu.items %}
-        {% include_block item with link_type='nav-item' %}
-      {% endfor %}
-    </ul>
+    {% endfor %}
+    <div class="sub-menu-spacer collapse collapse-{{ menu.slug }} d{{ menu.breakpoint }}-none order-1 py-1"></div>
+    <button class="navbar-toggler menu-toggler-{{ menu.slug }}"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target=".collapse-{{ menu.slug }}"
+            aria-controls="navbar-{{ menu.slug }}"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+            onclick="document.activeElement.blur();">
+      <span class="navbar-toggler-icon menustream menustream{{ menu.breakpoint }} menustream-{{ menu.slug }}"></span>
+    </button>
   </div>
 </nav>

@@ -1,10 +1,12 @@
 from django.utils.translation import gettext_lazy as _
-from wagtail.blocks import RichTextBlock, StructBlock
+from wagtail.blocks import StructBlock
 
-from .choices import TextAlignmentChoiceBlock
 
 
 class RichTextStructBlock(StructBlock):
+    from .choices import TextAlignmentChoiceBlock
+    from wagtail.blocks import RichTextBlock
+
     alignment = TextAlignmentChoiceBlock(default="justify", label=_("Text Alignment"))
     content = RichTextBlock()
 
@@ -19,9 +21,11 @@ class SimpleRichTextBlock(RichTextStructBlock):
     pass
 
 
-# class MinimalRichTextBlock(RichTextStructBlock):
-#     content = RichTextBlock(editor="minimal")
+class MinimalRichTextBlock(RichTextStructBlock):
+    from wagtail.blocks import RichTextBlock
+    content = RichTextBlock(editor="minimal")
 
 
-# class BasicRichTextBlock(RichTextStructBlock):
-#     content = RichTextBlock(editor="basic")
+class BasicRichTextBlock(RichTextStructBlock):
+    from wagtail.blocks import RichTextBlock
+    content = RichTextBlock(editor="basic")

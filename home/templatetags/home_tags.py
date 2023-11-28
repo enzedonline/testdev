@@ -6,7 +6,7 @@ from django.template.defaultfilters import linebreaksbr
 
 register = template.Library()
 
-@register.filter
+@register.filter()
 def clean_richtext(richtextblock):
     soup = BeautifulSoup(richtextblock, "html.parser")
     for item in soup.find_all():

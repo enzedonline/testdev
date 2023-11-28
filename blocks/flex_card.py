@@ -1,21 +1,18 @@
-from django import forms
-from django.forms.utils import ErrorList
-from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
-from wagtail.blocks import BooleanBlock, IntegerBlock, StructBlock
-from wagtail.blocks.struct_block import (StructBlockAdapter,
-                                         StructBlockValidationError)
+from wagtail.blocks import StructBlock
+from wagtail.blocks.struct_block import StructBlockAdapter
 from wagtail.telepath import register
-
-from .choices import (BreakpointChoiceBlock, ColourThemeChoiceBlock,
-                      FlexCardLayoutChoiceBlock)
-from .seo_image_chooser import SEOImageChooserBlock
-from .links import LinkBlock
-from .rich_text import SimpleRichTextBlock
 
 
 class FlexCardBlock(StructBlock):
-    
+    from wagtail.blocks import BooleanBlock, IntegerBlock
+
+    from .choices import (BreakpointChoiceBlock, ColourThemeChoiceBlock,
+                          FlexCardLayoutChoiceBlock)
+    from .links import LinkBlock
+    from .rich_text import SimpleRichTextBlock
+    from .seo_image_chooser import SEOImageChooserBlock
+
     text = SimpleRichTextBlock(
         label=_("Card Body Text"),
         help_text=_("Body text for this card."),
@@ -74,19 +71,24 @@ class FlexCardBlock(StructBlock):
             value['breakpoint'] = 'none'
 
         if image_min and image_max and image_min > image_max:
+            from django.forms.utils import ErrorList
             errors['image_min'] = ErrorList([_("Please make sure minimum is less than maximum.")])
             errors['image_max'] = ErrorList([_("Please make sure minimum is less than maximum.")])
         if errors:
+            from wagtail.blocks.struct_block import StructBlockValidationError
             raise StructBlockValidationError(block_errors=errors)
 
         return super().clean(value)     
 
 
 class FlexCardBlockAdapter(StructBlockAdapter):
+    from django.utils.functional import cached_property
+
     js_constructor = "blocks.models.FlexCardBlock"
 
     @cached_property
     def media(self):
+        from django import forms
         structblock_media = super().media
         return forms.Media(
             js=structblock_media._js + ["js/flex-card-block.js"],

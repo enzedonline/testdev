@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags %} 
+{% block content %}
+<h1>{{ product }}</h1>
+<p>{{ product.description|richtext }}</p>
+{% endblock content %}

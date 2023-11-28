@@ -4,7 +4,7 @@ from wagtail.admin.views.generic.chooser import BaseChooseView
 from wagtail.snippets.views.chooser import ChooseResultsView, ChooseView
 
 from core.viewsets.columns import ImageColumn
-from core.widgets import SnippetPreviewChooserViewSet
+from core.widgets.models import SnippetPreviewChooserViewSet
 
 from .models import Product
 

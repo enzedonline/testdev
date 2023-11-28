@@ -1,13 +1,15 @@
 {% load menu_tags wagtailimages_tags %}
-{% link_appearance as link %}
-{% if link.show and self.url %}
-    <li class="{{ link_type }} menustream menustream-{{ menu.breakpoint }} menustream-{{ menu.slug }} {{ link.active }}">
-        <a class="nav-link menustream menustream-{{ menu.breakpoint }} menustream-{{ menu.slug }} {{ link.active }}"
-           href="{{ self.url }}" title="{{ self.title }}">
+{% if self.url %}
+    <li class="{{ link_type }} menustream menustream{{ menu.breakpoint }} menustream-{{ menu.slug }} {% link_active self %}">
+        <a class="nav-link menustream menustream{{ menu.breakpoint }} menustream-{{ menu.slug }}"
+           href="{{ self.url }}"
+           title="{{ self.title }}">
             {% if self.icon %}
                 {% image self.icon fill-25x25 %}
             {% endif %}
-            <div>{{ self.title }}</div>
+            {% if self.title %}
+                <div{% if self.icon %} class="ps-1"{% endif %}>{{ self.title }}</div>
+            {% endif %}
         </a>
     </li>
 {% endif %}

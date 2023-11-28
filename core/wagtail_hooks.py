@@ -10,7 +10,7 @@ from .draftail_extensions import (DRAFTAIL_ICONS, register_block_feature,
                                   register_inline_styling)
 from .sitemap import SiteMap
 from .thumbnails import ThumbnailOperation
-from .utils import has_role
+from .utils import has_role, get_custom_icons
 
 import wagtail.admin.rich_text.editors.draftail.features as draftail_features
 from wagtail.admin.rich_text.converters.html_to_contentstate import BlockElementHandler
@@ -248,5 +248,5 @@ def register_image_operations():
 
 @hooks.register("register_icons")
 def register_icons(icons):
-    return icons + ['icons/downward-chevron.svg']
+    return icons + get_custom_icons()
     

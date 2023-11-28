@@ -5,7 +5,7 @@ from io import StringIO
 
 register = template.Library()
 
-@register.filter
+@register.filter()
 def render_html_table(table_block):
     df = pd.read_csv(
         StringIO(table_block["data"]),

@@ -1,10 +1,6 @@
-from django import forms
-from django.core.exceptions import ValidationError
-from django.utils.functional import cached_property
-from wagtail import blocks
-from wagtail.images import blocks as image_blocks
-
-from .validators import is_valid_href
+from wagtail.blocks import (CharBlock, ChoiceBlock, PageChooserBlock,
+                            StructBlock, TextBlock)
+from wagtail.images.blocks import ImageChooserBlock
 
 
 class RequiredMixin:
@@ -26,12 +22,12 @@ class RequiredMixin:
         return super().clean(value)
 
 
-class StructBlock(RequiredMixin, blocks.StructBlock):
+class StructBlock(RequiredMixin, StructBlock):
     def __init__(self, **kwargs):
         super().__init__(local_blocks=None, **kwargs)
 
 
-class ChoiceBlock(RequiredMixin, blocks.ChoiceBlock):
+class ChoiceBlock(RequiredMixin, ChoiceBlock):
     def __init__(self, *args, **kwargs):
         default = kwargs.pop("default", getattr(self, "default", None))
         label = kwargs.pop("label", getattr(self, "label", None))
@@ -48,11 +44,13 @@ class ChoiceBlock(RequiredMixin, blocks.ChoiceBlock):
         )
 
 
-class CharBlock(RequiredMixin, blocks.CharBlock):
+class CharBlock(RequiredMixin, CharBlock):
     pass
 
 
-class ImageChooserBlock(RequiredMixin, image_blocks.ImageChooserBlock):
+class ImageChooserBlock(RequiredMixin, ImageChooserBlock):
+    from django.utils.functional import cached_property
+
     def __init__(self, *args, widget_attrs={}, **kwargs):
         super().__init__(*args, **kwargs)
         self.widget_attrs = widget_attrs
@@ -64,7 +62,9 @@ class ImageChooserBlock(RequiredMixin, image_blocks.ImageChooserBlock):
         return AdminImageChooser(**self.widget_attrs)
 
 
-class PageChooserBlock(RequiredMixin, blocks.PageChooserBlock):
+class PageChooserBlock(RequiredMixin, PageChooserBlock):
+    from django.utils.functional import cached_property
+
     def __init__(self, *args, widget_attrs={}, **kwargs):
         super().__init__(*args, **kwargs)
         self.widget_attrs = widget_attrs
@@ -79,7 +79,7 @@ class PageChooserBlock(RequiredMixin, blocks.PageChooserBlock):
             **self.widget_attrs,
         )
 
-class TextBlock(RequiredMixin, blocks.TextBlock):
+class TextBlock(RequiredMixin, TextBlock):
     pass
 
 class URLBlock(CharBlock):
@@ -105,6 +105,7 @@ class URLBlock(CharBlock):
         ],
         ** kwargs,
     ):
+        from django import forms
         self.field = forms.CharField(
             required=required,
             help_text=help_text,
@@ -117,10 +118,12 @@ class URLBlock(CharBlock):
 
     def clean(self, value):
         if value:
+            from .validators import is_valid_href
             result = is_valid_href(value, protocols=self.protocols)
             if result:
                 value = result
             else:
+                from django.core.exceptions import ValidationError
                 raise ValidationError(result)
         return super().clean(value)
 

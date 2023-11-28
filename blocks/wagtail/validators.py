@@ -1,14 +1,13 @@
-import re
-from html import unescape
-from urllib.parse import parse_qs, unquote, urlparse, urlunparse
 
 import validators
 from django.utils.translation import gettext_lazy as _
 
 
 class ParsedURI:
+    
     # create an editable ParseResult object
     def __init__(self, url):
+        from urllib.parse import urlparse
         self.url = url
         self._parsed = urlparse(url)
 
@@ -62,6 +61,8 @@ class ParsedURI:
 
     @property
     def unparse(self):
+        from urllib.parse import urlunparse
+
         components = [
             self.scheme,
             self.netloc,
@@ -95,6 +96,8 @@ def is_valid_href(
     ],
     relative=True # allow relative links
 ):
+    import re
+    from urllib.parse import unquote
 
     result = False
     error = ""
@@ -236,6 +239,9 @@ def is_valid_href(
 
 
 def validate_email_uri(string):
+    from html import unescape
+    from urllib.parse import parse_qs, urlparse
+
     valid_params = {"to", "cc", "bcc", "subject", "body"}
 
     url_parts = urlparse(string)
@@ -288,6 +294,8 @@ def validate_email_uri(string):
 
 
 def validate_tel_value(value):
+    import re
+
     try:
         # Check if string is digits, +'s and commas
         if not re.match(r"^[+\d,]+$", value):

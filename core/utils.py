@@ -1,6 +1,8 @@
 import base64
+import fnmatch
 import importlib
 import io
+import os
 import re
 from collections import OrderedDict
 from html import unescape
@@ -288,4 +290,27 @@ def list_streamfield_blocks(streamfield):
         return list
     
     return list_child_blocks(streamfield.stream_block.child_blocks)
+
+def get_custom_icons():
+    # Specify the root folder
+    root_folder = 'core/templates'
+    icons_folder = 'icons'
+
+    # Specify the file extension you're looking for
+    file_extension = '*.svg'
+
+    # Initialize an empty list to store relative file paths
+    icons = []
+
+    # Construct the path to the 'enzedonline/templates/icons' folder
+    icons_path = os.path.join(root_folder, icons_folder)
+
+    # Walk through the directory and find .svg files in the 'enzedonline/templates/icons' folder
+    for foldername, subfolders, filenames in os.walk(icons_path):
+        for filename in fnmatch.filter(filenames, file_extension):
+            file_path = os.path.join(foldername, filename)
+            relative_path = os.path.relpath(file_path, root_folder)
+            icons.append(relative_path)
+
+    return icons
     

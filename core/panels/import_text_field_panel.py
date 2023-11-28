@@ -1,7 +1,7 @@
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import FieldPanel
-from core.widgets import ImportTextAreaWidget
+from core.widgets.models import ImportTextAreaWidget
 from django.db.models.fields import TextField
 
 class ImportTextAreaPanel(FieldPanel):

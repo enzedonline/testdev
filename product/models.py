@@ -13,6 +13,8 @@ from wagtail.snippets.models import register_snippet
 
 from .panels.category import ProductCategoryPanel
 
+class NonBreakingError(Exception):
+    pass
 
 @register_snippet
 class StoreDepartment(ClusterableModel):
@@ -82,7 +84,7 @@ class Product(
 ):
     icon = "cogs"
     
-    sku = models.CharField(max_length=10, verbose_name=_("SKU"))
+    sku = models.CharField(max_length=10, unique=True, verbose_name=_("SKU"))
     title = models.CharField(max_length=100, verbose_name=_("Product Title"))
     description = RichTextField(verbose_name=_("Product Description"))
     category = models.ForeignKey(
@@ -170,22 +172,43 @@ class ProductPage(RoutablePageMixin, Page):
             context_overrides={
                 "products": products,
             },
-            template="products/product_list.html",
+            template="product/product_list.html",
         )
 
+    @path("delete/")
+    def delete_products(self, request):
+        product_ids = request.POST.getlist('productIDs[]')
+        if product_ids:
+            products = Product.objects.filter(id__in=product_ids)
+            print(products)
+        return HttpResponseRedirect(self.url)
+        
     @path("<str:sku>/")
     def product_detail(self, request, sku):
-        product = Product.objects.filter(sku=sku, live=True).first()
-        if product:
+        try:
+            product = Product.objects.get(sku=sku, live=True)
             return self.render(
                 request,
                 context_overrides={
-                    "product": product.localized,
+                    "product": product,
                 },
-                template="products/product_detail.html",
+                template="product/product_detail.html",
             )
-        else:
+        except Product.DoesNotExist:
+            return self.render(
+                request,
+                context_overrides={
+                    "sku": sku,
+                },
+                template="product/product_not_found.html",
+            )
+        except Exception as e:
+            import logging
+            logging.exception(e)  
             return HttpResponseRedirect(self.url)
+
+
+
 
     @property
     def preview(self):

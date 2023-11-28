@@ -1,36 +1,37 @@
-from bs4 import BeautifulSoup
-from django import forms
-from django.contrib.auth.models import User
-from django.db import models
-from django.utils.functional import cached_property
-from django.utils.safestring import mark_safe
-from django.utils.translation import gettext_lazy as _
-from modelcluster.fields import ParentalKey, ParentalManyToManyField
+# from bs4 import BeautifulSoup
+# from django import forms
+# from django.contrib.auth.models import User
+# from django.db import models
+# from django.utils.functional import cached_property
+# from django.utils.safestring import mark_safe
+# from django.utils.translation import gettext_lazy as _
+# from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from wagtail.admin.panels import (FieldPanel, InlinePanel, MultiFieldPanel,
                                   MultipleChooserPanel)
-from wagtail.blocks import RawHTMLBlock, RichTextBlock
-from wagtail.fields import RichTextField, StreamField
+# from wagtail.blocks import RawHTMLBlock, RichTextBlock
+# from wagtail.fields import RichTextField, StreamField
 from wagtail.models import Orderable, Page
 
-from blocks.models import (CollapsibleCardBlock, CSVTableBlock,
-                           ExternalLinkEmbedBlock, FlexCardBlock, HeadingBlock,
-                           ImportTextBlock, LinkBlock)
-from core.forms import RestrictedPanelsAdminPageForm
-from core.panels import (ImportTextAreaPanel, M2MChooserPanel, RegexPanel,
-                         RestrictedFieldPanel, RestrictedInlinePanel,
-                         UtilityPanel)
-from core.utils import count_words, get_streamfield_text
-from core.widgets.import_textarea_widget import ImportTextAreaWidget
-from product.blocks import ProductChooserBlock
+# from blocks.models import (CollapsibleCardBlock, CSVTableBlock,
+#                            ExternalLinkEmbedBlock, FlexCardBlock, HeadingBlock,
+#                            ImportTextBlock, LinkBlock)
+# from core.forms import RestrictedPanelsAdminPageForm
+# from core.panels import (ImportTextAreaPanel, M2MChooserPanel, RegexPanel,
+#                          RestrictedFieldPanel, RestrictedInlinePanel,
+#                          UtilityPanel)
+# from core.utils import count_words, get_streamfield_text
+# from core.widgets.import_textarea_widget import ImportTextAreaWidget
+# from product.blocks import ProductChooserBlock
 
-from .categories import BlogCategory
-
+# from .categories import BlogCategory
 
 class AuthorPanel(FieldPanel):
     class BoundPanel(FieldPanel.BoundPanel):
         def render_html(self, parent_context=None):
             html = super().render_html(parent_context)
             if self.instance.id==None:
+                from bs4 import BeautifulSoup
+                from django.utils.safestring import mark_safe
                 soup = BeautifulSoup(html, "html.parser")
                 chosen = soup.find("input")
                 chosen['value'] = self.request.user.id
@@ -42,6 +43,7 @@ class AuthorPanel(FieldPanel):
             return html
         
 class BlogIndex(Page):
+    from wagtail.fields import RichTextField
     parent_page_types = ['home.HomePage']
     subpage_types = ['blog.BlogPage']
     max_count = 1
@@ -53,6 +55,10 @@ class BlogIndex(Page):
     ]
 
 class CarouselImages(Orderable):
+    from django.db import models
+    from modelcluster.fields import ParentalKey
+    from wagtail.fields import RichTextField
+
     """Between 1 and 5 images for the blog page carousel."""
 
     page = ParentalKey("blog.BlogPage", related_name="carousel_images")
@@ -89,6 +95,26 @@ class CarouselImages(Orderable):
         verbose_name = "Carousel Image"
 
 class BlogPage(Page):
+    from django.contrib.auth.models import User
+    from django.db import models
+    from django.utils.functional import cached_property
+    from django.utils.translation import gettext_lazy as _
+    from modelcluster.fields import ParentalManyToManyField
+    from wagtail.blocks import RawHTMLBlock, RichTextBlock
+    from wagtail.fields import RichTextField, StreamField
+
+    from blocks.models import (CollapsibleCardBlock, CSVTableBlock, SEOImageChooserBlock,
+                               ExternalLinkEmbedBlock, FlexCardBlock,
+                               HeadingBlock, ImportTextBlock, LinkBlock)
+    from core.forms.restricted_panels_admin_forms import \
+        RestrictedPanelsAdminPageForm
+    from core.panels.models import (ImportTextAreaPanel, M2MChooserPanel,
+                                    RegexPanel, RestrictedFieldPanel,
+                                    RestrictedInlinePanel, UtilityPanel)
+    from core.widgets.import_textarea_widget import ImportTextAreaWidget
+    from product.blocks import ProductChooserBlock
+    from .categories import BlogCategory
+
     parent_page_types = ['blog.BlogIndex']
     subpage_types = []
     wordcount = models.IntegerField(
@@ -148,6 +174,7 @@ class BlogPage(Page):
     content = StreamField(
         [
             ("rich_text", RichTextBlock()),
+            ("seo_image", SEOImageChooserBlock()),
             ("html", RawHTMLBlock()),
             ("import_text_block", ImportTextBlock()),
             ("csv_table", CSVTableBlock()),
@@ -161,9 +188,10 @@ class BlogPage(Page):
         verbose_name="Page Content",
         blank=True,
         use_json_field=True,
+        block_counts={'heading': {'min_num': 1, 'max_num': 1},}
     )
     categories = ParentalManyToManyField(
-        "blog.BlogCategory",
+        BlogCategory,
         verbose_name=_("Blog Categories"),
         related_name="categories",
     )
@@ -260,7 +288,7 @@ class BlogPage(Page):
         #         'file_reader': {'module': 'core.utils', 'method': 'import_text_field_button', 'field': 'some_text_area'}
         #     }
         # ),
-        M2MChooserPanel("categories"),
+        # M2MChooserPanel("categories"),
     ]
 
     base_form_class = RestrictedPanelsAdminPageForm
@@ -270,10 +298,12 @@ class BlogPage(Page):
 
     @cached_property
     def corpus(self):
+        from core.utils import get_streamfield_text
         return get_streamfield_text(self.content)
 
     @cached_property
     def words(self, corpus=None):
+        from core.utils import count_words
         if not corpus:
             corpus = self.corpus
         return count_words(corpus)
