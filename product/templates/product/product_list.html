@@ -53,6 +53,10 @@
         </div>
     </div>
     <script>
+        const checkboxes = document.querySelectorAll('input[name="productIDs[]"]');
+        const deleteButton = document.getElementById('deleteButton');
+        const deleteForm = document.getElementById('deleteForm');
+
         const openModal = (e) => {
             e.preventDefault();
             const modalList = document.getElementById('confirmModalList');
@@ -63,14 +67,12 @@
                 modalList.appendChild(listItem);
             });
         };
-        const enableDeleteButton = (event) => {
-            if (event.target.type === 'checkbox' && event.target.name === 'productIDs[]') {
+        
+        const enableDeleteButton = (e) => {
+            if (e.target.type === 'checkbox' && e.target.name === 'productIDs[]') {
                 deleteButton.disabled = ![...checkboxes].some(checkbox => checkbox.checked);
             }
         };
-        const checkboxes = document.querySelectorAll('input[name="productIDs[]"]');
-        const deleteButton = document.getElementById('deleteButton');
-        const deleteForm = document.getElementById('deleteForm')
         deleteForm.addEventListener('change', enableDeleteButton);
     </script>
 {% endblock content %}
