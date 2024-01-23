@@ -33,9 +33,9 @@ class StoreDepartment(ClusterableModel):
         FieldPanel("name"),
         MultiFieldPanel(
             [
-                InlinePanel("department_categories"),
+                InlinePanel("department_subcategories"),
             ],
-            heading=_("Categories"),
+            heading=_("Department Subcategories"),
         ),
     ]
 
@@ -46,10 +46,10 @@ class StoreDepartment(ClusterableModel):
         verbose_name = _("Product Category")
         verbose_name_plural = _("Product Categories")
 
-class DepartmentCategory(Orderable):
+class DepartmentSubcategory(Orderable):
     department = ParentalKey(
         "StoreDepartment",
-        related_name="department_categories",
+        related_name="department_subcategories",
         verbose_name=_("Store Department")
     )
     code = models.CharField(
@@ -71,7 +71,7 @@ class DepartmentCategory(Orderable):
         return self.name
     
     class Meta:
-        verbose_name = _("Department Product Category")
+        verbose_name = _("Department Product Subcategory")
 
 @register_snippet
 class Product(
@@ -87,8 +87,8 @@ class Product(
     sku = models.CharField(max_length=10, unique=True, verbose_name=_("SKU"))
     title = models.CharField(max_length=100, verbose_name=_("Product Title"))
     description = RichTextField(verbose_name=_("Product Description"))
-    category = models.ForeignKey(
-        "product.DepartmentCategory",
+    dept_subcategory = models.ForeignKey(
+        "product.DepartmentSubcategory",
         null=True,
         blank=True,
         related_name="+",
@@ -108,10 +108,10 @@ class Product(
         FieldPanel("title"),
         FieldPanel("description"),
         SubCategoryChooser(
-            "category", 
+            "dept_subcategory", 
             category=StoreDepartment, 
-            subcategory=DepartmentCategory, 
-            subcategory_related_name="department_categories"
+            subcategory=DepartmentSubcategory, 
+            subcategory_related_name="department_subcategories"
         ),
         FieldPanel("image"),
     ]
@@ -121,26 +121,6 @@ class Product(
 
     def get_preview_template(self, request, mode_name):
         return "products/product_detail.html"
-
-
-    def get_categories(self):
-        # Fetch all store departments with related department categories
-        store_departments = StoreDepartment.objects.prefetch_related(
-            Prefetch('department_categories', queryset=DepartmentCategory.objects.order_by('sort_order'))
-        )
-
-        # Iterate through store departments and build the result list
-        return [
-            {
-                'id': department.id,
-                'name': department.name,
-                'categories': [
-                    {'id': category.id, 'name': category.name}
-                    for category in department.department_categories.all()
-                ]
-            }
-            for department in store_departments
-        ]
 
 
 """ 
