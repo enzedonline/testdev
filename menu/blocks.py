@@ -73,10 +73,10 @@ class URLLinkValue(StructValue):
         return self.get("title")
 
 class URLLinkBlock(MenuStructBlock):
-    url = URLBlock()
+    url = URLBlock(label="URL")
     title = CharBlock(
         max_length=255, 
-        label="Text to Display on Menu"
+        label=_("Text to Display on Menu")
     )
 
     class Meta:

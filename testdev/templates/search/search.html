@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+    <div class="container-fluid mt-3 mt-lg-4 pt-0 pt-md-2 px-2 px-sm-5 pb-4">
+        <div class="p-1 p-sm-2 p-md-3 mt-2 mt-sm-3 mt-md-4 bg-light rounded">
+            <h1 class="text-center mb-4">Search Results</h1>
+            <form action="{% url 'search' %}" method="get">
+                <div class="form-group row g-1 my-1">
+                    <div class="col">
+                        <input type="text"
+                               onfocus="this.select();"
+                               onmouseup="return false;"
+                               name="query"
+                               class="form-control px-3"
+                               value="{{ request.GET.query }}">
+                    </div>
+                    <div class="col-auto">
+                        <input type="submit" value="Search" class="btn-primary form-control">
+                    </div>
+                </div>
+            </form>
+            {% if search_results %}
+                <div class="text-end h5">
+                    {% if search_order %}
+                        <a href="./?query={{ search_query }}">Sort by Relevance</a>
+                    {% else %}
+                        <a href="./?query={{ search_query }}&order=date">Sort by Date</a>
+                    {% endif %}
+                </div>
+                <span id="list"></span>
+                <div class="grid">
+                    {% for result in search_results %}
+                        <div class="p-2">
+                            {% with post=result.specific %}
+                                <a href="{{ post.url }}">{{ post.title }}</a>
+                            {% endwith %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock content %}

@@ -94,6 +94,23 @@ class CarouselImages(Orderable):
     class Meta(Orderable.Meta):
         verbose_name = "Carousel Image"
 
+class SimpleVideoOrderable(Orderable):
+    from wagtail.fields import RichTextField
+    from django.db import models
+    from modelcluster.fields import ParentalKey
+
+    page = ParentalKey("blog.BlogPage", related_name="videos")
+    description = RichTextField()
+    url = models.URLField()
+
+    panels = [
+        FieldPanel('description'),
+        FieldPanel('url')
+    ]
+
+    class Meta(Orderable.Meta):
+        verbose_name = "Video"
+
 class BlogPage(Page):
     from django.contrib.auth.models import User
     from django.db import models
@@ -198,6 +215,10 @@ class BlogPage(Page):
 
     content_panels = Page.content_panels + [
         AuthorPanel('author'),
+        MultiFieldPanel(
+            [InlinePanel("videos", min_num=1)],
+            heading="Videos",
+        ),
         # UtilityPanel(
         #     '<b>Word Count:</b> {{wordcount}}', {'wordcount': 'wordcount'},
         #     style = 'margin-bottom: 2em;display: block;background-color: antiquewhite;padding: 1em;border-radius: 1em;'

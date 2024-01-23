@@ -1,14 +1,29 @@
 {% extends "base.html" %} 
-{% load static wagtailcore_tags wagtailimages_tags home_tags %}
+{% load static wagtailcore_tags wagtailimages_tags home_tags wagtailembeds_tags %}
 
 {% block content %}
 
-<article style="width:90%; margin: 2rem auto">
+<article class="container">
     <h1>{{ self.title }}</h1>
 
-    <p>Word Count: {{ page.wordcount }}</p>
+    {% comment %} <p>Word Count: {{ page.wordcount }}</p> {% endcomment %}
 
-    <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+    <div class="row justify-content-center row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-3">
+        {% for video in self.videos.all %}
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="card-title w-100">
+                        <div class="card-video">{% embed video.url max_width=600 %}</div>
+                    </div>
+                    <p class="card-text">{{ video.description|richtext }}</p>
+                </div>
+              </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% comment %} <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
         <div class="carousel-inner">
             {% for loop_cycle in self.carousel_images.all %}
             {% image loop_cycle.carousel_image thumbnail-400x200 as img %}
@@ -29,7 +44,7 @@
 
     {% for block in page.content %}
         {% include_block block %}
-    {% endfor %}
+    {% endfor %} {% endcomment %}
 
 </article>
 

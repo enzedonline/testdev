@@ -171,6 +171,7 @@ MEDIA_URL = "/media/"
 
 WAGTAIL_SITE_NAME = "testdev"
 WAGTAILIMAGES_EXTENSIONS = ["gif", "jpg", "jpeg", "png", "webp", "svg"]
+WAGTAILEMBEDS_RESPONSIVE_HTML = True
 
 # Search
 # https://docs.wagtail.org/en/stable/topics/search/backends.html

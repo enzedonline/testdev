@@ -1,24 +1,20 @@
-{% load static wagtailcore_tags wagtailimages_tags menu_tags %}
-{% block extra_css %}
-  <link rel="stylesheet" type="text/css" href="{% static 'css/menu.css' %}" />
-{% endblock extra_css %}
+{% load wagtailcore_tags core_tags menu_tags %}
 {# pass menu object variable in context #}
-<nav class="navbar navbar-expand{{ menu.breakpoint }} bg-dark border-bottom border-body p-1 menustream menustream-{{ menu.slug }}"
-     data-bs-theme="dark">
-  <div class="container-fluid justify-content-end menustream-container menustream-container-{{ menu.slug }}">
+<nav class="navbar navbar-expand{{ menu.breakpoint }} p-1 position-fixed bg-dark menustream menustream{{ menu.breakpoint }} menustream-{{ menu.slug }}" data-bs-theme="dark">
+  <div class="container-fluid menustream-container">
     {% include "menu/brand.html" %}
     {% for item in menu.items %}
       {% show_on_menu item.value as show %}
       {% if show %}
-        <div class="{% if item.value.sticky %}d-flex{% if menu.breakpoint %} order-0{% endif %} {% else %} collapse navbar-collapse collapse-{{ menu.slug }} flex{{ menu.breakpoint }}-grow-0{% if menu.breakpoint %} order-1 order{{ menu.breakpoint }}-0{% endif %} {% endif %}">
-          <ul class="navbar-nav menustream menustream{{ menu.breakpoint }} menustream-{{ menu.slug }}">
+        <div class="{% if item.value.sticky %}d-flex{% if menu.breakpoint %} order-0{% endif %}{% else %} collapse navbar-collapse collapse-{{ menu.slug }} flex{{ menu.breakpoint }}-grow-0{% if menu.breakpoint %} order-1 order{{ menu.breakpoint }}-0{% endif %}{% endif %}">
+          <ul class="navbar-nav">
             {% include_block item with link_type='nav-item' %}
           </ul>
         </div>
       {% endif %}
     {% endfor %}
     <div class="sub-menu-spacer collapse collapse-{{ menu.slug }} d{{ menu.breakpoint }}-none order-1 py-1"></div>
-    <button class="navbar-toggler menu-toggler-{{ menu.slug }}"
+    <button class="navbar-toggler navbar-dark"
             type="button"
             data-bs-toggle="collapse"
             data-bs-target=".collapse-{{ menu.slug }}"
@@ -26,7 +22,7 @@
             aria-expanded="false"
             aria-label="Toggle navigation"
             onclick="document.activeElement.blur();">
-      <span class="navbar-toggler-icon menustream menustream{{ menu.breakpoint }} menustream-{{ menu.slug }}"></span>
+      <span class="navbar-toggler-icon"></span>
     </button>
   </div>
 </nav>
