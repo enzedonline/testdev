@@ -1,28 +1,32 @@
 {% extends "base.html" %}
 {% load wagtailcore_tags %}
 {% block content %}
-    <h1>{{ page.title }}</h1>
-    <p>{{ page.intro|richtext }}</p>
-    <form method="POST" id="deleteForm" action="{% slugurl 'products' %}delete/">
-        {% csrf_token %}
-        {% for product in products %}
-            <input type="checkbox"
-                   value="{{ product.id }}"
-                   data-strip-naam="{{ product.title }}"
-                   name="productIDs[]" />
-            <h4 class="d-inline">
-                <a href="{{ page.url }}{{ product.sku }}">{{ product }}</a>
-            </h4>
-            <br>
-        {% endfor %}
-        <button class="btn btn-danger mt-2 d-flex ms-auto"
-                id="deleteButton"
-                type="submit"
-                onclick="openModal(event)"
-                data-bs-toggle="modal"
-                data-bs-target="#confirmModal"
-                disabled>Delete</button>
-    </form>
+    <div class="article-body">
+        <h1>{{ page.title }}</h1>
+        <p>{{ page.intro|richtext }}</p>
+        <form method="POST"
+              id="deleteForm"
+              action="{% slugurl 'products' %}delete/">
+            {% csrf_token %}
+            {% for product in products %}
+                <input type="checkbox"
+                       value="{{ product.id }}"
+                       data-product-name="{{ product.title }}"
+                       name="productIDs[]" />
+                <h4 class="d-inline">
+                    <a href="{{ page.url }}{{ product.sku }}">{{ product }}</a>
+                </h4>
+                <br>
+            {% endfor %}
+            <button class="btn btn-danger mt-2 d-flex ms-auto"
+                    id="deleteButton"
+                    type="submit"
+                    onclick="openModal(event)"
+                    data-bs-toggle="modal"
+                    data-bs-target="#confirmModal"
+                    disabled>Delete</button>
+        </form>
+    </div>
     <!-- Modal -->
     <div class="modal fade"
          id="confirmModal"
@@ -47,7 +51,10 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-danger" id="modalContinue" onclick="deleteForm.submit();">Continue</button>
+                    <button type="button"
+                            class="btn btn-danger"
+                            id="modalContinue"
+                            onclick="deleteForm.submit();">Continue</button>
                 </div>
             </div>
         </div>
@@ -63,7 +70,7 @@
             modalList.innerHTML = '';
             deleteForm.querySelectorAll('input[name="productIDs[]"]:checked').forEach((checkbox) => {
                 const listItem = document.createElement('li');
-                listItem.textContent = checkbox.dataset.stripNaam;
+                listItem.textContent = checkbox.dataset.productName;
                 modalList.appendChild(listItem);
             });
         };

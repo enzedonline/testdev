@@ -1,0 +1,90 @@
+<div class="subcategory-chooser">
+    {# chosen subcategory display text container - load initial value if present #}
+    <div class="chooser__title subcategory-chooser-chosen{% if not initial_value %} hide{% endif %}"
+        id="{{ self.id_for_label }}-choosen-display">
+        {% if initial_value %}{{ initial_value }}{% endif %}
+    </div>
+    {# display text & icon on chooser button set according to presence of chosen value #}
+    <button type="button" class="button button-small button-secondary chooser__choose-button open-modal-button"
+        aria-describedby="{{ self.id_for_label }}-choosen-display">
+        <span class="add-subcategory{% if initial_value %} hide{% endif %}">
+            <svg class="icon icon-plus icon"><use href="#icon-plus"></use></svg> {{ opts.add_button_text }}
+        </span>
+        <span class="change-subcategory{% if not initial_value %} hide{% endif %}">
+            <svg class="icon icon-resubmit icon"><use href="#icon-resubmit"></use></svg> {{ opts.change_button_text }}
+        </span>
+    </button>
+    <button type="button" class="button button-small button-secondary chooser__choose-button clear-choice-button"
+        aria-describedby="{{ self.id_for_label }}-choosen-display">
+        <span class="clear-subcategory{% if not initial_value %} hide{% endif %}">
+            <svg class="icon icon-bin icon"><use href="#icon-bin"></use></svg> {{ opts.clear_button_text }}
+        </span>
+    </button>
+</div>
+{# subcategory Field Panel Modal form #}
+<div class="modal-backdrop subcategory-chooser-modal">
+    <div class="modal-content modal-body modal-form">
+        <header class="w-header w-header--merged">
+            {# title and cancel button #}
+            <div>
+                <div class="left">
+                    <div class="col modal-banner">
+                        <svg class="icon modal-icon" aria-hidden="true">
+                            <use href="#icon-tasks"></use>
+                        </svg>
+                        <h2 class="w-header__title modal-heading" id="header-title">{{ self.heading }}</h2>
+                    </div>
+                </div>
+                <div class="right modal-dismiss-container">
+                    <button type="button"
+                            class="button button--icon text-replace modal-dismiss"
+                            title="{{ opts.cancel_text }}">
+                        <svg class="icon icon-cross" aria-hidden="true">
+                            <use href="#icon-cross"></use>
+                        </svg>
+                        {{ opts.cancel_text }}
+                    </button>
+                </div>
+            </div>
+        </header>
+        <div class="subcategory-chooser-modal-body">
+            {# search input #}
+            <div class="modal-search-container">
+                <input type="text"
+                       placeholder="{{ opts.search_text }} {{ self.heading }}"
+                       class="modal-search" />
+                <a role="button" title="{{ opts.clear_filter_text }}">
+                    <svg class="modal-search-dismiss icon icon-cross" aria-hidden="true">
+                        <use href="#icon-cross"></use>
+                    </svg>
+                </a>
+            </div>
+            {# selection panel #}
+            <div class="selection-panel-container">
+                <div class="selection-panel">
+                    {# for each category, loop through each associated subcategory #}
+                    {% for category in category_index %}
+                        <div class="category" aria-expanded="false" data-category-name={{ category.name }}>
+                            {# collapsible category banner #}
+                            <div class="category-banner">
+                                <svg class="icon icon-placeholder w-panel__icon expander" aria-hidden="true">
+                                    <use href="#icon-placeholder"></use>
+                                </svg>
+                                <h2 class="category-label w-panel__heading--label">{{ category.name }}</h2>
+                            </div>
+                            {# subcategory list #}
+                            <ul class="subcategory-list">
+                                {% for subcategory in category.subcategories %}
+                                    <li class="subcategory-label" data-subcategory-id={{ subcategory.id }}>
+                                        {{ subcategory.name }}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>new subCategoryChooser("{{ opts.field_id }}");</script>

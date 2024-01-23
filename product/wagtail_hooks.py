@@ -13,14 +13,14 @@ def register_product_chooser_viewset():
 
 @hooks.register('insert_global_admin_js')
 def register_admin_js():
-    product_category_chooser_js = static('js/product_category_chooser.js')
+    subcategory_chooser_js = static('js/subcategory_chooser.js')
     return mark_safe(
-        f'<script src="{product_category_chooser_js}"></script>'
+        f'<script src="{subcategory_chooser_js}"></script>'
     )
 
 @hooks.register('insert_global_admin_css')
 def register_admin_css():
-    product_category_chooser_css = static('css/product_category_chooser.css')
+    subcategory_chooser_css = static('css/subcategory_chooser.css')
     return mark_safe(
-        f'<link rel="stylesheet" href="{product_category_chooser_css}">'
+        f'<link rel="stylesheet" href="{subcategory_chooser_css}">'
     )

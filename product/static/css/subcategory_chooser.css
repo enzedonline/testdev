@@ -1,0 +1,199 @@
+/* CSS styles for the admin page */
+/* ----------------------------- */
+
+div.subcategory-chooser {
+    display: flex;
+}
+div.subcategory-chooser-chosen {
+    max-width: 70%;
+    padding-right: 1em;
+}
+div.subcategory-chooser .hide {
+    display: none;
+}
+
+/* action buttons on admin page */
+div.subcategory-chooser>button>span {
+    display: flex;
+    align-items: center;
+}
+
+/* CSS styles for the modal form */
+/* ----------------------------- */
+
+/*  hide modal initially */
+div.subcategory-chooser-modal {
+    display: none;
+}
+
+/* set display on modal elements with hide class (search facility) */
+div.subcategory-chooser-modal .hide {
+    display: none;
+}
+
+/* set modal display */
+div.subcategory-chooser-modal div.modal-form {
+    width: 80%;
+    left: 10%;
+    height: 85vh;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 0;
+}
+
+/* modal title bar */
+div.subcategory-chooser-modal div.modal-banner {
+    color: var(--w-color-text-label-menus-active);
+    display: flex;
+    align-items: center;
+    margin-inline-start: 2em;
+}
+div.subcategory-chooser-modal .modal-heading {
+    padding: 1rem;
+    display: inline;
+}
+div.subcategory-chooser-modal svg.modal-icon {
+    display: inline;
+    max-width: 1.4em;
+    max-height: 1.4em;
+}
+div.subcategory-chooser-modal div.modal-dismiss-container {
+    padding: .7em .7em 0 0;
+    opacity: .7;
+}
+div.subcategory-chooser-modal button.modal-dismiss {
+    color: var(--w-color-text-label-menus-default) !important;
+    border-color: var(--w-color-text-label-menus-default) !important;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 5px;
+    background-color: transparent !important;
+}
+div.subcategory-chooser-modal button.modal-dismiss:hover {
+    color: var(--w-color-text-label-menus-active) !important;
+    border-color: var(--w-color-text-label-menus-active) !important;
+}
+
+/* modal body */
+div.subcategory-chooser-modal-body {
+    padding: 0.5rem 1.5rem 1.5rem 1.5rem;
+    border-radius: 0;
+    margin-top: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+/* modal search */
+div.subcategory-chooser-modal div.modal-search-container {
+    position: relative;
+    display: flex;
+}
+div.subcategory-chooser-modal input.modal-search {
+    margin-bottom: 0.6rem;
+    flex-grow: 1;
+    padding-right: 2em;
+}
+div.subcategory-chooser-modal svg.modal-search-dismiss {
+    color: var(--w-color-text-label);
+    height: 1em;
+    width: 1em;
+    position: absolute;
+    top: 50%;
+    right: 1em;
+    transform: translateY(-75%);
+    cursor: pointer;
+    opacity: .7;
+}
+div.subcategory-chooser-modal svg.modal-search-dismiss:hover {
+    color: var(--w-color-text-context);
+}
+
+/*  selection list container */
+div.subcategory-chooser-modal div.selection-panel-container {
+    border: 1px solid var(--w-color-border-field-default);
+    border-radius: 0.3125rem;
+    background-color: #fefefe;
+    overflow: hidden;
+    display: flex;
+    margin-bottom: 0.6rem;
+}
+
+/* scrollable selection list  */
+div.subcategory-chooser-modal div.selection-panel {
+    background-color: var(--w-color-surface-field);
+    padding: 20px 0;
+    overflow-y: auto;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    height: calc(85vh - 170px);
+    gap: 0.5em 0;
+}
+
+/* animate category expander icon */
+div.subcategory-chooser-modal div.category svg.expander {
+    transition: 200ms;
+}
+
+/* container for category display name and expander */
+div.subcategory-chooser-modal div.category-banner {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 0 1em;
+}
+div.subcategory-chooser-modal .category-label {
+    display: inline;
+    margin: 0 0 0 1em;
+    font-size: 1.2em;
+}
+
+/* category banners and subcategory labels hover/not hover  */
+div.subcategory-chooser-modal li.subcategory-label,
+div.subcategory-chooser-modal div.category-banner {
+    color: var(--w-color-text-label);
+}
+div.subcategory-chooser-modal li.subcategory-label:hover,
+div.subcategory-chooser-modal div.category-banner:hover,
+div.subcategory-chooser-modal div.category-banner:hover .category-label {
+    color: var(--w-color-text-context);
+    background-color: var(--w-color-border-field-default);
+}
+
+/* subcategory ul list grid - hide unless expanded */
+div.subcategory-chooser-modal ul.subcategory-list {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-column-gap: 1rem;
+    grid-row-gap: 0.5rem;
+    padding: 0.2rem 2rem 0 2.5rem;
+    display: none;
+}
+
+/* display subcategory list when parent category expanded */
+div.subcategory-chooser-modal div.category[aria-expanded="true"] ul.subcategory-list {
+    display: grid;
+}
+
+/* style subcategory list item */
+div.subcategory-chooser-modal li.subcategory-label {
+    height: 100%;
+    cursor: pointer;
+    font-size: large;
+    font-weight: 500;
+    padding: 0.3rem 0.8rem;
+    break-inside: avoid-column;
+    overflow-wrap: break-word;
+    border-radius: 0.5rem;
+    line-height: normal;
+}
+
+/* add border and check mark to pre-chosen subcategory */
+div.subcategory-chooser-modal li.subcategory-label.active {
+    border-color: var(--w-color-text-label);
+    border-width: 1px;
+}
+div.subcategory-chooser-modal li.subcategory-label.active::after {
+    content: '✓';
+}

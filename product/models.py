@@ -11,7 +11,7 @@ from wagtail.models import (DraftStateMixin, LockableMixin, Orderable, Page,
                             PreviewableMixin, RevisionMixin, WorkflowMixin)
 from wagtail.snippets.models import register_snippet
 
-from .panels.category import ProductCategoryPanel
+from .panels.category import SubCategoryChooser
 
 class NonBreakingError(Exception):
     pass
@@ -93,7 +93,7 @@ class Product(
         blank=True,
         related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name="Category",
+        verbose_name="Product Category",
     )
     image = models.ForeignKey(
         "wagtailimages.Image",
@@ -107,7 +107,12 @@ class Product(
         FieldPanel("sku"),
         FieldPanel("title"),
         FieldPanel("description"),
-        ProductCategoryPanel("category"),
+        SubCategoryChooser(
+            "category", 
+            category=StoreDepartment, 
+            subcategory=DepartmentCategory, 
+            subcategory_related_name="department_categories"
+        ),
         FieldPanel("image"),
     ]
 
@@ -118,7 +123,7 @@ class Product(
         return "products/product_detail.html"
 
 
-    def get_categories():
+    def get_categories(self):
         # Fetch all store departments with related department categories
         store_departments = StoreDepartment.objects.prefetch_related(
             Prefetch('department_categories', queryset=DepartmentCategory.objects.order_by('sort_order'))
@@ -165,8 +170,15 @@ class ProductPage(RoutablePageMixin, Page):
     content_panels = Page.content_panels + [FieldPanel("intro")]
 
     @path("")
-    def product_list(self, request):
+    @path("index/")
+    @path("index/<str:sort>/")
+    def product_list(self, request, sort=None):
         products = Product.objects.all()
+        if sort:
+            try:
+                products = products.order_by(sort)
+            except Exception as e:
+                pass       
         return self.render(
             request,
             context_overrides={
