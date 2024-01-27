@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %} 
+{% block content %}
+<div class="container">
+<h2>{{ object }}</h2>
+<h3>{{ object.dept_subcategory.department }} - {{ object.dept_subcategory }}</h3>
+<p>{{ object.description|richtext }}</p>
+{% image object.image width-400 %}
+</div>
+{% endblock content %}
