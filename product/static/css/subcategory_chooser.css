@@ -9,11 +9,18 @@ div.subcategory-chooser-chosen {
     padding-right: 1em;
 }
 div.subcategory-chooser .hide {
-    display: none;
+    display: none !important;
 }
 
 /* action buttons on admin page */
-div.subcategory-chooser>button>span {
+div.subcategory-chooser>div.chooser-button-group {
+    display: flex;
+    flex-wrap: wrap;
+}
+div.subcategory-chooser button.chooser__choose-button {
+    margin-inline-start: 1rem;
+}
+div.subcategory-chooser button.chooser__choose-button>span {
     display: flex;
     align-items: center;
 }
@@ -51,6 +58,9 @@ div.subcategory-chooser-modal div.modal-banner {
 div.subcategory-chooser-modal .modal-heading {
     padding: 1rem;
     display: inline;
+}
+header.w-header div.left { /* wagtail bug fix - stop dismiss wrapping on mobile */
+    max-width: 80%;
 }
 div.subcategory-chooser-modal svg.modal-icon {
     display: inline;

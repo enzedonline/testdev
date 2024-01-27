@@ -1,9 +1,12 @@
-class subCategoryChooser {
+// static/js/subcategory_chooser.js
+
+class subcategoryChooser {
     constructor(id) {
         this.chooser = {};
         this.initHTMLElements(id);
     }
 
+    // set up class variables, add event listeners ==========================================================
     initHTMLElements(id) {
         // Wagtail admin form elements
         this.chooser.wrapper = document.querySelector(`[data-subcategory-chooser="${id}"]`);
@@ -18,102 +21,103 @@ class subCategoryChooser {
         this.chooser.modalSelect = this.chooser.modal.querySelector('.selection-panel');
         this.chooser.searchInput = this.chooser.modal.querySelector('.modal-search');
         this.chooser.dismissModalBtn = this.chooser.modal.querySelector('.modal-dismiss');
-        this.chooser.categoryLists = this.chooser.modal.querySelectorAll('.category');
-        this.chooser.listItems = this.chooser.modal.querySelectorAll('.subcategory-label');
+        this.chooser.categories = this.chooser.modal.querySelectorAll('.category');
+        this.chooser.subcategories = this.chooser.modal.querySelectorAll('.subcategory-label');
 
-        // used to restore last open category after clearing filter
-        this.chooser.openCategory = null;
-
-        // open modal form method
+        // open modal form ========================================================================
         this.chooser.openModalBtn.addEventListener('click', () => {
+            // used to restore last open category after clearing filter
+            this.chooser.openCategory = null;
+            // clear any filters and collapse any open categories
+            this.clearFilter();
+            // show modal
             this.chooser.modal.style.display = 'block';
-            this.chooser.modalSelect.querySelectorAll('div.category[aria-expanded="true"]').forEach(category => {
-                category.setAttribute('aria-expanded', 'false');
-            });
-            // clear any filters
-            this.filterItems(true);
             // if pre-chosen subcategory show item and set style
             this.showActiveSubCategory();
         });
 
-        // clear chosen value from panel button
+        // clear chosen value =====================================================================
         this.chooser.clearChoiceBtn.addEventListener('click', () => {
             this.clearChosenItem();
         });
 
-        // modal click events
+        // modal click events =====================================================================
         this.chooser.modal.addEventListener('click', event => {
             const clickedItem = event.target;
 
+            // expand/collapse category =================================================
             if (clickedItem.closest('.category-banner')) {
-                // expand/collapse category
-                const clickedCategory = clickedItem.closest('.category');
-                this.chooser.categoryLists.forEach(category => {
-                    if (category == clickedCategory) {
-                        // toggle category value so collapses if currently open
-                        category.setAttribute('aria-expanded', category.getAttribute('aria-expanded') !== 'true');
-                    } else {
-                        // collapse all other categorys
-                        category.setAttribute('aria-expanded', 'false');
-                    }
-                });
-                if (clickedCategory.getAttribute('aria-expanded') === 'true') {
-                    // only remember clickedCategory if no search filter
-                    if (!this.chooser.searchInput.value) {
-                        this.chooser.openCategory = clickedCategory;
-                    }
-                    // ensure expanded category is visible
-                    if (this.chooser.modalSelect.clientHeight > clickedCategory.clientHeight) {
-                        const modalSelectBottom = this.chooser.modalSelect.scrollTop + this.chooser.modalSelect.clientHeight;
-                        const categoryBottom = clickedCategory.offsetTop + clickedCategory.offsetHeight;
-                        if (modalSelectBottom <= categoryBottom){
-                            clickedCategory.scrollIntoView({ block: 'end', behavior: 'smooth' });
-                        }
-                    } else {
-                        clickedCategory.scrollIntoView({ block: 'start', behavior: 'smooth' });
-                    }
-                } else {
-                    this.chooser.openCategory = null;
-                }
-
-            } else if (clickedItem.matches('.subcategory-label')) {
-                // category selected - set select value and dismiss modal
+                this.handleCategoryClick(clickedItem.closest('.category'));
+            }
+            // subcategory clicked - set select value and dismiss modal =================
+            else if (clickedItem.matches('.subcategory-label')) {
                 this.setChosenItem(clickedItem);
                 this.dismissModal();
-
-            } else if (clickedItem.closest('.modal-search-dismiss')) {
-                // clear search filter
-                this.filterItems(true);
-
-            } else if (clickedItem.closest('.modal-dismiss') || !this.chooser.modalForm.contains(clickedItem)) {
-                // dismiss button or area outside of modal clicked
+            }
+            // clear search filter ======================================================
+            else if (clickedItem.closest('.modal-search-dismiss')) {
+                this.clearFilter();
+            }
+            // dismiss button or area outside of modal clicked ==========================
+            else if (clickedItem.closest('.modal-dismiss') || !this.chooser.modalForm.contains(clickedItem)) {
                 this.dismissModal();
             }
         });
 
+        // filter category list or clear if no input value ========================================
         this.chooser.searchInput.addEventListener('input', () => {
-            // filter category list
             this.filterItems();
         });
 
     }
 
-    // set chosen item on Admin page
+    // expand/collapse category, scroll subcategories into view if expanded =================================
+    handleCategoryClick(clickedCategory) {
+        this.chooser.categories.forEach(category => {
+            // toggle clicked category value so collapses if currently open, collapse all other categories
+            if (category == clickedCategory) {
+                category.setAttribute('aria-expanded', category.getAttribute('aria-expanded') !== 'true');
+            } else {
+                category.setAttribute('aria-expanded', 'false');
+            }
+        });
+        if (clickedCategory.getAttribute('aria-expanded') === 'true') {
+            // only remember clickedCategory if no search filter
+            if (!this.chooser.searchInput.value) {
+                this.chooser.openCategory = clickedCategory;
+            }
+            // ensure expanded category is scrolled into view fully so subcategories are visible
+            if (this.chooser.modalSelect.clientHeight > clickedCategory.clientHeight) {
+                const modalSelectBottom = this.chooser.modalSelect.scrollTop + this.chooser.modalSelect.clientHeight;
+                const categoryBottom = clickedCategory.offsetTop + clickedCategory.offsetHeight;
+                if (modalSelectBottom <= categoryBottom) {
+                    clickedCategory.scrollIntoView({ block: 'end', behavior: 'smooth' });
+                }
+            } else {
+                clickedCategory.scrollIntoView({ block: 'start', behavior: 'smooth' });
+            }
+        } else {
+            // there are no open categories
+            this.chooser.openCategory = null;
+        }
+    }
+
+    // set chosen item on Admin page ========================================================================
     setChosenItem(clickedItem) {
         const subcategoryID = clickedItem.getAttribute('data-subcategory-id');
         const category = clickedItem.closest('div.category').getAttribute('data-category-name');
         // set input widget value and display text for chosen item (category - subcategory)
         this.chooser.formInput.value = subcategoryID;
         this.chooser.chosenItem.innerText = `${category} - ${clickedItem.innerText}`;
-        // change from 'add new' mode to 'edit/clear/display' mode
+        // admin interface - change from 'add new' mode to 'edit/clear/display' mode
         this.chooser.chosenItem.classList.remove('hide');
         this.chooser.openModalBtn.querySelector('.add-subcategory').classList.add('hide');
         this.chooser.openModalBtn.querySelector('.change-subcategory').classList.remove('hide');
         this.chooser.clearChoiceBtn.querySelector('.clear-subcategory').classList.remove('hide');
     }
 
+    // clear chosen value and display text, revert admin panel to 'add new' mode ============================
     clearChosenItem() {
-        // clear chosen value and display text
         this.chooser.formInput.value = '';
         this.chooser.chosenItem.innerText = '';
         this.chooser.chosenItem.classList.add('hide');
@@ -123,33 +127,50 @@ class subCategoryChooser {
         this.chooser.openCategory = null;
     }
 
+    // if chosen value already when opening modal, display and highlight item in modal list =================
     showActiveSubCategory() {
-        // if chosen value already when opening modal, display and highlight item in modal list
+        // remove any previous 'active' subcategories in case modal has been opened previously
         this.chooser.modalSelect.querySelectorAll('li.active').forEach(item => {
             item.classList.remove('active');
         })
-        const activeSubCategory = this.chooser.modalSelect.querySelector(`li[data-subcategory-id="${this.chooser.formInput.value}"]`);
+        // find the subcategory element from the form field input value
+        const activeSubCategory = this.chooser.modalSelect.querySelector(
+            `li[data-subcategory-id="${this.chooser.formInput.value}"]`
+        );
         if (activeSubCategory) {
+            // highlight chosen item
             activeSubCategory.classList.add('active');
+            // expand parent category
             this.chooser.openCategory = activeSubCategory.closest('div.category')
             this.chooser.openCategory.setAttribute('aria-expanded', 'true');
+            // ensure chosen item visible on screen - modal must not be hidden for this
+            activeSubCategory.scrollIntoView({ block: 'end' });
         }
     }
 
-    // filter items
-    filterItems(clear = false) {
-        if (clear || this.chooser.searchInput.value === '') {
-            // clear search value, show all categories, collapse all categorys except last active if not null
-            this.chooser.searchInput.value = '';
-            this.chooser.modalSelect.querySelectorAll('.hide').forEach(item => {
-                item.classList.remove('hide');
-            });
-            this.chooser.categoryLists.forEach(category => {
-                category.setAttribute('aria-expanded', 'false');
-                if (this.chooser.openCategory) {
-                    this.chooser.openCategory.setAttribute('aria-expanded', 'true');
-                }
-            });
+    // clear search value ===================================================================================
+    clearFilter() {
+        this.chooser.searchInput.value = '';
+        // unhide all categories and subcategories
+        this.chooser.modalSelect.querySelectorAll('.hide').forEach(item => {
+            item.classList.remove('hide');
+        });
+        // show all categories, collapse all categorys except last active if not null
+        this.chooser.categories.forEach(category => {
+            // collapse all category banners
+            category.setAttribute('aria-expanded', 'false');
+            // if a category was expanded before search, restore open and scroll to view
+            if (this.chooser.openCategory) {
+                this.chooser.openCategory.setAttribute('aria-expanded', 'true');
+                this.chooser.openCategory.scrollIntoView({ block: 'end' });
+            }
+        });
+    }
+
+    // filter items =========================================================================================
+    filterItems() {
+        if (this.chooser.searchInput.value === '') {
+            this.clearFilter();
         } else {
             // display partial matches, expand all categorys with results, hide those without
             this.chooser.modalSelect.querySelectorAll('[aria-expanded="false"').forEach(category => {
@@ -157,17 +178,21 @@ class subCategoryChooser {
             });
             const searchText = this.chooser.searchInput.value.trim().toLowerCase();
             // display or hide modal list item containers where item has partial match with search text
-            this.chooser.listItems.forEach(item => {
-                // item.style.display = item.textContent.toLowerCase().includes(searchText) ? 'block' : 'none';
-                (item.textContent.toLowerCase().includes(searchText)) ? item.classList.remove('hide') : item.classList.add('hide');
+            this.chooser.subcategories.forEach(subcategory => {
+                (subcategory.textContent.toLowerCase().includes(searchText)) 
+                    ? subcategory.classList.remove('hide') 
+                    : subcategory.classList.add('hide');
             });
             // hide any empty categories
-            this.chooser.categoryLists.forEach(category => {
-                (category.querySelectorAll('li.subcategory-label:not(.hide)').length == 0) ? category.classList.add('hide') : category.classList.remove('hide');
+            this.chooser.categories.forEach(category => {
+                (category.querySelectorAll('li.subcategory-label:not(.hide)').length == 0) 
+                    ? category.classList.add('hide') 
+                    : category.classList.remove('hide');
             });
         }
     }
 
+    // hide modal - close button clicked, or click was outside of modal body ================================
     dismissModal() {
         this.chooser.modal.style.display = 'none';
     }

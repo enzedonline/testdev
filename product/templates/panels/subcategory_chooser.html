@@ -5,21 +5,23 @@
         {% if initial_value %}{{ initial_value }}{% endif %}
     </div>
     {# display text & icon on chooser button set according to presence of chosen value #}
-    <button type="button" class="button button-small button-secondary chooser__choose-button open-modal-button"
-        aria-describedby="{{ self.id_for_label }}-choosen-display">
-        <span class="add-subcategory{% if initial_value %} hide{% endif %}">
-            <svg class="icon icon-plus icon"><use href="#icon-plus"></use></svg> {{ opts.add_button_text }}
-        </span>
-        <span class="change-subcategory{% if not initial_value %} hide{% endif %}">
-            <svg class="icon icon-resubmit icon"><use href="#icon-resubmit"></use></svg> {{ opts.change_button_text }}
-        </span>
-    </button>
-    <button type="button" class="button button-small button-secondary chooser__choose-button clear-choice-button"
-        aria-describedby="{{ self.id_for_label }}-choosen-display">
-        <span class="clear-subcategory{% if not initial_value %} hide{% endif %}">
-            <svg class="icon icon-bin icon"><use href="#icon-bin"></use></svg> {{ opts.clear_button_text }}
-        </span>
-    </button>
+    <div class="chooser-button-group">
+        <button type="button" class="button button-small button-secondary chooser__choose-button open-modal-button"
+            aria-describedby="{{ self.id_for_label }}-choosen-display">
+            <span class="add-subcategory{% if initial_value %} hide{% endif %}">
+                <svg class="icon icon-plus icon"><use href="#icon-plus"></use></svg> {{ opts.add_button_text }}
+            </span>
+            <span class="change-subcategory{% if not initial_value %} hide{% endif %}">
+                <svg class="icon icon-resubmit icon"><use href="#icon-resubmit"></use></svg> {{ opts.change_button_text }}
+            </span>
+        </button>
+        <button type="button" class="button button-small button-secondary chooser__choose-button clear-choice-button"
+            aria-describedby="{{ self.id_for_label }}-choosen-display">
+            <span class="clear-subcategory{% if not initial_value %} hide{% endif %}">
+                <svg class="icon icon-bin icon"><use href="#icon-bin"></use></svg> {{ opts.clear_button_text }}
+            </span>
+        </button>
+    </div>
 </div>
 {# subcategory Field Panel Modal form #}
 <div class="modal-backdrop subcategory-chooser-modal">
@@ -51,7 +53,7 @@
             {# search input #}
             <div class="modal-search-container">
                 <input type="text"
-                       placeholder="{{ opts.search_text }} {{ self.heading }}"
+                       placeholder="{{ opts.search_text }}"
                        class="modal-search" />
                 <a role="button" title="{{ opts.clear_filter_text }}">
                     <svg class="modal-search-dismiss icon icon-cross" aria-hidden="true">
@@ -64,7 +66,7 @@
                 <div class="selection-panel">
                     {# for each category, loop through each associated subcategory #}
                     {% for category in category_index %}
-                        <div class="category" aria-expanded="false" data-category-name={{ category.name }}>
+                        <div class="category" aria-expanded="false" data-category-name="{{ category.name }}">
                             {# collapsible category banner #}
                             <div class="category-banner">
                                 <svg class="icon icon-placeholder w-panel__icon expander" aria-hidden="true">
@@ -87,4 +89,4 @@
         </div>
     </div>
 </div>
-<script>new subCategoryChooser("{{ opts.field_id }}");</script>
+<script>new subcategoryChooser("{{ opts.field_id }}");</script>
