@@ -12,9 +12,7 @@ from wagtail.admin.panels import (FieldPanel, InlinePanel, MultiFieldPanel,
 # from wagtail.fields import RichTextField, StreamField
 from wagtail.models import Orderable, Page
 
-# from blocks.models import (CollapsibleCardBlock, CSVTableBlock,
-#                            ExternalLinkEmbedBlock, FlexCardBlock, HeadingBlock,
-#                            ImportTextBlock, LinkBlock)
+from blocks.models import *
 # from core.forms import RestrictedPanelsAdminPageForm
 # from core.panels import (ImportTextAreaPanel, M2MChooserPanel, RegexPanel,
 #                          RestrictedFieldPanel, RestrictedInlinePanel,
@@ -201,11 +199,12 @@ class BlogPage(Page):
             ("link", LinkBlock()),
             ("flex_card", FlexCardBlock()),
             ("heading", HeadingBlock()),
+            ("django_template_fragment", DjangoTemplateFragmentBlock()),
         ],
         verbose_name="Page Content",
         blank=True,
         use_json_field=True,
-        block_counts={'heading': {'min_num': 1, 'max_num': 1},}
+        # block_counts={'heading': {'min_num': 1, 'max_num': 1},}
     )
     categories = ParentalManyToManyField(
         BlogCategory,
@@ -215,10 +214,10 @@ class BlogPage(Page):
 
     content_panels = Page.content_panels + [
         AuthorPanel('author'),
-        MultiFieldPanel(
-            [InlinePanel("videos", min_num=1)],
-            heading="Videos",
-        ),
+        # MultiFieldPanel(
+        #     [InlinePanel("videos", min_num=1)],
+        #     heading="Videos",
+        # ),
         # UtilityPanel(
         #     '<b>Word Count:</b> {{wordcount}}', {'wordcount': 'wordcount'},
         #     style = 'margin-bottom: 2em;display: block;background-color: antiquewhite;padding: 1em;border-radius: 1em;'
