@@ -9,3 +9,4 @@ from .parsed_richtext import ParsedRichTextBlock
 from .product import ProductBlock
 from .rich_text import RichTextStructBlock, MinimalRichTextBlock, SimpleRichTextBlock, BasicRichTextBlock
 from .seo_image_chooser import SEOImageChooserBlock
+from .django_html import DjangoTemplateFragmentBlock
