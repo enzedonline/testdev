@@ -8,43 +8,9 @@
 
     {% comment %} <p>Word Count: {{ page.wordcount }}</p> {% endcomment %}
 
-    <div class="row justify-content-center row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-3">
-        {% for video in self.videos.all %}
-        <div class="col">
-            <div class="card h-100">
-                <div class="card-body">
-                    <div class="card-title w-100">
-                        <div class="card-video">{% embed video.url max_width=600 %}</div>
-                    </div>
-                    <p class="card-text">{{ video.description|richtext }}</p>
-                </div>
-              </div>
-        </div>
-        {% endfor %}
-    </div>
-
-    {% comment %} <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
-        <div class="carousel-inner">
-            {% for loop_cycle in self.carousel_images.all %}
-            {% image loop_cycle.carousel_image thumbnail-400x200 as img %}
-                <div class="carousel-item{% if forloop.counter == 1 %} active{% endif %}">
-                    <img src="{{ img.url }}" class="d-block w-100" alt="{{ img.alt }}">
-                </div>
-            {% endfor %}
-        </div>
-        <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="sr-only">Previous</span>
-        </a>
-        <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="sr-only">Next</span>
-        </a>
-    </div>
-
     {% for block in page.content %}
         {% include_block block %}
-    {% endfor %} {% endcomment %}
+    {% endfor %}
 
 </article>
 
