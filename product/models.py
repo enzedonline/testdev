@@ -1,5 +1,4 @@
 from django.db import models
-from django.db.models import Prefetch
 from django.http import HttpResponseRedirect
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
@@ -11,10 +10,7 @@ from wagtail.models import (DraftStateMixin, LockableMixin, Orderable, Page,
                             PreviewableMixin, RevisionMixin, WorkflowMixin)
 from wagtail.snippets.models import register_snippet
 
-from .panels.category import SubCategoryChooser
-
-class NonBreakingError(Exception):
-    pass
+from .panels.category import SubcategoryChooser
 
 @register_snippet
 class StoreDepartment(ClusterableModel):
@@ -43,19 +39,18 @@ class StoreDepartment(ClusterableModel):
         return self.name
     
     class Meta:
-        verbose_name = _("Product Category")
-        verbose_name_plural = _("Product Categories")
+        verbose_name = _("Store Department")
+        verbose_name_plural = _("Store Departments")
 
 class DepartmentSubcategory(Orderable):
     department = ParentalKey(
         "StoreDepartment",
-        related_name="department_subcategories",
-        verbose_name=_("Store Department")
+        related_name="department_subcategories"
     )
     code = models.CharField(
         max_length=10,
         unique=True,
-        verbose_name=_("Department Code"),
+        verbose_name=_("Subcategory Code"),
     )    
     name = models.CharField(
         max_length=50,
@@ -71,7 +66,8 @@ class DepartmentSubcategory(Orderable):
         return self.name
     
     class Meta:
-        verbose_name = _("Department Product Subcategory")
+        verbose_name = _("Department Subcategory")
+        verbose_name_plural = _("Department Subcategories")
 
 @register_snippet
 class Product(
@@ -93,7 +89,7 @@ class Product(
         blank=True,
         related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name="Product Category",
+        verbose_name=_("Department Subcategory"),
     )
     image = models.ForeignKey(
         "wagtailimages.Image",
@@ -107,11 +103,12 @@ class Product(
         FieldPanel("sku"),
         FieldPanel("title"),
         FieldPanel("description"),
-        SubCategoryChooser(
+        SubcategoryChooser(
             "dept_subcategory", 
             category=StoreDepartment, 
             subcategory=DepartmentSubcategory, 
-            subcategory_related_name="department_subcategories"
+            subcategory_related_name="department_subcategories", 
+            search_text=_("Search Department Subcategories")
         ),
         FieldPanel("image"),
     ]
@@ -120,24 +117,8 @@ class Product(
         return f"{self.sku} - {self.title}"
 
     def get_preview_template(self, request, mode_name):
-        return "products/product_detail.html"
+        return "product/product_preview.html"
 
-
-""" 
-To list all department categories grouped by store department using Django ORM, you can perform a query 
-that involves both StoreDepartment and DepartmentCategory. You can use the prefetch_related to fetch the 
-related department_categories for each StoreDepartment efficiently. 
-This code does the following:
-- Uses prefetch_related to efficiently fetch all StoreDepartment instances with their related department_categories.
-- Iterates through each StoreDepartment.
-- Prints the department name.
-- Iterates through the related department_categories and prints each category name.
-
-Make sure to adjust the sorting or filtering conditions as per your requirements. 
-The order_by('sort_order') in the Prefetch is optional and depends on whether you want to retrieve the categories in a specific order.
-
-This approach uses efficient database queries to fetch the related data in a single query, avoiding the N+1 query problem.
-"""
 
 
 class ProductPage(RoutablePageMixin, Page):
