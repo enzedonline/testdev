@@ -1,17 +1,13 @@
+from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from wagtail.blocks import StructBlock
 from wagtail.blocks.struct_block import StructBlockAdapter
 from wagtail.telepath import register
 
-from blocks.wagtail.blocks import RequiredMixin
+from blocks.wagtail.blocks import CharBlock, ImageChooserBlock, RequiredMixin
 
 
 class SEOImageChooserBlock(RequiredMixin, StructBlock):
-    from django.utils.functional import cached_property
-    from wagtail.blocks import DateBlock
-
-    from blocks.wagtail.blocks import (CharBlock, ImageChooserBlock,
-                                       RequiredMixin)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -26,7 +22,6 @@ class SEOImageChooserBlock(RequiredMixin, StructBlock):
             "A text description of the image for screen readers and search engines"
         ),
     )
-    date = DateBlock(required=False)
 
     class Meta:
         form_classname = "seo-image-chooser-block"
