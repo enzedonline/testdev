@@ -342,7 +342,7 @@
 
 /* search block */
 
-.search-menu {
+.menustream .search-menu {
   padding: 0.3em 1em !important;
   margin-top: 0 !important;
   position: absolute !important;
@@ -351,6 +351,11 @@
   left: clamp(0.01px, calc(100% - 30rem), 100%) !important;
   border: 0;
   border-radius: 0 0 var(--bs-border-radius) var(--bs-border-radius);
+}
+
+.menustream.menu-spacer {
+  height: calc(2rem + var(--menustream-brand-height));
+  /* top: calc(0.6em + var(--menustream-brand-height)) !important; */
 }
 
 /* main-menu */
