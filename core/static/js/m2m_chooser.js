@@ -1,118 +1,206 @@
 class M2MChooser {
     constructor(id) {
-        this.chooser = {};
         this.initHTMLElements(id);
-        this.showChosenItems();
+        this.addEventListeners();
+        this.getSelectedItems(); // get selected items from select element
+        this.showChosenItems(); // display chosen items list on admin form
     }
 
     initHTMLElements(id) {
-        // Wagtail admin form elements
-        this.chooser.wrapper = document.querySelector(`.m2mchooser-${id}`);
-        this.chooser.formSelect = this.chooser.wrapper.querySelector(`#${id}`)
-        this.chooser.chosenItems = this.chooser.wrapper.querySelector('.m2m-chooser-chosen');
-        this.chooser.openModalBtn = this.chooser.wrapper.querySelector('.m2m-chooser-open-modal-button');
+        // Class variables ========================================================================
+        this.chooser = {};
+        this.chooser.selectedItems = {}; // stores currently selected items in format {'value': 'label'}
 
-        // modal form elements
-        this.chooser.modal = this.chooser.wrapper.querySelector('.m2m-chooser-modal');
-        this.chooser.modalForm = this.chooser.wrapper.querySelector('.m2m-chooser-modal-form');
-        this.chooser.modalSelect = this.chooser.wrapper.querySelector('.m2m-chooser-modal-select');
-        this.chooser.searchInput = this.chooser.wrapper.querySelector('.m2m-chooser-modal-search');
-        this.chooser.submitModalBtn = this.chooser.wrapper.querySelector('.m2m-chooser-modal-submit');
-        this.chooser.dismissModalBtn = this.chooser.wrapper.querySelector('.m2m-chooser-modal-dismiss');
-        this.chooser.listItems = null;
+        // Wagtail admin form elements ============================================================
+        this.chooser.wrapper = document.querySelector(`div.m2mchooser-${id}`);
+        this.chooser.formSelect = this.chooser.wrapper.querySelector(`select#${id}`)
+        this.chooser.chosenItemsList = this.chooser.wrapper.querySelector('ul.m2m-chooser-chosen');
+        this.chooser.openModalBtn = this.chooser.wrapper.querySelector('button[data-button-role="open-modal"]');
+        this.chooser.clearChosenBtn = this.chooser.wrapper.querySelector('button[data-button-role="clear-chosen"]');
 
-        // open modal form method
-        this.chooser.openModalBtn.addEventListener('click', () => {
-            this.updateModalSelectOptions();
-            this.chooser.modal.style.display = 'block';
-            this.chooser.listItems = Array.from(this.chooser.modalSelect.getElementsByClassName("m2m-chooser-modal-option"));
-        });
+        // modal form elements ====================================================================
+        this.chooser.modal = this.chooser.wrapper.querySelector('div.m2m-chooser-modal');
+        this.chooser.modalForm = this.chooser.modal.querySelector('div.modal-form');
+        this.chooser.searchInput = this.chooser.modal.querySelector('input.modal-search');
+        this.chooser.listItems = this.chooser.modal.querySelectorAll("li.modal-select-item");
 
-        // toggle selected modal list items on click
-        // items with 'button-secondary' class will be considered unselected
-        this.chooser.modalSelect.addEventListener('click', event => {
-            const clickedItem = event.target;
-            if (clickedItem.matches('.m2m-chooser-modal-option')) {
-                clickedItem.classList.toggle('button-secondary');
+        // chosen item template used to add items to chosenItemsList ==============================
+        this.chooser.chosenItemTemplate = document.createElement('li');
+        this.chooser.chosenItemTemplate.classList.add('tagit-choice', 'tagit-choice-editable');
+        this.chooser.chosenItemTemplate.innerHTML = `
+            <span></span>
+            <a class="clear-choice-button" role="button" title="Remove">
+                <svg class="icon icon-circle-mark">
+                    <use href="#icon-circle-xmark"></use>
+                </svg>
+            </a>
+        `;
+    }
+
+    addEventListeners() {
+
+    // admin form event listeners ===========================================================================
+
+        // clear all chosen values ================================================================
+        this.chooser.clearChosenBtn.addEventListener('click', () => {
+            this.handleClearChosenItemsClick();
+        })
+
+        // remove item from chosen list if clear choice button was clicked ========================
+        this.chooser.chosenItemsList.addEventListener('click', (event) => {
+            const target = event.target.closest('a.clear-choice-button')
+            if (target) {
+                this.handleClearChoiceClick(target);
             }
         });
 
-        // modal form submit
-        this.chooser.submitModalBtn.addEventListener('click', event => {
-            event.preventDefault();
-            // set selected attributes on Wagtail select option elements
-            Array.from(this.chooser.modalSelect.getElementsByClassName("m2m-chooser-modal-option")).forEach(modalItem => {
-                const originalOption = this.chooser.formSelect.querySelector(`option[value="${modalItem.value}"]`);
-                if (originalOption && !modalItem.classList.contains("button-secondary")) {
-                    originalOption.setAttribute('selected', "");
-                } else if (originalOption && modalItem.classList.contains("button-secondary")) {
-                    originalOption.removeAttribute('selected');
-                }
-            });
-            // rebuild displayed selected items on underlying admin form
-            this.showChosenItems();
-            // hide modal
-            this.dismissModal();
+        // open modal form method =================================================================
+        this.chooser.openModalBtn.addEventListener('click', () => {
+            this.showSelectedModalItems();
+            this.chooser.modal.style.display = 'block';
         });
 
-        this.chooser.dismissModalBtn.addEventListener('click', () => {
-            // hide modal with no actions
-            this.dismissModal();
-        });
+    // modal event listeners ================================================================================
 
-        // Dismiss modal if clicked outside of form area
-        this.chooser.modal.addEventListener("click", (event) => {
-            if (!this.chooser.modalForm.contains(event.target)) {
+        //  click events ==========================================================================
+        this.chooser.modal.addEventListener('click', event => {
+            const clickedItem = event.target;
+
+            // toggle modal list items selected status on click ==============================
+            if (clickedItem.matches('li.modal-select-item')) {
+                clickedItem.setAttribute('data-selected', clickedItem.getAttribute('data-selected')==='true' ? 'false' : 'true');
+                clickedItem.classList.toggle('button-secondary');
+            }
+            // modal submit ==================================================================
+            // get selected values from modal form, rebuild displayed selected items on underlying admin form, hide modal
+            else if (clickedItem.matches('button[data-button-role="submit-modal"]')) {
+                event.preventDefault();
+                this.getSelectedModalItems();
+                this.setChosenItems();
+                this.dismissModal();
+            }
+            // clear search filter ===========================================================
+            else if (clickedItem.closest('a[data-button-role="clear-filter"]')) {
+                this.clearFilter();
+            }
+            // dismiss button or area outside of modal clicked ===============================
+            else if (clickedItem.closest('button[data-button-role="cancel-modal"]') || !this.chooser.modalForm.contains(clickedItem)) {
                 this.dismissModal();
             }
         });
 
+        // search form input ======================================================================
         this.chooser.searchInput.addEventListener('input', () => {
-            const searchText = this.chooser.searchInput.value.trim().toLowerCase();
-            // display or hide modal list item containers where item has partial match with search text
-            this.chooser.listItems.forEach(item => {
-                item.parentNode.style.display = item.textContent.toLowerCase().includes(searchText) ? 'block' : 'none';
-            });
+            this.filterItems();
         });
 
     }
 
-    // display selected options in Wagtail <select> element in style of tagged items 
+    // load selected values and labels from <select> element into selectedItems dictionary ==================
+    getSelectedItems() {
+        this.chooser.selectedItems = {};
+        Array.from(this.chooser.formSelect.selectedOptions).forEach(option => {
+            this.chooser.selectedItems[option.value] = option.textContent;
+        });
+    }
+
+    // populate admin form chosen items list ================================================================
+    // get selected options from selectedItems dictionary and display in style of tagged items 
     showChosenItems() {
-        this.chooser.chosenItems.innerHTML = "";
-        Array.from(this.chooser.formSelect.options).forEach(option => {
-            if (option.selected) {
-                const newItem = document.createElement('li');
-                newItem.classList.add("tagit-choice", "tagit-choice-editable", "m2m-chooser-selected-item");
-                newItem.innerText = option.text;
-                this.chooser.chosenItems.appendChild(newItem);
-            }
-        });
-    }
-
-    // fill modal list from Wagtail select element
-    updateModalSelectOptions() {
+        this.chooser.chosenItemsList.innerHTML = "";
         const fragment = document.createDocumentFragment();
-        Array.from(this.chooser.formSelect.options).forEach(option => {
-            const newOptionContainer = document.createElement('ul');
-            newOptionContainer.className = "m2m-chooser-modal-option-container";
-            const newListItem = document.createElement('li');
-            newListItem.textContent = option.text;
-            newListItem.value = option.value;
-            newListItem.classList.add("button", "m2m-chooser-modal-option");
-            if (!option.selected) {
-                newListItem.classList.add("button-secondary");
-            }
-            newOptionContainer.appendChild(newListItem);
-            fragment.appendChild(newOptionContainer);
+        Object.keys(this.chooser.selectedItems).forEach(key => {
+            const value = this.chooser.selectedItems[key];
+            const li = this.chooser.chosenItemTemplate.cloneNode(true);
+            li.setAttribute('data-chosen-value', key);
+            li.querySelector('span').textContent = value;
+            fragment.appendChild(li);
         });
-        this.chooser.modalSelect.innerHTML = '';
-        this.chooser.modalSelect.appendChild(fragment);
+        this.chooser.chosenItemsList.appendChild(fragment);
     }
 
+    // update admin form <select> element from selectedItems dictionary and update chosen item display ======
+    // used after modal form submit
+    setChosenItems() {
+        this.chooser.formSelect.selectedIndex = -1;
+        Object.keys(this.chooser.selectedItems).forEach(value => {
+            const option = this.chooser.formSelect.querySelector(`option[value="${value}"]`);
+            if (option) {
+                option.selected = true;
+            }
+        });
+        this.showChosenItems();
+    }
+
+    // set selected style attributes on modal list items if they appear in selectedItems dictionary =========
+    // used when showing modal to match selected items with chosen items
+    showSelectedModalItems() {
+        this.chooser.listItems.forEach(li => {
+            const key = li.getAttribute('value');
+            if (this.chooser.selectedItems.hasOwnProperty(key)) {
+                li.setAttribute('data-selected', 'true');
+                li.classList.remove('button-secondary');
+            } else {
+                li.setAttribute('data-selected', 'false');
+                li.classList.add('button-secondary');
+            }
+        });
+    }
+
+    // update selectedItems dictionary from modal form selected values =======================================
+    getSelectedModalItems() {
+        const selectedListItems = Array.from(this.chooser.listItems).filter(li => li.getAttribute('data-selected') === 'true');
+        this.chooser.selectedItems = {};
+        selectedListItems.forEach(li => {
+            // Retrieve the key name from the value attribute and the key value from the text content
+            const key = li.getAttribute('value');
+            const value = li.textContent.trim();
+            this.chooser.selectedItems[key] = value;
+        });        
+    }
+
+    // clear all selected items from admin form button ======================================================
+    handleClearChosenItemsClick() {
+        this.chooser.selectedItems = {};
+        this.setChosenItems();
+    }
+
+    // handle chosen item delete button =====================================================================
+    // remove item from chosen list in admin interface & selectedItems, deselect from <select> form element
+    handleClearChoiceClick(button) {
+        const chosenListItem = button.closest('li');
+        const chosenListItemValue = chosenListItem.getAttribute('data-chosen-value');
+        delete this.chooser.selectedItems[chosenListItemValue]
+        // find the item in the admin form <select> element
+        const selectItem = Array.from(
+            this.chooser.formSelect.selectedOptions
+            ).find(
+                option => option.value === chosenListItemValue
+            );
+        if (selectItem) { 
+            selectItem.selected = false 
+        };
+        chosenListItem.remove();
+    }
+
+    // handle search input - case insensitive partial match on list items inner text ========================
+    filterItems() {
+        const searchText = this.chooser.searchInput.value.trim().toLowerCase();
+        // display or hide modal list item containers where item has partial match with search text
+        this.chooser.listItems.forEach(listItem => {
+            listItem.classList.toggle('hide', !listItem.textContent.toLowerCase().includes(searchText));
+        });
+    }
+
+    // clear search input & restore list items display to block
+    clearFilter() {
+        this.chooser.searchInput.value = '';
+        this.filterItems();
+    }
+
+    // hide modal
     dismissModal() {
         this.chooser.modal.style.display = 'none';
-        this.chooser.modalSelect.innerHTML = "";
     }
 
 }

@@ -1,27 +1,27 @@
 <ul class="tagit ui-widget ui-widget-content ui-corner-all m2m-chooser-chosen">
 </ul>
-<div class="m2m-chooser-open-modal-button-container">
-    <button class="button m2m-chooser-open-modal-button" type="button">{{ opts.select_button_text }}</button>
+<div class="m2m-chooser-button-container">
+    <button class="button no" type="button" data-button-role="clear-chosen">{{ opts.clear_button_text }}</button>
+    <button class="button" type="button" data-button-role="open-modal">{{ opts.select_button_text }}</button>
 </div>
 <!-- M2M Field Panel Modal form -->
 <div class="modal-backdrop m2m-chooser-modal">
-    <div class="modal-content modal-body m2m-chooser-modal-form">
+    <div class="modal-content modal-body modal-form">
         <header class="w-header w-header--merged">
+            {# title and cancel button #}
             <div>
                 <div class="left">
-                    <div class="col">
-                        <h1 class="w-header__title m2m-chooser-modal-heading" id="header-title">
-                            <svg class="icon m2m-chooser-modal-heading-icon" aria-hidden="true">
-                                <use href="#icon-tasks"></use>
-                            </svg>
-                            {{ self.heading }}
-                        </h1>
+                    <div class="col modal-banner">
+                        <svg class="icon modal-icon" aria-hidden="true">
+                            <use href="#icon-tasks"></use>
+                        </svg>
+                        <h2 class="w-header__title modal-heading" id="header-title">{{ self.heading }}</h2>
                     </div>
                 </div>
-                <div class="right">
-                    <button type="button" 
-                            class="button close button--icon text-replace m2m-chooser-modal-dismiss" 
-                            title={{ opts.cancel_text }}>
+                <div class="right modal-dismiss-container">
+                    <button type="button" data-button-role="cancel-modal"
+                            class="button button--icon text-replace modal-dismiss"
+                            title="{{ opts.cancel_text }}">
                         <svg class="icon icon-cross" aria-hidden="true">
                             <use href="#icon-cross"></use>
                         </svg>
@@ -30,21 +30,35 @@
                 </div>
             </div>
         </header>
-        <div class="modal-body m2m-chooser-modal-body">
-            <input type="text"
-                   placeholder="{{ opts.search_text }} {{ self.heading }}"
-                   class="m2m-chooser-modal-search" />
-            <div class="m2m-chooser-modal-content-container">
-                <div class="m2m-chooser-modal-content">
-                    <div class="m2m-chooser-modal-select"></div>
+        <div class="m2m-chooser-body">
+            {# search input #}
+            <div class="modal-search-container">
+                <input type="text"
+                       placeholder="{{ opts.search_text }}"
+                       class="modal-search" />
+                <a role="button" title="{{ opts.clear_filter_text }}" data-button-role="clear-filter">
+                    <svg class="modal-search-dismiss icon icon-cross" aria-hidden="true">
+                        <use href="#icon-cross"></use>
+                    </svg>
+                </a>
+            </div>
+            {# selection panel #}
+            <div class="selection-panel-container">
+                <div class="selection-panel">
+                    <ul class="modal-select-list">
+                        {% for choice in choices %}
+                            <li value="{{ choice.value }}"
+                                class="button modal-select-item button-secondary">{{ choice.label }}</li>
+                        {% endfor %}
+                    </ul>
                 </div>
             </div>
-            <div style="text-align: right;">
-                <button type="submit" class="button m2m-chooser-modal-submit">{{ opts.submit_button_text }}</button>
+            {# modal buttons #}
+            <div class="m2m-chooser-button-container">
+                <button class="button no" type="button" data-button-role="cancel-modal">{{ opts.cancel_text }}</button>
+                <button class="button" type="button" data-button-role="submit-modal">{{ opts.submit_button_text }}</button>
             </div>
         </div>
     </div>
 </div>
-<script>
-	new M2MChooser("{{ opts.field_id }}");
-</script>
+<script>new M2MChooser("{{ opts.field_id }}");</script>
