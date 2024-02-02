@@ -1,7 +1,7 @@
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.ui.tables import TitleColumn
 from wagtail.admin.views.generic.chooser import BaseChooseView
-from wagtail.snippets.views.chooser import ChooseResultsView, ChooseView
+from wagtail.snippets.views.chooser import ChooseResultsView, ChooseView, BaseSnippetChooseView
 
 from core.viewsets.columns import ImageColumn
 from core.widgets.models import SnippetPreviewChooserViewSet
@@ -9,7 +9,7 @@ from core.widgets.models import SnippetPreviewChooserViewSet
 from .models import Product
 
 
-class BaseProductChooseView(BaseChooseView):
+class BaseProductChooseView(BaseSnippetChooseView):
     @property
     def columns(self):
         return [
