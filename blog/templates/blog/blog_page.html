@@ -1,0 +1,17 @@
+{% extends "base.html" %} 
+{% load static wagtailcore_tags wagtailimages_tags home_tags wagtailembeds_tags %}
+
+{% block content %}
+
+<article class="container">
+    <h1>{{ self.title }}</h1>
+
+    {% comment %} <p>Word Count: {{ page.wordcount }}</p> {% endcomment %}
+
+    {% for block in page.content %}
+        {% include_block block %}
+    {% endfor %}
+
+</article>
+
+{% endblock content %}
