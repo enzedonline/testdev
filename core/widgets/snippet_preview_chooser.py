@@ -27,14 +27,15 @@ class PreviewMixin:
         def render_icon(icon=None):
             if not icon:
                 icon = getattr(self, "icon", getattr(instance, "get_icon", "snippet"))
-            return render_to_string(
-                "wagtailadmin/shared/icon.html", context=get_icon(icon)
-            )
+            context=get_icon(icon)
+            return f'''<svg class="icon icon-{context['name']} {context['classname']}" viewBox="0 0 24 24" height="60px" aria-hidden="true">
+                        <use href="#icon-{context['name']}"></use>
+                       </svg>'''
 
         preview = getattr(instance, self.preview_name, None)
         if preview:
             if isinstance(preview, Image):
-                return preview.get_rendition("height-60").img_tag()
+                return preview.get_rendition('height-60').img_tag({'class':"show-transparency"})
             else:
                 if is_html(preview):  # preview is html formatted string
                     return preview
