@@ -10,6 +10,7 @@ class subcategoryChooser {
     initHTMLElements(id) {
         // Wagtail admin form elements
         this.chooser.wrapper = document.querySelector(`[data-subcategory-chooser="${id}"]`);
+        this.chooser.required = this.chooser.wrapper.hasAttribute('data-field-required')
         this.chooser.formInput = this.chooser.wrapper.querySelector(`#${id}`)
         this.chooser.chosenItem = this.chooser.wrapper.querySelector('.subcategory-chooser-chosen');
         this.chooser.openModalBtn = this.chooser.wrapper.querySelector('.open-modal-button');
@@ -113,7 +114,10 @@ class subcategoryChooser {
         this.chooser.chosenItem.classList.remove('hide');
         this.chooser.openModalBtn.querySelector('.add-subcategory').classList.add('hide');
         this.chooser.openModalBtn.querySelector('.change-subcategory').classList.remove('hide');
-        this.chooser.clearChoiceBtn.querySelector('.clear-subcategory').classList.remove('hide');
+        // only show the 'clear' button on the admin form if the field is not required
+        if (!this.chooser.required) {
+            this.chooser.clearChoiceBtn.classList.remove('hide');
+        };
     }
 
     // clear chosen value and display text, revert admin panel to 'add new' mode ============================
@@ -123,7 +127,7 @@ class subcategoryChooser {
         this.chooser.chosenItem.classList.add('hide');
         this.chooser.openModalBtn.querySelector('.add-subcategory').classList.remove('hide');
         this.chooser.openModalBtn.querySelector('.change-subcategory').classList.add('hide');
-        this.chooser.clearChoiceBtn.querySelector('.clear-subcategory').classList.add('hide');
+        this.chooser.clearChoiceBtn.classList.add('hide');
         this.chooser.openCategory = null;
     }
 

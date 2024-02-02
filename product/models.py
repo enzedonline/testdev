@@ -10,7 +10,7 @@ from wagtail.models import (DraftStateMixin, LockableMixin, Orderable, Page,
                             PreviewableMixin, RevisionMixin, WorkflowMixin)
 from wagtail.snippets.models import register_snippet
 
-from .panels.category import SubcategoryChooser
+from core.panels.models import SubcategoryChooser
 
 @register_snippet
 class StoreDepartment(ClusterableModel):

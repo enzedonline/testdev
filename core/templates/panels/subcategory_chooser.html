@@ -15,9 +15,11 @@
                 <svg class="icon icon-resubmit icon"><use href="#icon-resubmit"></use></svg> {{ opts.change_button_text }}
             </span>
         </button>
-        <button type="button" class="button button-small button-secondary chooser__choose-button clear-choice-button"
+        <button type="button" 
+            class="button button-small button-secondary chooser__choose-button clear-choice-button
+                    {% if not initial_value or field.field.required %} hide{% endif %}"
             aria-describedby="{{ self.id_for_label }}-choosen-display">
-            <span class="clear-subcategory{% if not initial_value %} hide{% endif %}">
+            <span class="clear-subcategory">
                 <svg class="icon icon-bin icon"><use href="#icon-bin"></use></svg> {{ opts.clear_button_text }}
             </span>
         </button>

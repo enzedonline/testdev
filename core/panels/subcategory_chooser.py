@@ -180,6 +180,9 @@ class SubcategoryChooser(FieldPanel):
             # create uid on wrapper element
             wrapper = soup.find(class_="w-field__wrapper")
             wrapper["data-subcategory-chooser"] = self.opts["field_id"]
+            # add required attribute to wrapper if field required - used to hide 'clear choice' button
+            if self.bound_field.field.required:
+                wrapper["data-field-required"]=""
             # add rendered chooser html to wrapper element
             chooser_html = render_to_string(
                 "panels/subcategory_chooser.html",
