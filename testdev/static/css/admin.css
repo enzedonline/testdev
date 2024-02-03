@@ -191,3 +191,8 @@ code {
 opacity: 1;
 visibility: visible;
 }
+
+.listing--inline-actions td.title {
+  display: table-cell;
+  line-height: normal;
+}
