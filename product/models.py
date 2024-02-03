@@ -4,16 +4,23 @@ from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
 from wagtail.admin.panels import FieldPanel, InlinePanel, MultiFieldPanel
+from wagtail.admin.ui.tables import UpdatedAtColumn
 from wagtail.contrib.routable_page.models import RoutablePageMixin, path
 from wagtail.fields import RichTextField
 from wagtail.models import (DraftStateMixin, LockableMixin, Orderable, Page,
                             PreviewableMixin, RevisionMixin, WorkflowMixin)
 from wagtail.snippets.models import register_snippet
+from wagtail.snippets.views.snippets import SnippetViewSet
 
 from core.panels.models import SubcategoryChooser
+from core.viewsets.columns import ImageColumn
+from core.forms.restricted_panels_admin_forms import \
+    RestrictedPanelsAdminModelForm
 
 @register_snippet
 class StoreDepartment(ClusterableModel):
+    base_form_class = RestrictedPanelsAdminModelForm
+
     code = models.CharField(
         max_length=10,
         unique=True,
@@ -69,7 +76,6 @@ class DepartmentSubcategory(Orderable):
         verbose_name = _("Department Subcategory")
         verbose_name_plural = _("Department Subcategories")
 
-@register_snippet
 class Product(
     PreviewableMixin,
     WorkflowMixin,
@@ -79,6 +85,7 @@ class Product(
     models.Model,
 ):
     icon = "cogs"
+    base_form_class = RestrictedPanelsAdminModelForm
     
     sku = models.CharField(max_length=10, unique=True, verbose_name=_("SKU"))
     title = models.CharField(max_length=100, verbose_name=_("Product Title"))
@@ -118,8 +125,20 @@ class Product(
 
     def get_preview_template(self, request, mode_name):
         return "product/product_preview.html"
+    
+    def get_department_subcategory(self):
+        return f'{self.dept_subcategory.department} - {self.dept_subcategory}'
 
+class ProductViewSet(SnippetViewSet):
+    model = Product
+    list_display = ["title", "sku", "get_department_subcategory", ImageColumn("image"), UpdatedAtColumn()]
+    list_filter = {"title": ["icontains"], "sku": ["icontains"], "dept_subcategory": ["exact"]}
+    list_per_page = 50
+    ordering = ["title"]
 
+setattr(Product.get_department_subcategory, 'admin_order_field', "dept_subcategory")
+setattr(Product.get_department_subcategory, 'short_description', "Department Subcategory")
+register_snippet(ProductViewSet)
 
 class ProductPage(RoutablePageMixin, Page):
     parent_page_types = ["home.HomePage"]
