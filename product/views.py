@@ -1,6 +1,5 @@
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.ui.tables import TitleColumn
-from wagtail.admin.views.generic.chooser import BaseChooseView
 from wagtail.snippets.views.chooser import ChooseResultsView, ChooseView, BaseSnippetChooseView
 
 from core.viewsets.columns import ImageColumn
