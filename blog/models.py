@@ -1,3 +1,4 @@
+from django.utils.translation import gettext_lazy as _
 # from bs4 import BeautifulSoup
 # from django import forms
 # from django.contrib.auth.models import User
@@ -8,11 +9,13 @@
 # from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from wagtail.admin.panels import (FieldPanel, InlinePanel, MultiFieldPanel,
                                   MultipleChooserPanel)
+from wagtail.admin.widgets.slug import SlugInput
 # from wagtail.blocks import RawHTMLBlock, RichTextBlock
 # from wagtail.fields import RichTextField, StreamField
 from wagtail.models import Orderable, Page
 
 from blocks.models import *
+
 # from core.forms import RestrictedPanelsAdminPageForm
 # from core.panels import (ImportTextAreaPanel, M2MChooserPanel, RegexPanel,
 #                          RestrictedFieldPanel, RestrictedInlinePanel,
@@ -93,9 +96,9 @@ class CarouselImages(Orderable):
         verbose_name = "Carousel Image"
 
 class SimpleVideoOrderable(Orderable):
-    from wagtail.fields import RichTextField
     from django.db import models
     from modelcluster.fields import ParentalKey
+    from wagtail.fields import RichTextField
 
     page = ParentalKey("blog.BlogPage", related_name="videos")
     description = RichTextField()
@@ -118,16 +121,20 @@ class BlogPage(Page):
     from wagtail.blocks import RawHTMLBlock, RichTextBlock
     from wagtail.fields import RichTextField, StreamField
 
-    from blocks.models import (CollapsibleCardBlock, CSVTableBlock, SEOImageChooserBlock,
+    from blocks.models import (CollapsibleCardBlock, CSVTableBlock,
                                ExternalLinkEmbedBlock, FlexCardBlock,
-                               HeadingBlock, ImportTextBlock, LinkBlock)
+                               HeadingBlock, ImportTextBlock, LinkBlock,
+                               SEOImageChooserBlock)
     from core.forms.restricted_panels_admin_forms import \
         RestrictedPanelsAdminPageForm
     from core.panels.models import (ImportTextAreaPanel, M2MChooserPanel,
                                     RegexPanel, RestrictedFieldPanel,
                                     RestrictedInlinePanel, UtilityPanel)
     from core.widgets.import_textarea_widget import ImportTextAreaWidget
+    from core.widgets.input_char_limit import (CharLimitTextArea,
+                                               CharLimitTextInput)
     from product.blocks import ProductChooserBlock
+
     from .categories import BlogCategory
 
     parent_page_types = ['blog.BlogIndex']
@@ -146,7 +153,7 @@ class BlogPage(Page):
         null=True, blank=True, help_text="Some helpful text"
     )
     some_text = models.CharField(null=True, blank=True, max_length=255, default="some default value")
-    some_text_area = models.TextField(null=True, blank=True, verbose_name="Air Quality")
+    some_text_area = models.TextField(null=True, blank=True)
     some_rich_text = RichTextField(null=True, blank=True, editor="basic")
     some_slug = models.SlugField(null=True, blank=True)
     some_choice_field = models.CharField(
@@ -213,7 +220,7 @@ class BlogPage(Page):
     )
 
     content_panels = Page.content_panels + [
-        AuthorPanel('author'),
+        # AuthorPanel('author'),
         # MultiFieldPanel(
         #     [InlinePanel("videos", min_num=1)],
         #     heading="Videos",
@@ -230,8 +237,8 @@ class BlogPage(Page):
         #     heading="Carousel Images",
         # ),
         # RestrictedFieldPanel('some_date'),
-        # RestrictedFieldPanel('some_text'),
-        # FieldPanel('some_text_area', widget=ImportTextAreaWidget(file_type_filter='.csv')),
+        # FieldPanel('some_text', widget=CharLimitTextInput(min=10, max=20, enforced=True)),
+        # FieldPanel('some_text_area', widget=CharLimitTextArea(min=10, max=20)),
         # ImportTextAreaPanel('some_text_area', file_type_filter='.csv'),
         # RestrictedFieldPanel('some_choice_field'),
         # RestrictedFieldPanel('some_rich_text'),
@@ -239,7 +246,7 @@ class BlogPage(Page):
         # RestrictedFieldPanel('some_document'),
         # FieldPanel("some_product"),
         # RestrictedFieldPanel('some_page'),
-        RestrictedFieldPanel("content"),
+        FieldPanel("content"),
         # UtilityPanel('<span class="editor-reminder">Some important notice to display</span>'),
         # UtilityPanel(
         #     '<h5><a target="_blank" href="{{url}}" style="color: blue; text-decoration: underline;">News Article Editors Guide</a></h5>',
@@ -309,6 +316,14 @@ class BlogPage(Page):
         #     }
         # ),
         M2MChooserPanel("categories"),
+    ]
+
+    promote_panels = [
+        MultiFieldPanel([
+            FieldPanel('slug', widget=SlugInput),
+            FieldPanel('seo_title', widget=CharLimitTextInput(min=15, max=70, enforced=True)),
+            FieldPanel('search_description', widget=CharLimitTextArea(min=50, max=160, enforced=False)),
+        ], _('For search engines')),
     ]
 
     base_form_class = RestrictedPanelsAdminPageForm

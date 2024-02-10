@@ -35,8 +35,9 @@ class UserSearchFilterMixin(forms.Form):
             self.search_query = search_query
         return objects
 
-
 class BaseUserChooseView(BaseChooseView):
+    ordering = ["last_name", "first_name"]
+
     @property
     def columns(self):
         return [
