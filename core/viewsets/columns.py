@@ -10,7 +10,9 @@ class ImageColumn(TitleColumn):
                 )
         except:
             context['value'] = mark_safe(
-                '<svg class="icon icon-image" height="50px" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-image"></use></svg>'
+                '<svg class="icon icon-image" height="50px" viewBox="0 0 24 24" aria-hidden="true">'\
+                    '<use href="#icon-image"></use>'\
+                '</svg>'
                 )
         return context
 
