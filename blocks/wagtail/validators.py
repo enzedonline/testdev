@@ -1,3 +1,5 @@
+import copy
+from urllib.parse import urlparse
 
 import validators
 from django.utils.translation import gettext_lazy as _
@@ -7,7 +9,6 @@ class ParsedURI:
     
     # create an editable ParseResult object
     def __init__(self, url):
-        from urllib.parse import urlparse
         self.url = url
         self._parsed = urlparse(url)
 
@@ -141,6 +142,11 @@ def is_valid_href(
 
         match parsed_uri.scheme:
             case scheme if scheme in ["http", "https", "ftp", "ftps"]:
+                # validators do not recognise localhost as valid, replace with example.com
+                if 'localhost' in parsed_uri.netloc.lower():
+                    localhost_uri = copy.deepcopy(parsed_uri)
+                    localhost_uri.netloc = parsed_uri.netloc.lower().replace('localhost', 'example.com')
+                    uri = localhost_uri.unparse
                 result = validators.url(uri)
                 if not result:
                     raise ParsedError(_("Invalid URL"))
