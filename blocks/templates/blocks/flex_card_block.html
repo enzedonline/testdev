@@ -28,17 +28,17 @@
         <div class="col{% if self.layout not in 'right-fixed, left-fixed' %}-{{ self.breakpoint }}{% endif %}">
             <div class="card-body p-0 d-flex flex-column h-100">
                 <div class="card-text text-{{ self.text.alignment }} mt-n2">{{ self.text.content }}</div>
-                {% if self.link.url and self.button_label %}
+                {% if self.link.url and self.link.link_text %}
                     <div class="mt-auto {% if self.layout == 'right-fixed' %}text-start {% elif self.layout == 'right-responsive' %}text-end text-{{ self.breakpoint }}-start {% else %}text-end {% endif %}">
-                        <a href="{{ self.link.url }}" class="btn btn-primary">{{ self.button_label }}</a>
+                        <a href="{{ self.link.url }}" class="btn btn-primary">{{ self.link.link_text }}</a>
                     </div>
                 {% endif %}
             </div>
         </div>
     </div>
-    {% if self.link.url and not self.button_label %}
+    {% if self.link.url and not self.link.link_text %}
         <a href="{{ self.link.url }}"
            class="stretched-link"
-           aria-label="{{ self.title }}"></a>
+           aria-label="{{ self.link.text }}"></a>
     {% endif %}
 </div>
