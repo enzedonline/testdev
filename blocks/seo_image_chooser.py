@@ -24,6 +24,7 @@ class SEOImageChooserBlock(RequiredMixin, StructBlock):
     )
 
     class Meta:
+        template = 'blocks/image_block.html'
         form_classname = "seo-image-chooser-block"
 
     @cached_property
