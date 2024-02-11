@@ -30,6 +30,7 @@ class FlexCardBlock(StructBlock):
     link = LinkBlock(
         label=_("Optional Card Link"),
         required=False,
+        url_link_text_required = False,
         help_text=_("If using a link, setting a link label will render a hyperlink button.<br>\
                     Leave link label blank to make the whole card a clickable link."),
     )
