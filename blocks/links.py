@@ -1,79 +1,132 @@
-from django.utils.translation import gettext_lazy as _
+import logging
+import re
 
-from wagtail.blocks.struct_block import StructBlockAdapter
-from wagtail.blocks import StructBlock, StructValue
+from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
+from django.forms import RadioSelect
+from django.forms.utils import ErrorList
+from django.utils.functional import cached_property
+from django.utils.translation import gettext_lazy as _
+from wagtail.blocks import (CharBlock, ChoiceBlock, PageChooserBlock,
+                            StructBlock, StructValue)
+from wagtail.blocks.struct_block import (StructBlockAdapter,
+                                         StructBlockValidationError)
+from wagtail.documents.blocks import DocumentChooserBlock
 from wagtail.telepath import register
 
+from blocks.wagtail.blocks import URLBlock, RequiredMixin
 
-from .choices import LinkTypeChoiceBlock
-from blocks.wagtail.blocks import RequiredMixin
 
+class LinkTypeChoiceBlock(ChoiceBlock):
+    def __init__(self, *args, **kwargs):
+        super().__init__(widget=RadioSelect, *args, **kwargs)
+    
+    choices=[
+        ('page', _('Page Link')),
+        ('url', _('URL Link')),
+        ('document', _('Document Link')),
+    ]
 
 class Link_Value(StructValue):
-    """Additional logic for the Link class"""
-
     def url(self) -> str:
-        from django.conf import settings
-        i18n_enabled = getattr(settings, "WAGTAIL_I18N_ENABLED", False)
-        link_type = self.get("link_type")
-        if link_type == 'page':
-            internal_page = self.get("internal_page")
-            if internal_page:
-                url = internal_page.localized.url if i18n_enabled else internal_page.url
-                anchor_target = self.get("anchor_target")
-                if anchor_target:
-                    url += anchor_target if anchor_target[:1] == "#" else f'#{anchor_target}'
-                return url
-        else:
-            url_link = self.get("url_link")
-            if url_link:
-                if i18n_enabled and url_link.startswith("/"):
-                    from wagtail.models import Locale
-                    url_link = f"/{Locale.get_active().language_code}" + url_link
-                return url_link
+        """Return a link's url regardless of link type"""
+        try:
+            match self.get("link_type"):
+                case 'page':
+                    internal_page = self.get("internal_page")
+                    i18n_enabled = getattr(settings, "WAGTAIL_I18N_ENABLED", False)
+                    url = internal_page.localized.url if i18n_enabled else internal_page.url
+                    return url + self.get("anchor_target")
+                case 'url':
+                    # if needing to localise routable page relative urls, use template tag
+                    # requires active site (get from request)
+                    return self.get("url_link")
+                case 'document':
+                    return self.get("document").url
+        except Exception as e:
+            logging.error(
+                f"{type(e).__name__} at line {e.__traceback__.tb_lineno} of {__file__}: {e}"
+            )
         return None
     
+    def text(self) -> str:
+        """Return link text - default to object title for page and document links"""
+        link_text = self.get("link_text")
+        if link_text:
+            return link_text
+        else:
+            try:
+                match self.get("link_type"):
+                    case 'page':
+                        internal_page = self.get("internal_page")
+                        i18n_enabled = getattr(settings, "WAGTAIL_I18N_ENABLED", False)
+                        return internal_page.localized.title if i18n_enabled else internal_page.title
+                    case 'document':
+                        return self.get("document").title
+            except Exception as e:
+                logging.error(
+                    f"{type(e).__name__} at line {e.__traceback__.tb_lineno} of {__file__}: {e}"
+                )
+            return ''        
+    
 class LinkBlock(RequiredMixin, StructBlock):
-    from wagtail.blocks import CharBlock, PageChooserBlock
-    from wagtail.documents.blocks import DocumentChooserBlock
-    from blocks.wagtail.blocks import URLBlock
 
-    def __init__(self, link_types=['page', 'url', 'document'], **kwargs):
+    def __init__(
+            self, 
+            link_types=['page', 'url', 'document'], 
+            url_link_text_required=True,
+            no_link_label = _("No Link"),
+            no_link_description = _("No link selected."),
+            **kwargs
+        ):
         super().__init__(**kwargs)
         self.link_types = link_types
-        if kwargs:
-            self.declared_blocks['link_type'].required = kwargs.get('required', True)
+        self.no_link_label = no_link_label
+        self.url_link_text_required = url_link_text_required
+        self.no_link_description = no_link_description
+        if getattr(settings, 'DEBUG', False): self.validate_link_types()
         
-    link_type = LinkTypeChoiceBlock(label='')
+    link_type = LinkTypeChoiceBlock(required=False, label='')
     internal_page = PageChooserBlock(required=False, label=_("Link to internal page"))
-    anchor_target = CharBlock(required=False, label=_("Optional anchor target"))
+    anchor_target = CharBlock(
+        required=False, 
+        label=_("Optional anchor target"), 
+        help_text=_("Anchor target must start with '#' followed by alphanumeric characters, hyphens and underscores.")
+    )
     url_link = URLBlock(
         required=False, label=_("Link to external site or internal URL")
     )
     document = DocumentChooserBlock(required=False, label=_("Link to document"))
-    link_label = CharBlock(required=False, label=_("Optional link label"))
+    link_text = CharBlock(required=False, label=_("Link text"))
 
     class Meta:
+        template = 'blocks/link_block.html'
         value_class = Link_Value
         icon = "link"
         form_classname = "link-block"
-        # template = "blocks/link_button.html"
-
 
     def clean(self, value):
-        from django.forms.utils import ErrorList
-        from wagtail.blocks.struct_block import StructBlockValidationError
-
         errors = {}
-        match value.get("link_type"):
+        link_type = value.get("link_type")
+        match link_type:
             case 'page':
                 internal_page = value.get('internal_page')
+                anchor_target = value.get('anchor_target')
                 if not internal_page:
                     errors['internal_page'] = ErrorList([_("Please select a page to link to")])
+                if anchor_target:
+                    # add '#' if missing, validate format
+                    if not anchor_target.startswith("#"):
+                        anchor_target = f"#{anchor_target}"
+                        value['anchor_target'] = anchor_target
+                    if not re.match(r'^#[\w\-.]+$', anchor_target):
+                        errors['anchor_target'] = ErrorList([_("Please select a valid anchor target")])
             case 'url':
                 url_link = value.get('url_link')
                 if not url_link:
                     errors['url_link'] = ErrorList([_("Please enter a URL to link to")])
+                if self.url_link_text_required and not value.get('link_text'):
+                    errors['link_text'] = ErrorList([_("Please enter a display text for the link")])
             case 'document':
                 url_link = value.get('document')
                 if not url_link:
@@ -81,14 +134,20 @@ class LinkBlock(RequiredMixin, StructBlock):
             case _:
                 if self.required:
                     errors['link_type'] = ErrorList([_("Please select a link type and value")])
-
         if errors:
             raise StructBlockValidationError(block_errors=errors)
 
         return super().clean(value)
 
+    def validate_link_types(self):
+        if not isinstance(self.link_types, list):
+            raise ImproperlyConfigured("link_types must be a list")
+        if not any(link_type in self.link_types for link_type in ['page', 'url', 'document']):
+            raise ImproperlyConfigured("link_types must contain at least one of 'page', 'url', or 'document'")
+        if any(link_type not in ['page', 'url', 'document'] for link_type in self.link_types):
+            raise ImproperlyConfigured("link_types must only contain elements 'page', 'url', or 'document'")
+
 class LinkBlockAdapter(StructBlockAdapter):
-    from django.utils.functional import cached_property
     js_constructor = "blocks.models.LinkBlock"
 
     def js_args(self, block):
@@ -97,8 +156,9 @@ class LinkBlockAdapter(StructBlockAdapter):
         # passed to LinkBlock as parameter: link_types=['page', 'url', 'document']
         args[2]['link_types'] = block.link_types
         # tab label and description for the empty value option
-        args[2]['no_link_label'] = _("No Link")
-        args[2]['no_link_description'] = _("No link selected.")
+        args[2]['no_link_label'] = block.no_link_label
+        args[2]['no_link_description'] = block.no_link_description
+        args[2]['url_link_text_required'] = block.url_link_text_required
         return args
 
     @cached_property

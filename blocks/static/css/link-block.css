@@ -3,18 +3,18 @@
     margin-inline-start: 1em;
 }
 
-.block-tablist {
+.link-block-tablist {
     padding-inline-start: 0;
     position: relative;
     flex-wrap: wrap;
     z-index: 0;
 }
 
-.block-tablist> :not([hidden])~:not([hidden]) {
+.link-block-tablist> :not([hidden])~:not([hidden]) {
     margin-inline-start: calc(0.5rem*(1 - var(--tw-space-x-reverse)));
 }
 
-.block-tab {
+.link-block-tab {
     padding: 0 1rem;
     margin-top: 1rem;
     color: var(--w-color-text-label);
@@ -23,10 +23,10 @@
     border-radius: 0.5rem 0.5rem 0 0;
     cursor: pointer;
     background-color: var(--w-color-surface-field-inactive);
-    opacity: .8;
+    opacity: 0.9;
 }
 
-.block-tab.active {
+.link-block-tab.active {
     background-color: var(--w-color-surface-field-active);
     border-bottom-style: solid;
     border-bottom-width: 2px;
@@ -35,7 +35,7 @@
     opacity: 1;
 }
 
-.block-tab>label {
+.link-block-tab>label {
     padding: 0.5rem;
     margin-bottom: -1px !important;
     margin: 0;
@@ -44,16 +44,16 @@
     color: inherit;
 }
 
-.block-tab.active label {
+.link-block-tab.active label {
     opacity: 1;
 }
 
-.block-tab:hover, .block-tab>label:hover {
+.link-block-tab:hover, .block-tab>label:hover {
     color: var(--w-color-text-link-hover);
     opacity: 1;
 }
 
-.block-tab>label>input {
+.link-block-tab>label>input {
     position: absolute;
     clip: rect(0, 0, 0, 0);
 }
