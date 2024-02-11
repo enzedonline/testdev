@@ -24,6 +24,7 @@ class M2MChooserPanel(FieldPanel):
             search_text=_("Search"),
             cancel_text=_("Close without changes"),
             clear_filter_text=_("Clear filter"),
+            filter_no_results_text=_("Sorry, no matching records found."),
             widget=None, 
             disable_comments=None, 
             permission=None, 
@@ -45,6 +46,7 @@ class M2MChooserPanel(FieldPanel):
         self.search_text = search_text
         self.cancel_text = cancel_text
         self.clear_filter_text = clear_filter_text
+        self.filter_no_results_text = filter_no_results_text
 
     def clone_kwargs(self):
         kwargs = super().clone_kwargs()
@@ -56,6 +58,7 @@ class M2MChooserPanel(FieldPanel):
             search_text=self.search_text,
             cancel_text=self.cancel_text,
             clear_filter_text=self.clear_filter_text,            
+            filter_no_results_text=self.filter_no_results_text,
         )
         return kwargs
 
@@ -82,6 +85,7 @@ class M2MChooserPanel(FieldPanel):
                 "search_text": self.panel.search_text,
                 "cancel_text": self.panel.cancel_text,
                 "clear_filter_text": self.panel.clear_filter_text,
+                "filter_no_results_text": self.panel.filter_no_results_text,
             }
             if settings.USE_I18N:
                 self.localise_choices()

@@ -22,6 +22,7 @@ class M2MChooser {
         this.chooser.modal = this.chooser.wrapper.querySelector('div.m2m-chooser-modal');
         this.chooser.modalForm = this.chooser.modal.querySelector('div.modal-form');
         this.chooser.searchInput = this.chooser.modal.querySelector('input.modal-search');
+        this.chooser.noResults = this.chooser.modal.querySelector('div.no-results-text');
         this.chooser.listItems = this.chooser.modal.querySelectorAll("li.modal-select-item");
 
         // chosen item template used to add items to chosenItemsList ==============================
@@ -82,6 +83,7 @@ class M2MChooser {
             // clear search filter ===========================================================
             else if (clickedItem.closest('a[data-button-role="clear-filter"]')) {
                 this.clearFilter();
+                this.chooser.searchInput.focus();
             }
             // dismiss button or area outside of modal clicked ===============================
             else if (clickedItem.closest('button[data-button-role="cancel-modal"]') || !this.chooser.modalForm.contains(clickedItem)) {
@@ -186,10 +188,22 @@ class M2MChooser {
     // handle search input - case insensitive partial match on list items inner text ========================
     filterItems() {
         const searchText = this.chooser.searchInput.value.trim().toLowerCase();
-        // display or hide modal list item containers where item has partial match with search text
-        this.chooser.listItems.forEach(listItem => {
-            listItem.classList.toggle('hide', !listItem.textContent.toLowerCase().includes(searchText));
-        });
+        if (this.chooser.searchInput.value === '') {
+            this.chooser.listItems.forEach(listItem => {
+                listItem.classList.remove('hide');
+            });
+            this.chooser.noResults.classList.add('hide');
+        } else {
+            // display or hide modal list item containers where item has partial match with search text
+            let matchExists = false;
+            this.chooser.listItems.forEach(listItem => {
+                let match = listItem.textContent.toLowerCase().includes(searchText)
+                listItem.classList.toggle('hide', !match);
+                matchExists = (matchExists || match);
+            });
+            // show 'no results' text if no matching records were found
+            this.chooser.noResults.classList.toggle('hide', matchExists);
+        }
     }
 
     // clear search input & restore list items display to block

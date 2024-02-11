@@ -47,6 +47,11 @@ div.m2m-chooser-modal {
     display: none;
 }
 
+/* set display on modal elements with hide class (search facility) */
+div.m2m-chooser-modal .hide {
+    display: none;
+}
+
 /* set modal display */
 div.m2m-chooser-modal div.modal-form {
     width: 80%;
@@ -127,6 +132,11 @@ div.m2m-chooser-modal svg.modal-search-dismiss {
 div.m2m-chooser-modal svg.modal-search-dismiss:hover {
     color: var(--w-color-text-context);
 }
+div.no-results-text {
+    padding: 0 2em;
+    font-style: italic;
+    opacity: 0.8;
+}
 
 /*  selection list container */
 div.m2m-chooser-modal div.selection-panel-container {
@@ -171,7 +181,4 @@ div.m2m-chooser-modal li.modal-select-item {
     text-align: left;
     margin-inline-start: 0 !important;
 }
-/* hide unmatched list items in search mode */
-div.m2m-chooser-modal li.modal-select-item.hide {
-    display: none;
-}
+

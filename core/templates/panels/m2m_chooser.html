@@ -45,6 +45,8 @@
             {# selection panel #}
             <div class="selection-panel-container">
                 <div class="selection-panel">
+                    {# display no results text if filter has no match #}
+                    <div class="no-results-text hide">{{ opts.filter_no_results_text }}</div>
                     <ul class="modal-select-list">
                         {% for choice in choices %}
                             <li value="{{ choice.value }}"
