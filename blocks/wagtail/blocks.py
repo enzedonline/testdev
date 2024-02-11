@@ -32,14 +32,12 @@ class ChoiceBlock(RequiredMixin, ChoiceBlock):
         default = kwargs.pop("default", getattr(self, "default", None))
         label = kwargs.pop("label", getattr(self, "label", None))
         help_text = kwargs.pop("help_text", getattr(self, "help_text", None))
-        required = kwargs.pop("required", getattr(self, "required", True))
 
         super().__init__(
             *args,
             default=default,
             label=label,
             help_text=help_text,
-            required=required,
             **kwargs,
         )
 
