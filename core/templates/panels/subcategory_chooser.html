@@ -66,6 +66,8 @@
             {# selection panel #}
             <div class="selection-panel-container">
                 <div class="selection-panel">
+                    {# display no results text if filter has no match #}
+                    <div class="no-results-text hide">{{ opts.filter_no_results_text }}</div>
                     {# for each category, loop through each associated subcategory #}
                     {% for category in category_index %}
                         <div class="category" aria-expanded="false" data-category-name="{{ category.name }}">

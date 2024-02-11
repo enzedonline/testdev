@@ -11,19 +11,19 @@ class subcategoryChooser {
         // Wagtail admin form elements
         this.chooser.wrapper = document.querySelector(`[data-subcategory-chooser="${id}"]`);
         this.chooser.required = this.chooser.wrapper.hasAttribute('data-field-required')
-        this.chooser.formInput = this.chooser.wrapper.querySelector(`#${id}`)
-        this.chooser.chosenItem = this.chooser.wrapper.querySelector('.subcategory-chooser-chosen');
-        this.chooser.openModalBtn = this.chooser.wrapper.querySelector('.open-modal-button');
-        this.chooser.clearChoiceBtn = this.chooser.wrapper.querySelector('.clear-choice-button');
+        this.chooser.formInput = this.chooser.wrapper.querySelector(`input#${id}`)
+        this.chooser.chosenItem = this.chooser.wrapper.querySelector('div.subcategory-chooser-chosen');
+        this.chooser.openModalBtn = this.chooser.wrapper.querySelector('button.open-modal-button');
+        this.chooser.clearChoiceBtn = this.chooser.wrapper.querySelector('button.clear-choice-button');
 
         // modal form elements
-        this.chooser.modal = this.chooser.wrapper.querySelector('.subcategory-chooser-modal');
-        this.chooser.modalForm = this.chooser.modal.querySelector('.modal-form');
-        this.chooser.modalSelect = this.chooser.modal.querySelector('.selection-panel');
-        this.chooser.searchInput = this.chooser.modal.querySelector('.modal-search');
-        this.chooser.dismissModalBtn = this.chooser.modal.querySelector('.modal-dismiss');
-        this.chooser.categories = this.chooser.modal.querySelectorAll('.category');
-        this.chooser.subcategories = this.chooser.modal.querySelectorAll('.subcategory-label');
+        this.chooser.modal = this.chooser.wrapper.querySelector('div.subcategory-chooser-modal');
+        this.chooser.modalForm = this.chooser.modal.querySelector('div.modal-form');
+        this.chooser.searchInput = this.chooser.modal.querySelector('input.modal-search');
+        this.chooser.noResults = this.chooser.modal.querySelector('div.no-results-text');
+        this.chooser.modalSelect = this.chooser.modal.querySelector('div.selection-panel');
+        this.chooser.categories = this.chooser.modal.querySelectorAll('div.category');
+        this.chooser.subcategories = this.chooser.modal.querySelectorAll('li.subcategory-label');
 
         // open modal form ========================================================================
         this.chooser.openModalBtn.addEventListener('click', () => {
@@ -47,20 +47,21 @@ class subcategoryChooser {
             const clickedItem = event.target;
 
             // expand/collapse category =================================================
-            if (clickedItem.closest('.category-banner')) {
+            if (clickedItem.closest('div.category-banner')) {
                 this.handleCategoryClick(clickedItem.closest('.category'));
             }
             // subcategory clicked - set select value and dismiss modal =================
-            else if (clickedItem.matches('.subcategory-label')) {
+            else if (clickedItem.matches('li.subcategory-label')) {
                 this.setChosenItem(clickedItem);
                 this.dismissModal();
             }
-            // clear search filter ======================================================
-            else if (clickedItem.closest('.modal-search-dismiss')) {
+            // clear search filter & set focus on search input ==========================
+            else if (clickedItem.closest('svg.modal-search-dismiss')) {
                 this.clearFilter();
+                this.chooser.searchInput.focus();
             }
             // dismiss button or area outside of modal clicked ==========================
-            else if (clickedItem.closest('.modal-dismiss') || !this.chooser.modalForm.contains(clickedItem)) {
+            else if (clickedItem.closest('button.modal-dismiss') || !this.chooser.modalForm.contains(clickedItem)) {
                 this.dismissModal();
             }
         });
@@ -112,8 +113,8 @@ class subcategoryChooser {
         this.chooser.chosenItem.innerText = `${category} - ${clickedItem.innerText}`;
         // admin interface - change from 'add new' mode to 'edit/clear/display' mode
         this.chooser.chosenItem.classList.remove('hide');
-        this.chooser.openModalBtn.querySelector('.add-subcategory').classList.add('hide');
-        this.chooser.openModalBtn.querySelector('.change-subcategory').classList.remove('hide');
+        this.chooser.openModalBtn.querySelector('span.add-subcategory').classList.add('hide');
+        this.chooser.openModalBtn.querySelector('span.change-subcategory').classList.remove('hide');
         // only show the 'clear' button on the admin form if the field is not required
         if (!this.chooser.required) {
             this.chooser.clearChoiceBtn.classList.remove('hide');
@@ -125,8 +126,8 @@ class subcategoryChooser {
         this.chooser.formInput.value = '';
         this.chooser.chosenItem.innerText = '';
         this.chooser.chosenItem.classList.add('hide');
-        this.chooser.openModalBtn.querySelector('.add-subcategory').classList.remove('hide');
-        this.chooser.openModalBtn.querySelector('.change-subcategory').classList.add('hide');
+        this.chooser.openModalBtn.querySelector('span.add-subcategory').classList.remove('hide');
+        this.chooser.openModalBtn.querySelector('span.change-subcategory').classList.add('hide');
         this.chooser.clearChoiceBtn.classList.add('hide');
         this.chooser.openCategory = null;
     }
@@ -159,7 +160,9 @@ class subcategoryChooser {
         this.chooser.modalSelect.querySelectorAll('.hide').forEach(item => {
             item.classList.remove('hide');
         });
-        // show all categories, collapse all categorys except last active if not null
+        // hide 'no results' text
+        this.chooser.noResults.classList.add('hide');
+        // show all categories, collapse all categories except last active if not null
         this.chooser.categories.forEach(category => {
             // collapse all category banners
             category.setAttribute('aria-expanded', 'false');
@@ -177,7 +180,7 @@ class subcategoryChooser {
             this.clearFilter();
         } else {
             // display partial matches, expand all categorys with results, hide those without
-            this.chooser.modalSelect.querySelectorAll('[aria-expanded="false"').forEach(category => {
+            this.chooser.modalSelect.querySelectorAll('[aria-expanded="false"]').forEach(category => {
                 category.setAttribute('aria-expanded', 'true');
             });
             const searchText = this.chooser.searchInput.value.trim().toLowerCase();
@@ -188,11 +191,17 @@ class subcategoryChooser {
                     : subcategory.classList.add('hide');
             });
             // hide any empty categories
+            let found = false;
             this.chooser.categories.forEach(category => {
-                (category.querySelectorAll('li.subcategory-label:not(.hide)').length == 0) 
-                    ? category.classList.add('hide') 
-                    : category.classList.remove('hide');
+                if (category.querySelectorAll('li.subcategory-label:not(.hide)').length == 0) {
+                    category.classList.add('hide');
+                } else {
+                    category.classList.remove('hide');
+                    found = true;
+                }
             });
+            // show 'no results' text if no matching records were found
+            this.chooser.noResults.classList.toggle('hide', found);
         }
     }
 

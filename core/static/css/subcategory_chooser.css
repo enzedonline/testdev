@@ -119,6 +119,11 @@ div.subcategory-chooser-modal svg.modal-search-dismiss {
 div.subcategory-chooser-modal svg.modal-search-dismiss:hover {
     color: var(--w-color-text-context);
 }
+div.no-results-text {
+    padding: 0 2em;
+    font-style: italic;
+    opacity: 0.8;
+}
 
 /*  selection list container */
 div.subcategory-chooser-modal div.selection-panel-container {

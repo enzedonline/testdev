@@ -25,7 +25,8 @@ class SubcategoryChooser(FieldPanel):
       subcategory - Orderable class object (display value will be str representation of each instance)
       subcategory_related_name - the related_name value passed into the ParentalKey field definition in the subcategory model
       subcategory_sort_order (optional) - sort order for the subcategory groups on the chooser, defaults to 'ordering' meta value
-      add_button_text, change_button_text, clear_button_text, search_text, cancel_text, clear_filter_text (optional) - text for the panel and chooser
+      add_button_text, change_button_text, clear_button_text, search_text, cancel_text, clear_filter_text,filter_no_results_text (optional)
+        - text for the panel and chooser
       standard FieldPanel kwargs with the exception that any widget value passed will be ignored
     """
 
@@ -42,6 +43,7 @@ class SubcategoryChooser(FieldPanel):
             search_text=_("Search"),
             cancel_text=_("Close without changes"),
             clear_filter_text=_("Clear filter"),
+            filter_no_results_text=_("Sorry, no matching records found."),
             widget=None,
             disable_comments=None,
             permission=None,
@@ -66,6 +68,7 @@ class SubcategoryChooser(FieldPanel):
         self.search_text = search_text
         self.cancel_text = cancel_text
         self.clear_filter_text = clear_filter_text
+        self.filter_no_results_text = filter_no_results_text
 
     def clone_kwargs(self):
         kwargs = super().clone_kwargs()
@@ -80,6 +83,7 @@ class SubcategoryChooser(FieldPanel):
             search_text=self.search_text,
             cancel_text=self.cancel_text,
             clear_filter_text=self.clear_filter_text,
+            filter_no_results_text=self.filter_no_results_text,
         )
         return kwargs
 
@@ -123,7 +127,8 @@ class SubcategoryChooser(FieldPanel):
                 "clear_button_text": self.panel.clear_button_text,
                 "search_text": self.panel.search_text,
                 "cancel_text": self.panel.cancel_text,
-                "clear_filter_text": self.panel.clear_filter_text
+                "clear_filter_text": self.panel.clear_filter_text,
+                "filter_no_results_text": self.panel.filter_no_results_text,
             }
 
         def get_categories(self):
