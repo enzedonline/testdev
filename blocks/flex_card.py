@@ -61,6 +61,7 @@ class FlexCardBlock(StructBlock):
     class Meta:
         template = 'blocks/flex_card_block.html'
         label = _("Image & Text Card")
+        label_format = f'{_("Card")}: ' + '{text}'
         icon = 'image'
 
     def clean(self, value):
