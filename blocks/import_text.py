@@ -1,7 +1,5 @@
 from django import forms
-
-
-from blocks.wagtail.blocks import TextBlock
+from wagtail.blocks import TextBlock
 
 
 class ImportTextBlock(TextBlock):
