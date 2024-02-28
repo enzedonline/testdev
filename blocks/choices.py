@@ -1,16 +1,5 @@
 from django.utils.translation import gettext_lazy as _
-from blocks.wagtail.blocks import ChoiceBlock
-
-class LinkTypeChoiceBlock(ChoiceBlock):
-    def __init__(self, *args, **kwargs):
-        from django.forms import RadioSelect
-        super().__init__(widget=RadioSelect, *args, **kwargs)
-    
-    choices=[
-        ('page', _('Page Link')),
-        ('url', _('URL Link')),
-        ('document', _('Document Link')),
-    ]
+from blocks.base_blocks import ChoiceBlock
 
         
 class AlignmentChoiceBlock(ChoiceBlock):
