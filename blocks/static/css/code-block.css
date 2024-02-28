@@ -1,0 +1,23 @@
+div.highlight-code-block pre {
+    background-color: rgb(28, 27, 27);
+    color: ghostwhite;
+    border-radius: 0.5em;
+}
+div.highlight-code-block:hover span.btn-code-copy {
+    visibility: visible;
+}
+div.highlight-code-block span.btn-code-copy {
+    visibility: hidden;
+    opacity: .6;
+    margin-right: 0.2rem;
+    cursor: pointer;
+    transition: all 200ms ease-in-out;
+}
+div.highlight-code-block span.btn-code-copy:hover {
+    opacity: 1;
+    visibility: visible;
+}
+div.highlight-code-block span.btn-code-copy.copied-to-clipboard {
+    opacity: 1;
+    visibility: visible;
+}

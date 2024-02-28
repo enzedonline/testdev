@@ -1,0 +1,19 @@
+{% load static %}
+<div class="block-container highlight-code-block pb-2 position-relative">
+  <div class="position-absolute top-0 end-0">
+    <span class="badge bg-light rounded-pill btn-code-copy"
+          onclick="copyToClipboard(event, 'code-block-{{ block.id }}')">Copy</span>
+  </div>
+  <pre><code class="theme-{{ self.theme }}-min language-{{ self.language }}" id="code-block-{{ block.id }}">{{ self.code }}</code></pre>
+</div>
+<script>
+  highlightCodeBlock(
+    blockID="code-block-{{ block.id }}", 
+    codeBlockCSS="{% static 'css/code-block.css' %}", 
+    theme="{{ self.theme }}", 
+    themeCSS="{% static 'css/'|add:self.theme|add:'.min.css' %}", 
+    highlightScript="{% static 'js/code-highlight/highlight.min.js' %}", 
+    language="{{ self.language }}", 
+    languageScript="{% static 'js/code-highlight/languages/'|add:self.language|add:'.min.js' %}"
+  )
+</script>

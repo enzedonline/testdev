@@ -1,20 +1,51 @@
-.link-block {
+/* visually hide element while leaving readable to screen readers */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+  }
+div.link-block {
+    /* space under label and after structblock */
     margin-block-start: 1em;
-    margin-inline-start: 1em;
+    margin-block-end: 1em;
 }
-
-.link-block-tablist {
+/* remove excess space after child blocks */
+div.link-block div.w-field__wrapper {
+    margin-bottom: 0;
+}
+/* container for link type radio buttons */
+div.link-block-tablist {
     padding-inline-start: 0;
     position: relative;
     flex-wrap: wrap;
     z-index: 0;
+    /* label hidden, remove rendundant space */
+    margin-top: -1rem;
 }
-
-.link-block-tablist> :not([hidden])~:not([hidden]) {
+/* add border beneath tabs */
+div.link-block-tablist::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-bottom: 1px solid var(--w-color-text-context);
+    opacity: 0.3;
+    pointer-events: none;
+}
+/* override wagtail core style .w-tabs__list>:not([hidden])~:not([hidden]) */
+/* reduce space between tabs */
+div.link-block-tablist> :not([hidden])~:not([hidden]) {
     margin-inline-start: calc(0.5rem*(1 - var(--tw-space-x-reverse)));
 }
-
-.link-block-tab {
+/* radio button container - restyle as tab */
+div.link-block-tab {
     padding: 0 1rem;
     margin-top: 1rem;
     color: var(--w-color-text-label);
@@ -25,17 +56,8 @@
     background-color: var(--w-color-surface-field-inactive);
     opacity: 0.9;
 }
-
-.link-block-tab.active {
-    background-color: var(--w-color-surface-field-active);
-    border-bottom-style: solid;
-    border-bottom-width: 2px;
-    border-bottom-color: var(--w-color-text-context);
-    box-shadow: 4px 0px 4px var(--w-color-border-furniture);
-    opacity: 1;
-}
-
-.link-block-tab>label {
+/* link type label */
+div.link-block-tab>label {
     padding: 0.5rem;
     margin-bottom: -1px !important;
     margin: 0;
@@ -43,17 +65,34 @@
     opacity: .8;
     color: inherit;
 }
-
-.link-block-tab.active label {
+/* style active tab */
+div.link-block-tab.active {
+    background-color: var(--w-color-surface-field-active);
+    border-bottom-style: solid;
+    border-bottom-width: 2px;
+    border-bottom-color: var(--w-color-text-context);
+    box-shadow: 4px 0px 4px var(--w-color-border-furniture);
     opacity: 1;
 }
-
-.link-block-tab:hover, .block-tab>label:hover {
+div.link-block-tab.active label {
+    opacity: 1;
+}
+/* tab hover style */
+div.link-block-tab:hover, div.block-tab>label:hover {
     color: var(--w-color-text-link-hover);
     opacity: 1;
 }
-
-.link-block-tab>label>input {
+/* hide radio button ◉ input element */
+div.link-block-tab>label>input {
     position: absolute;
     clip: rect(0, 0, 0, 0);
+}
+/* add horizontal padding to tab item structblocks */
+div.link-block > div[data-contentpath]:not([data-contentpath='link_type']), 
+.link-block-no-selection {
+    padding: 0 1rem;
+}
+/* add extra space after 'no linkselected' StaticBlock */
+div.link-block > div[data-contentpath='not_selected'] {
+    margin-block-end: 2rem;
 }

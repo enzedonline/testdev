@@ -3,6 +3,12 @@
 class LinkBlockDefinition extends window.wagtailStreamField.blocks
     .StructBlockDefinition {
     render(placeholder, prefix, initialState, initialError) {
+        this.meta.link_types.forEach(link_type => {
+            this.childBlockDefs.find(obj => obj.name === link_type).meta.required = true;
+        })
+        if (this.meta.url_link_text_required){
+            this.childBlockDefs.find(obj => obj.name === 'link_text').meta.required = true;
+        }
         const block = super.render(
             placeholder,
             prefix,
@@ -11,14 +17,23 @@ class LinkBlockDefinition extends window.wagtailStreamField.blocks
         );
         // initialise class var with structblock element
         this.linkBlock = { structBlock: block.container[0] };
-        // arguments paased in LinkBlockAdapter.js_args
-        this.settings = block.blockDef.meta
         this.initialiseBlock(prefix);
         return block;
     };
 
     initialiseBlock(prefix) {
+        this.setupTabs(prefix);
+        this.setupLinkTypePanels();
+        // Link text section and required mark
+        this.linkBlock.linkTextSection = this.linkBlock.structBlock.querySelector('[data-contentpath="link_text"]');
+        this.linkBlock.linkTextRequiredMark = this.linkBlock.linkTextSection.querySelector("label.w-field__label>span.w-required-mark")
+        // Listen for tab click events
+        this.linkBlock.tabs.linkTypeSection.addEventListener('click', event => this.handleTabClick(event));
+        // Show panels for initially selected tab, or first tab by default
+        this.showPanels(this.linkBlock.tabs.buttons.find(button => button.checked) || this.linkBlock.tabs.buttons[0]);
+    }
 
+    setupTabs(prefix) {
         // Cache link type wrapper and buttons
         this.linkBlock.tabs = { buttons: [], panels: {} };
         this.linkBlock.tabs.wrapper = this.linkBlock.structBlock.querySelector(`div#${prefix}-link_type`);
@@ -34,105 +49,71 @@ class LinkBlockDefinition extends window.wagtailStreamField.blocks
             label.className = "w-tabs__tab";
         });
 
-        // Get field sections 
+        // Hide redundant field label for 'link type' (but leave readable fo rcreen readers), move tabs row up
         this.linkBlock.tabs.linkTypeSection = this.linkBlock.tabs.wrapper.closest('[data-contentpath="link_type"]');
-        this.linkBlock.tabs.panels.internalPageSection = this.linkBlock.structBlock.querySelector('[data-contentpath="internal_page"]');
-        this.linkBlock.tabs.panels.anchorTargetSection = this.linkBlock.structBlock.querySelector('[data-contentpath="anchor_target"]');
-        this.linkBlock.tabs.panels.urlLinkSection = this.linkBlock.structBlock.querySelector('[data-contentpath="url_link"]');
-        this.linkBlock.tabs.panels.documentSection = this.linkBlock.structBlock.querySelector('[data-contentpath="document"]');
-        this.linkBlock.tabs.panels.linkTextSection = this.linkBlock.structBlock.querySelector('[data-contentpath="link_text"]');
-
-        // Hide redundant field label for 'link type', move tabs row up
-        this.linkBlock.tabs.linkTypeSection.querySelector("label.w-field__label").style.display = 'None';
-        this.linkBlock.tabs.wrapper.style.marginTop = '-1em';
-
-        // Configure 'no selection' tab and panel, relate field section visibility to tabs
-        this.setupTabsPanels();
-
-        // Show panels for initially selected tab, or first tab by default
-        this.showPanels(this.linkBlock.tabs.buttons.find(button => button.checked) || this.linkBlock.tabs.buttons[0]);
-
+        this.linkBlock.tabs.linkTypeSection.querySelector("label.w-field__label").classList.add('visually-hidden');
     }
 
-    setupTabsPanels () {
-        // Initialise tabs and associate panels with respective tabs
-        const tabs = [...this.linkBlock.tabs.buttons];
-
-        // hide any tabs not in block settings link_types, configure 'not selected' tab and panel
-        for (const tab of tabs) {
-            const tabValue = tab.value;
-            if (tabValue) { 
-                // Check if the button value is not empty and not in the 'link_types' array
-                if (!this.settings.link_types.includes(tabValue)) {
-                    // Set the display attribute to 'none'
-                    tab.parentElement.parentElement.style.display = 'none';
-
-                    // Remove the tab from the 'tabs' array
-                    const index = this.linkBlock.tabs.buttons.indexOf(tab);
-                    if (index !== -1) {
-                        this.linkBlock.tabs.buttons.splice(index, 1);
-                    }
-                }                        
-            } else { // radio button with no value is the 'not selected' button
-                const emptyLabel = tab.closest('label');
-                // 'Not selected' label is '---------' by default, replace text with no_link_label from this.linkBlock settings
-                // Radio button label text is a text node - replacing text on text node only preserves innerHTML (the <input> element) 
-                emptyLabel.childNodes.forEach(node => {
-                    if (node.nodeType === Node.TEXT_NODE) {
-                        node.textContent = this.settings.no_link_label;
-                        return false; // Exit the loop 
-                    }
-                });
-                // Create a panel to display when no link has been chosen, use no_link_description from block settings
-                this.linkBlock.tabs.panels.notSelectedSection = document.createElement('p');
-                this.linkBlock.tabs.panels.notSelectedSection.textContent = this.settings.no_link_description;
-                this.linkBlock.tabs.panels.notSelectedSection.className = "w-field__label w-field__wrapper";
-                this.linkBlock.structBlock.appendChild(this.linkBlock.tabs.panels.notSelectedSection);
+    setupLinkTypePanels() {
+        // associate child blocks with link type button
+        // child blocks should be declared with classname="link-block-tab-item link-type-XX" where XX is the link_type value
+        // these classes are added to the data-field element - the child block element is the div[data-contentpath] parent of that
+        // set data-parent-tab attribute on child block with value XX 
+        this.linkBlock.structBlock.querySelectorAll('div.link-block-tab-item').forEach(element => {
+            const childBlock = element.closest('div[data-contentpath]');
+            if (childBlock) {
+                const linkType = Array.from(element.classList).find(
+                    classname => classname.includes("link-type-")
+                ).replace(/^link-type-/, '');
+                childBlock.setAttribute('data-parent-tab', linkType);
             }
-        };
+        });
+        // configure 'not selected' option if applicable
+        this.setupNotSelected();
+        // cache all tab item child blocks
+        this.tabItems = this.linkBlock.structBlock.querySelectorAll('div[data-parent-tab]');
+    }
 
-        // add required mark to link fields that are required for each link type
-        const requiredMark = document.createElement('span');
-        requiredMark.innerText = "*";
-        requiredMark.className = "w-required-mark";
-        this.linkBlock.tabs.panels.internalPageSection.querySelector("label.w-field__label").appendChild(requiredMark);
-        this.linkBlock.tabs.panels.urlLinkSection.querySelector("label.w-field__label").appendChild(requiredMark.cloneNode(true));
-        this.linkBlock.tabs.panels.documentSection.querySelector("label.w-field__label").appendChild(requiredMark.cloneNode(true));
-        // required mark for link tet only shown if set in settings and URL Link is active tab
-        // for page and document links, link text defaults to object title
-        this.linkBlock.tabs.linkTextRequiredMark = requiredMark.cloneNode(true)
-        this.linkBlock.tabs.panels.linkTextSection.querySelector("label.w-field__label").appendChild(this.linkBlock.tabs.linkTextRequiredMark);
-
-        // link section value to radio button (tab) value - used to show/hide on tab click
-        this.linkBlock.tabs.panels.internalPageSection.setAttribute('data-value', 'page');
-        this.linkBlock.tabs.panels.anchorTargetSection.setAttribute('data-value', 'page');
-        this.linkBlock.tabs.panels.urlLinkSection.setAttribute('data-value', 'url');
-        this.linkBlock.tabs.panels.documentSection.setAttribute('data-value', 'document');
-
-        // Listen for tab click events
-        this.linkBlock.tabs.linkTypeSection.addEventListener('click', event => this.handleTabClick(event));
-
+    setupNotSelected() {
+        // If link block required=False, relabel the 'not selected' button which has value===''
+        // 'Not selected' label is '---------' by default, replace text with this.meta.no_link_label 
+        // Associate not_selected StaticBlock with the 'not selected' button which has value===''
+        if (!this.meta.required) {
+            const noLinkSelectedButton = this.linkBlock.tabs.buttons.find(button => button.value === '');
+            // Radio button label text is a text node - replacing text on text node only preserves innerHTML (the <input> element) 
+            const emptyLabel = noLinkSelectedButton.closest('label');
+            emptyLabel.childNodes.forEach(node => {
+                if (node.nodeType === Node.TEXT_NODE) {
+                    node.textContent = this.meta.no_link_label;
+                    return false; // Exit the loop 
+                }
+            });
+            const noLinkSelectedText = this.linkBlock.structBlock.querySelector('div[data-contentpath="not_selected"]')
+            noLinkSelectedText.setAttribute('data-parent-tab', '');
+        }
     }
 
     showPanels(activeTab) {
+        // When tab with value='XX' clicked, only those child blocks with data-parent-tab='XX' are visible
+        this.tabItems.forEach(div => {
+            div.style.display = (div.dataset.parentTab === activeTab.value) ? 'block' : 'none';
+        });
         // set the active tab styling
         this.linkBlock.tabs.buttons.forEach(button => {
             button.closest('div.link-block-tab').classList.toggle('active', button === activeTab);
             button.ariaSelected = (button === activeTab) ? "true" : "false";
         });
-        // hide panels not related to the active tab
-        for (let panelKey in this.linkBlock.tabs.panels) { 
-            let panel = this.linkBlock.tabs.panels[panelKey];
-            panel.style.display = (panel.getAttribute('data-value') === activeTab.value) ? 'block' : 'none';
-        };
-        this.linkBlock.tabs.linkTextRequiredMark.style.display = (activeTab.value === 'url' && this.settings.url_link_text_required)  ? "inline" : "none";
         // link text visible whenever active tab has a value (link type chosen)
-        this.linkBlock.tabs.panels.linkTextSection.style.display = (activeTab.value === '') ? "none" : "block";
-        // 'not selected' panel visible whenever active tab has no value (no link type chosen)
-        this.linkBlock.tabs.panels.notSelectedSection.style.display = (activeTab.value !== '') ? "none" : "block";
+        this.linkBlock.linkTextSection.style.display = (activeTab.value === '') ? "none" : "block";
+        // required mark for link tet only shown if url_link_text_required set in blockDef.meta and URL Link is active tab
+        if (this.meta.url_link_text_required){
+            this.linkBlock.linkTextRequiredMark.style.display = (
+                activeTab.value === 'url_link' && this.meta.url_link_text_required
+                ) ? "inline" : "none";
+        }
     }
 
-    handleTabClick (event) {
+    handleTabClick(event) {
         event.stopPropagation();
         let clickedTab = event.target.closest('input[type="radio"]');
         if (clickedTab) {
