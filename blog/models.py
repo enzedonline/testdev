@@ -177,14 +177,14 @@ class BlogPage(Page):
         on_delete=models.SET_NULL,
         verbose_name="Some Document",
     )
-    some_product = models.ForeignKey(
-        "product.Product",
-        null=True,
-        blank=True,
-        related_name="+",
-        on_delete=models.SET_NULL,
-        verbose_name="Product",
-    )
+    # some_product = models.ForeignKey(
+    #     "product.Product",
+    #     null=True,
+    #     blank=True,
+    #     related_name="+",
+    #     on_delete=models.SET_NULL,
+    #     verbose_name="Product",
+    # )
     some_page = models.ForeignKey(
         "wagtailcore.Page",
         null=True,
@@ -196,8 +196,8 @@ class BlogPage(Page):
     content = StreamField(
         [
             ("rich_text", RichTextBlock()),
-            ("seo_image", SEOImageChooserBlock()),
             ("html", RawHTMLBlock()),
+            ("code", BaseCodeBlock()),
             ("import_text_block", ImportTextBlock()),
             ("csv_table", CSVTableBlock()),
             ("collapsible_card_block", CollapsibleCardBlock()),
@@ -205,6 +205,7 @@ class BlogPage(Page):
             ("external_link", ExternalLinkEmbedBlock()),
             ("link", LinkBlock()),
             ("flex_card", FlexCardBlock()),
+            ("seo_image", SEOImageChooserBlock()),
             ("heading", HeadingBlock()),
             ("django_template_fragment", DjangoTemplateFragmentBlock()),
         ],
