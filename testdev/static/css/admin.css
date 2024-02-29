@@ -29,44 +29,38 @@ body {
 .Draftail-block--h4_class ,
 .Draftail-block--h5_class ,
 .Draftail-block--h6_class ,
-h1, h2, h3, h4, h5, h6 {
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
   font-family: var(--font-family-headings);
   margin-bottom: 0.8rem;
   font-weight: 500;
   line-height: 1.2;
 }
 
-.Draftail-block--h1_class ,
-h1 {
+.Draftail-block--h1_class, h1, .h1 {
   font-size: var(--font-size-1);
 }
 
-.Draftail-block--h2_class ,
-h2 {
+.Draftail-block--h2_class, h2, .h2 {
   font-size: var(--font-size-2);
   padding: 0.35rem 0;
 }
 
-.Draftail-block--h3_class,
-h3 {
+.Draftail-block--h3_class, h3, .h3 {
   font-size: var(--font-size-3);
   padding: 0.25rem 0;
 }
 
-.Draftail-block--h4_class ,
-h4 {
+.Draftail-block--h4_class, h4, .h4 {
   font-size: var(--font-size-4);
   padding: 0.15rem 0;
 }
 
-.Draftail-block--h5_class ,
-h5 {
+.Draftail-block--h5_class, h5, .h5 {
   font-size: var(--font-size-5);
   padding: 0.125rem 0 !important;
 }
 
-.Draftail-block--h6_class ,
-h6 {
+.Draftail-block--h6_class, h6, .h6 {
   font-size: var(--font-size-6);
   padding: 0.1rem 0 !important;
 }
@@ -75,6 +69,9 @@ h6 {
 p {
   font-size: var(--font-size-body);
   font-family: var(--font-family-body);
+}
+
+p:not(.help), .p {
   text-align: justify;
 }
 
@@ -195,4 +192,41 @@ visibility: visible;
 .listing--inline-actions td.title {
   display: table-cell;
   line-height: normal;
+}
+
+/* block menu */
+div[data-tippy-root] div.tippy-box {
+  max-width: unset !important;
+}
+div.tippy-content div.w-combobox {
+  width: 70vw;
+}
+div.w-combobox__field>input {
+  display: none;
+}
+div.tippy-content div.w-combobox div.w-combobox__menu div.w-combobox__optgroup {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-column-gap: 1rem;
+  grid-row-gap: 0.5rem;
+  grid-auto-flow: row
+}
+div.tippy-content div.w-combobox__option {
+  grid-template-columns: unset;
+  grid-column: unset;
+  display: flex;
+  align-items: stretch;
+  height: 100%;
+  break-inside: avoid-column;
+  overflow-wrap: break-word;
+  line-height: normal;  
+}
+div.tippy-content div.w-combobox__option div.w-combobox__option-text {
+  margin-top: .2em;
+}
+div.tippy-content div.w-combobox__option div.w-combobox__option-icon .icon {
+  height: 1.2rem;
+  width: 1.2rem;
+  margin-right: 0.5em;
 }
