@@ -7,7 +7,7 @@ from wagtail.admin.widgets import AdminAutoHeightTextInput
 
 
 class CharLimitMixin:
-    def __init__(self, min: int = 0, max: int or None = None, enforced: bool = False, *args, **kwargs):
+    def __init__(self, min: int = 0, max: int = None, enforced: bool = False, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.minimum = min
         self.maximum = max
@@ -37,6 +37,7 @@ class CharLimitMixin:
         widget_media = super().media
         return Media(
             js=widget_media._js + ["js/widgets/input-char-limit-widget.js"],
+            css={"all": ("css/widgets/input-char-limit-widget.css",)},
         )
 
 class CharLimitTextInput(CharLimitMixin, TextInput):
