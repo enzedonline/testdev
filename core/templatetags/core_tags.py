@@ -7,6 +7,13 @@ from wagtail.templatetags.wagtailcore_tags import richtext
 
 register = template.Library()
 
+@register.filter(name='is_in_group') 
+def is_in_group(user, group_name):
+    if user.id==None:
+        return False
+    else:
+        return user.groups.get_queryset().filter(name=group_name).exists() 
+    
 @register.simple_tag()
 def random_string(length=8):
     characters = string.ascii_letters + string.digits
