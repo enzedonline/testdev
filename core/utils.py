@@ -9,6 +9,7 @@ from html import unescape
 from html.parser import HTMLParser
 
 from bs4 import BeautifulSoup
+from crequest.middleware import CrequestMiddleware
 from django.utils.encoding import force_str
 from django.utils.translation import gettext_lazy as _
 from PIL.ExifTags import GPSTAGS, TAGS
@@ -314,3 +315,75 @@ def get_custom_icons():
 
     return icons
     
+class FakeRequest:
+    """
+    FakeRequest takes the place of the django HTTPRequest object in various testing scenarios where
+    a real one doesn't exist, but the code under test expects one to be there.
+
+    Wagtail 2.9 now determines the current Site by looking at the hostname and port in the request object,
+    which means it calls get_host() on our faked out requests. Thus, we need to emulate it.
+    """
+
+    def __init__(self, site=None, user=None, **kwargs):
+        self.user = user
+        # Include empty GET and POST attrs, so code which expects request.GET or request.POST to exist won't crash.
+        self.GET = self.POST = {}
+        # Callers can override GET and POST, or override/add any other attribute using kwargs.
+        self.__dict__.update(kwargs)
+        self._wagtail_site = site
+
+    def get_host(self):
+        if not self._wagtail_site:
+            return 'fakehost'
+        return self._wagtail_site.hostname
+
+    def get_port(self):
+        # It should be safe to pretend all test traffic is on port 443.
+        # HTTPRequest.get_port() explicitly returns a string, so we do, too.
+        return '443'
+
+
+def set_fake_current_request(site=None, user=None, request=None, **kwargs):
+    """
+    Sets the current request to either a specified request object or a FakeRequest object built from the given Site
+    and/or User. Any additional keyword args are added as attributes on the FakeRequest.
+    """
+    # If the caller didn't provide a request object, create a FakeRequest.
+    if request is None:
+        request = FakeRequest(site, user, **kwargs)
+    # Set the created (or provided) request as the "current request".
+    CrequestMiddleware.set_request(request)
+    return request
+
+
+class FakeCurrentRequest():
+    """
+    Implements set_fake_current_request() as a context manager. Use like this:
+    with FakeCurrentRequest(some_site, some_user):
+        // .. do stuff
+    OR
+    with FakeCurrentRequest(request=some_request):
+        // .. do stuff
+
+    When the context manager exits, the current request will be automatically reverted to its previous state.
+    """
+    NO_CURRENT_REQUEST = 'no_current_request'
+
+    def __init__(self, site=None, user=None, request=None, **kwargs):
+        self.site = site
+        self.user = user
+        self.request = request
+        self.kwargs = kwargs
+
+    def __enter__(self):
+        # Store a copy of the original current request, so we can restore it when the context manager exits.
+        self.old_request = CrequestMiddleware.get_request(default=self.NO_CURRENT_REQUEST)
+        return set_fake_current_request(self.site, self.user, self.request, **self.kwargs)
+
+    def __exit__(self, *args):
+        if self.old_request == self.NO_CURRENT_REQUEST:
+            # If there wasn't a current request when we entered the contact manager, remove the current request.
+            CrequestMiddleware.del_request()
+        else:
+            # Otherwise, set the current request back to whatever it was when we entered.
+            CrequestMiddleware.set_request(self.old_request)
