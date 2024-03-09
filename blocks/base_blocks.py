@@ -1,27 +1,11 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from django.utils.functional import cached_property
-from wagtail.admin.widgets import AdminPageChooser
-from wagtail.blocks import CharBlock, ChoiceBlock, PageChooserBlock
+from wagtail.blocks import CharBlock, ChoiceBlock
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.images.widgets import AdminImageChooser
 
 from .validators import is_valid_href
 
-
-class CompactImageChooserBlock(ImageChooserBlock):
-    def __init__(self, *args, widget_attrs={}, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.widget_attrs = widget_attrs
-        self.widget_attrs["show_edit_link"]=False
-
-    class Meta:
-        form_classname = "compact-image-chooser"
-
-    @property
-    def widget(self):
-        chooser = AdminImageChooser(**self.widget_attrs)
-        return chooser    
 
 class DefaultChoiceBlock(ChoiceBlock):
     def __init__(self, *args, **kwargs):
@@ -37,18 +21,6 @@ class DefaultChoiceBlock(ChoiceBlock):
             **kwargs,
         )
 
-class CustomPageChooserBlock(PageChooserBlock):
-    def __init__(self, *args, widget_attrs={}, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.widget_attrs = widget_attrs
-
-    @cached_property
-    def widget(self):
-        return AdminPageChooser(
-            target_models=self.target_models,
-            can_choose_root=self.can_choose_root,
-            **self.widget_attrs,
-        )
 
 class ExtendedURLBlock(CharBlock):
     def __init__(
@@ -71,6 +43,7 @@ class ExtendedURLBlock(CharBlock):
             "mailto",
             "tel",
         ],
+        allow_relative=True,
         ** kwargs,
     ):
         self.field = forms.CharField(
@@ -82,10 +55,13 @@ class ExtendedURLBlock(CharBlock):
         )
         super().__init__(required=required, **kwargs)
         self.protocols = protocols
+        self.allow_relative = allow_relative
 
     def clean(self, value):
         if value:
-            result = is_valid_href(value, protocols=self.protocols)
+            result = is_valid_href(
+                value, protocols=self.protocols, relative=self.allow_relative
+            )
             if result:
                 value = result
             else:
@@ -94,4 +70,18 @@ class ExtendedURLBlock(CharBlock):
 
     class Meta:
         icon = "link"
-		
+
+
+class CompactImageChooserBlock(ImageChooserBlock):
+    def __init__(self, *args, widget_attrs={}, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.widget_attrs = widget_attrs
+        self.widget_attrs["show_edit_link"] = False
+
+    class Meta:
+        form_classname = "compact-image-chooser"
+
+    @property
+    def widget(self):
+        chooser = AdminImageChooser(**self.widget_attrs)
+        return chooser

@@ -35,7 +35,7 @@ class FlexCardBlock(StructBlock):
                     Leave link label blank to make the whole card a clickable link."),
     )
     image = SEOImageChooserBlock(
-        label=_("Select Image & Enter Details"),
+        label=_("Optional Card Image"),
         help_text=_("Card Image (approx 1:1.4 ratio - ideally upload 2100x1470px)."),
         required=False
     )
