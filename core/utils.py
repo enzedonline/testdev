@@ -2,6 +2,7 @@ import base64
 import fnmatch
 import importlib
 import io
+import math
 import os
 import re
 from collections import OrderedDict
@@ -291,6 +292,12 @@ def list_streamfield_blocks(streamfield):
         return list
     
     return list_child_blocks(streamfield.stream_block.child_blocks)
+
+def sf(number, significant_figures):
+    if number == 0:
+        return 0
+    else:
+        return round(number, significant_figures - int(math.floor(math.log10(abs(number)))) - 1)
 
 def get_custom_icons():
     # Specify the root folder

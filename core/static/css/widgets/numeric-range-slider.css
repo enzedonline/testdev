@@ -1,0 +1,69 @@
+/* slider container */
+div.numeric-range-slider {
+    height: 7px;
+    margin: 3rem 2rem;
+}
+
+/* prevent excessive calculated height */
+div.numeric-range-slider div.noUi-pips {
+    height: unset;
+}
+
+/* slider bar outside of selected range */
+div.numeric-range-slider .noUi-connects {
+    background: var(--w-color-surface-field-inactive);
+}
+
+/* selector handles */
+div.numeric-range-slider .noUi-handle {
+    height: 18px;
+    width: 18px;
+    top: -7px;
+    right: -9px; /* half the width */
+    border-radius: 50%; /* Use border-radius to make it circular */
+    background-color: var(--w-color-surface-button-default);
+    cursor: pointer;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5); /* Add box-shadow for the raised effect */
+    border: 1px solid transparent; /* Add a border to maintain shape */
+}
+/* Add a gradient background to enhance the raised effect */
+div.numeric-range-slider .noUi-handle::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%);
+}
+div.numeric-range-slider .noUi-handle:hover {
+    background-color: var(--w-color-surface-button-hover);
+}
+
+/* handle tooltips */
+.noUi-horizontal .noUi-tooltip {
+    bottom: 140%;
+    padding: 1px 6px;
+}
+/* hide || on handle */
+/* div.numeric-range-slider .noUi-handle::before, */
+div.numeric-range-slider .noUi-handle::after {
+    background: unset;
+}
+
+div.numeric-range-slider.vertical-labels div.noUi-value.noUi-value-horizontal.noUi-value-large {
+    top: 20px;
+    transform: rotate(90deg);
+    transform-origin: left;
+}
+
+/* loading error message */
+p.numeric-range-slider-db-value-error {
+    margin: 0 2rem;
+    font-weight: 500;
+}
+p.numeric-range-slider-db-value-error::before {
+    margin-right: 0.5em;
+    vertical-align: -17%;
+}
