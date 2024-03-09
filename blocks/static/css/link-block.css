@@ -9,22 +9,24 @@
     clip: rect(0, 0, 0, 0);
     border: 0;
   }
+/* space under label and after structblock */
 div.link-block {
-    /* space under label and after structblock */
     margin-block-start: 1em;
     margin-block-end: 1em;
 }
+
 /* remove excess space after child blocks */
 div.link-block div.w-field__wrapper {
     margin-bottom: 0;
 }
 /* container for link type radio buttons */
 div.link-block-tablist {
-    padding-inline-start: 0;
     position: relative;
     flex-wrap: wrap;
     z-index: 0;
-    /* label hidden, remove rendundant space */
+    /* remove redundant space */
+    padding-inline-start: 0;
+    padding-inline-end: 0;
     margin-top: -1rem;
 }
 /* add border beneath tabs */
@@ -44,6 +46,7 @@ div.link-block-tablist::after {
 div.link-block-tablist> :not([hidden])~:not([hidden]) {
     margin-inline-start: calc(0.5rem*(1 - var(--tw-space-x-reverse)));
 }
+
 /* radio button container - restyle as tab */
 div.link-block-tab {
     padding: 0 1rem;
@@ -56,7 +59,7 @@ div.link-block-tab {
     background-color: var(--w-color-surface-field-inactive);
     opacity: 0.9;
 }
-/* link type label */
+/* link type tab label */
 div.link-block-tab>label {
     padding: 0.5rem;
     margin-bottom: -1px !important;
@@ -65,7 +68,7 @@ div.link-block-tab>label {
     opacity: .8;
     color: inherit;
 }
-/* style active tab */
+/* style active tab & label */
 div.link-block-tab.active {
     background-color: var(--w-color-surface-field-active);
     border-bottom-style: solid;
