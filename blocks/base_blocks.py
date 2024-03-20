@@ -1,8 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from wagtail.blocks import CharBlock, ChoiceBlock
+from wagtail.blocks import CharBlock, ChoiceBlock, PageChooserBlock
 from wagtail.images.blocks import ImageChooserBlock
-from wagtail.images.widgets import AdminImageChooser
 
 from .validators import is_valid_href
 
@@ -71,17 +70,21 @@ class ExtendedURLBlock(CharBlock):
     class Meta:
         icon = "link"
 
-
-class CompactImageChooserBlock(ImageChooserBlock):
-    def __init__(self, *args, widget_attrs={}, **kwargs):
+class CustomChooserMixin:
+    def __init__(self, *args, chooser_attrs={"show_edit_link":False}, **kwargs):
         super().__init__(*args, **kwargs)
-        self.widget_attrs = widget_attrs
-        self.widget_attrs["show_edit_link"] = False
-
-    class Meta:
-        form_classname = "compact-image-chooser"
+        self.chooser_attrs = chooser_attrs
 
     @property
     def widget(self):
-        chooser = AdminImageChooser(**self.widget_attrs)
+        chooser = super().widget
+        for key, value in self.chooser_attrs.items():
+            if hasattr(chooser, key):
+                setattr(chooser, key, value)
         return chooser
+        
+class CustomImageChooserBlock(CustomChooserMixin, ImageChooserBlock):
+    pass
+
+class CustomPageChooserBlock(CustomChooserMixin, PageChooserBlock):
+    pass
