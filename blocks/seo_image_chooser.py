@@ -6,15 +6,16 @@ from wagtail.blocks.struct_block import (StructBlockAdapter,
                                          StructBlockValidationError)
 from wagtail.telepath import register
 
-from blocks.base_blocks import CompactImageChooserBlock
+from blocks.base_blocks import CustomImageChooserBlock
 
 
 class SEOImageChooserBlock(StructBlock):
     def __init__(self, required=True, **kwargs):
         local_blocks = (
-            ("image", CompactImageChooserBlock(
+            ("image", CustomImageChooserBlock(
                 label=_("Image"),
-                required=required
+                required=required,
+                form_classname="compact-image-chooser"
             )),
             ("description", CharBlock(
                 label=_("Description"),
