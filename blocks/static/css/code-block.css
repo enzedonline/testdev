@@ -1,7 +1,40 @@
+div.highlight-code-wrapper>div.accordion {
+    border-radius: 0.5rem;
+}
+div.highlight-code-wrapper>div.accordion>div.accordion-item {
+    border-radius: 0.5rem;
+}
+div.highlight-code-wrapper>div.accordion>div.accordion-item>div.accordion-header>button.accordion-button {
+    color: ghostwhite;
+    background-color: var(--bs-dark);
+    font-family: var(--font-family-headings);
+    padding: 0.5em 1em;
+    box-shadow: none;
+    border-radius: 0.5rem 0.5rem 0 0;
+    transition: border-radius 15ms;
+}
+div.highlight-code-wrapper>div.accordion>div.accordion-item>div.accordion-header>button.accordion-button.collapsed {
+    border-radius: 0.5rem;
+    transition: border-radius 1s;
+}
+div.highlight-code-wrapper>div.accordion>div.accordion-item>div.accordion-header>button.accordion-button:focus {
+    border-color: var(--bs-light);
+    box-shadow: none;
+}
+div.highlight-code-wrapper>div.accordion>div.accordion-item>div.accordion-header>button.accordion-button::after {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M2 5L8 11L14 5'/%3e%3c/svg%3e");
+}
+div.highlight-code-wrapper>div.accordion>div.accordion-item>div.accordion-collapse>div.accordion-body {
+    padding: 0;
+}
+div.highlight-code-wrapper>div.accordion>div.accordion-item>div.accordion-collapse>div.accordion-body>div.highlight-code-block>pre {
+    margin: 0;
+    border-radius: 0 0 0.5rem 0.5rem;
+}
 div.highlight-code-block pre {
     background-color: rgb(28, 27, 27);
     color: ghostwhite;
-    border-radius: 0.5em;
+    border-radius: 0.5rem;
 }
 div.highlight-code-block:hover span.btn-code-copy {
     visibility: visible;
