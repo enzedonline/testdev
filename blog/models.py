@@ -203,7 +203,7 @@ class BlogPage(Page):
             ("collapsible_card_block", CollapsibleCardBlock()),
             ("product", ProductChooserBlock()),
             ("external_link", ExternalLinkEmbedBlock()),
-            ("link", LinkBlock()),
+            ("link", LinkBlock(required=False)),
             ("flex_card", FlexCardBlock()),
             ("seo_image", SEOImageChooserBlock()),
             ("heading", HeadingBlock()),

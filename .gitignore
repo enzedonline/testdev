@@ -12,15 +12,6 @@ db.sqlite3-journal
 media
 venv.ps1
 .venv/
-*/migrations/*
-!blog/migrations/__init__.py
-!contact/migrations/__init__.py
-!core/migrations/__init__.py
-!home/migrations/__init__.py
-!menu/migrations/__init__.py
-!service/migrations/__init__.py
-!site_settings/migrations/__init__.py
-!userauth/migrations/__init__.py
 local.py
 restart.sh
 manage.py 
