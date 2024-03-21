@@ -24,45 +24,34 @@ const waitForObject = async (object) => {
 
 // include js script only if not already included
 const include_js = (js, id) => {
-  let script_tag = document.getElementById(`${id}`)
-  if (!script_tag) {
-    let target_tag = document.getElementsByTagName("head")[0];
-    let script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.src = `${js}`;
-    script.id = `${id}`;
-    target_tag.appendChild(script);
-    if (document.getElementById(`${id}`)) {
-      return script;
+  return new Promise((resolve, reject) => {
+    let script_tag = document.getElementById(id);
+
+    if (!script_tag) {
+      const head = document.head || document.getElementsByTagName('head')[0];
+      script_tag = document.createElement('script');
+      script_tag.type = 'text/javascript';
+      script_tag.src = js;
+      script_tag.id = id;
+      script_tag.onload = resolve; // Resolve the promise when script is loaded
+      script_tag.onerror = reject; // Reject the promise on error
+      head.appendChild(script_tag);
+    } else {
+      resolve(); // Resolve the promise if script is already loaded
     }
-    else {
-      return null;
-    } 
-  }
-  else {
-    return script_tag;
-  }
-}
+  });
+};
 
 // include css only if not already included
 const include_css = (css, id) => {
   let link_tag = document.getElementById(`${id}`)
   if (!link_tag) {
-    let target_tag = document.getElementsByTagName("head")[0];
+    const head = document.head || document.getElementsByTagName('head')[0];
     let link = document.createElement('link');
     link.rel = 'stylesheet';
     link.href = `${css}`;
     link.id = `${id}`;
-    target_tag.appendChild(link);
-    if (document.getElementById(`${id}`)) {
-      return link;
-    }
-    else {
-      return null;
-    } 
-  }
-  else {
-    return link_tag;
+    head.appendChild(link);
   }
 }
 
