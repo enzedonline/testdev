@@ -1,3 +1,4 @@
+
 import base64
 import fnmatch
 import importlib
@@ -13,6 +14,7 @@ from bs4 import BeautifulSoup
 from crequest.middleware import CrequestMiddleware
 from django.utils.encoding import force_str
 from django.utils.translation import gettext_lazy as _
+from lxml import etree
 from PIL.ExifTags import GPSTAGS, TAGS
 from wagtail.blocks import ListBlock
 from wagtail.blocks.stream_block import StreamValue
@@ -321,6 +323,16 @@ def get_custom_icons():
             icons.append(relative_path)
 
     return icons
+
+def strip_svg_markup(svg_markup):
+    """Strip <script> tags, height and width attributes from svg markup"""
+    root = etree.fromstring(svg_markup.encode('utf-8'))
+    for element in root.findall(".//{http://www.w3.org/2000/svg}script"):
+        element.getparent().remove(element)
+    for element in root.iter():
+        element.attrib.pop('height', None)
+        element.attrib.pop('width', None)
+    return etree.tostring(root, encoding='unicode', method='xml', xml_declaration=False)
     
 class FakeRequest:
     """
