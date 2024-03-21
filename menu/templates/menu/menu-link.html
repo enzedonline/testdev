@@ -1,0 +1,15 @@
+{% load menu_tags wagtailimages_tags %}
+{% if self.link.url %}
+    <li class="{{ link_type }}{% link_active self.link %}">
+        <a class="nav-link"
+           href="{{ self.link.url }}"
+           title="{{ self.link.text }}">
+            {% if self.options.icon %}
+                {% image self.options.icon fill-25x25 %}
+            {% endif %}
+            {% if self.link.text %}
+                <div>{{ self.link.text }}</div>
+            {% endif %}
+        </a>
+    </li>
+{% endif %}

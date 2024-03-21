@@ -1,25 +1,27 @@
+from django import forms
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from wagtail.admin.panels import FieldPanel, TitleFieldPanel
+from wagtail.admin.panels import FieldPanel, MultiFieldPanel
+from wagtail.admin.ui.tables import UpdatedAtColumn, LiveStatusTagColumn
 from wagtail.admin.widgets.slug import SlugInput
 from wagtail.fields import StreamField
 from wagtail.images.widgets import AdminImageChooser
 from wagtail.models import (DraftStateMixin, Locale, LockableMixin,
                             PreviewableMixin, RevisionMixin, WorkflowMixin)
 from wagtail.snippets.models import register_snippet
+from wagtail.snippets.views.snippets import SnippetViewSet
 
 from .blocks import MenuStreamBlock
 
 BREAKPOINT_CHOICES = (
-    # ("-none", _("No breakpoint (always collapsed)")),
-    # ("-sm", _("Mobile screens only (<576px)")),
-    ("-md", _("Small Screens (<768px)")),
-    ("-lg", _("Medium Screens (<992px)")),
-    # ("-xl", _("Extra Large (<1200px)")),
-    ("", _("Always expanded (no small screen format)"))
+    ("", _("Always expanded")),
+    ("-sm", _("Mobile only (<576px)")),
+    ("-md", _("Medium (<768px)")),
+    ("-lg", _("Large (<992px)")),
+    ("-xl", _("Extra Large (<1200px)")),
+    ("-none", _("Always collapsed")),
 )
 
-@register_snippet
 class Menu(
     PreviewableMixin,
     WorkflowMixin,
@@ -28,6 +30,8 @@ class Menu(
     RevisionMixin,
     models.Model,
 ):
+    icon = "menu"
+    
     title = models.CharField(
         max_length=255, 
         verbose_name=_("Menu Title"),
@@ -40,32 +44,35 @@ class Menu(
         blank=True,
         related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name=_("Optional Menu Logo"),
+        verbose_name=_("Optional Brand Logo"),
     )
     brand_title = models.CharField(
         max_length=50, 
         null=True,
         blank=True,
-        verbose_name=_("Optional Menu Display Title")
+        verbose_name=_("Optional Brand Display Title")
     )
     items = StreamField(
-        MenuStreamBlock(), verbose_name="Menu Items", blank=True, use_json_field=True
+        MenuStreamBlock(), verbose_name=_("Menu Items"), blank=True, use_json_field=True
     )
     breakpoint = models.CharField(
-        max_length=4,
+        max_length=5,
         choices=BREAKPOINT_CHOICES,
-        default="lg",
+        default="-lg",
         blank=True,
         null=False,
         verbose_name=_("Mobile Layout Breakpoint"),
+        help_text=_("Select screen widths to display menu in collapsed format.")
     )
 
     panels = [
-        TitleFieldPanel("title"),
-        FieldPanel("slug", widget=SlugInput),
-        FieldPanel("brand_logo", widget=AdminImageChooser(show_edit_link=False)),
-        FieldPanel("brand_title"),
-        FieldPanel("breakpoint"),
+        MultiFieldPanel([
+            FieldPanel("title", icon="info-circle",classname="menu-title"),
+            FieldPanel("slug", icon="cogs", widget=SlugInput, classname="menu-slug"),
+            FieldPanel("breakpoint", icon="mobile-alt", classname="menu-breakpoint"),
+            FieldPanel("brand_title", icon="title", classname="menu-brand-title"),
+            FieldPanel("brand_logo", widget=AdminImageChooser(show_edit_link=False), classname="menu-brand-logo compact-image-chooser"),
+        ], _('Menu Settings'), classname="menu-settings"),
         FieldPanel("items"),
     ]
 
@@ -77,3 +84,11 @@ class Menu(
 
     class Meta:
         verbose_name = _("Menu")
+
+class MenuViewSet(SnippetViewSet):
+    model = Menu
+    icon = "menu"
+    list_display = ["title", "slug", UpdatedAtColumn(), LiveStatusTagColumn()]
+    ordering = ["title"]
+
+register_snippet(MenuViewSet)

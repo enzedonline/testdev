@@ -1,0 +1,33 @@
+{% load wagtailcore_tags wagtailimages_tags menu_tags %}
+{% get_autofill_pages as links %}
+{% if link_type == 'nav-item' %}
+<li class="nav-item dropdown">
+{% else %}
+<li class="dropdown-item submenu submenu{{ menu.breakpoint }} dropinline">
+{% endif %}    
+    <a role="button"
+       title="{{ self.title }}"
+       class="nav-link dropdown-toggle"
+       data-bs-toggle="dropdown"
+       aria-expanded="false"
+       {% if link_type == 'dropdown-item' %}onclick="event.stopPropagation();"{% endif %}>
+        {% if self.options.icon %}
+            {% image self.options.icon fill-25x25 %}
+        {% endif %}
+        <div>{{ self.title }}</div>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end {% if self.sticky %} position-absolute{% endif %}">
+        {% for link in links %}
+            <li class="dropdown-item {{ link.active }}">
+                <a class="nav-link {{ link.active }}"
+                   href="{{ link.url }}"
+                   title="{{ link.title }}">
+                    <span>{{ link.title }}</span>
+                </a>
+            </li>
+            {% if forloop.first and self.include_parent_page %}
+                {% include "menu/submenu-divider.html" %}
+            {% endif %}
+        {% endfor %}
+    </ul>
+</li>

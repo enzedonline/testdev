@@ -1,0 +1,226 @@
+/* compact image chooser */
+div.compact-image-chooser div.w-field__input>div.image-chooser>div.chosen {
+    flex-wrap: wrap;
+}
+div.compact-image-chooser div.w-field__input>div.image-chooser>div.chosen>img {
+    max-height: 100px;
+    max-width: 100px;
+    background: 
+        repeating-conic-gradient(#ddd 0% 25%, #fff 0% 50%) 50% / 20px 20px;
+}
+div.compact-image-chooser div.w-field__input>div.image-chooser>div.chosen>div.chooser__title {
+    order: 1;
+    font-size: 0.875rem;
+}
+div.compact-image-chooser div.w-field__input>div.image-chooser>div.chosen>div.w-dropdown>button {
+    padding-inline: 0;
+    padding: 0;
+    width: auto;
+}
+
+/* settings multifield panel */
+section.menu-settings {
+    margin-bottom: 0;
+}
+section.menu-settings>div.w-panel__content {
+    flex-wrap: wrap;
+    display: flex;
+    column-gap: 2rem;
+}
+section.menu-settings>div.w-panel__content div.w-field__wrapper {
+    margin-bottom: 1rem;
+}
+section.menu-settings>div.w-panel__content div.w-field {
+    display: grid;
+}
+section.menu-settings>div.w-panel__content div.w-field>div.w-field__input {
+    margin-top: 0.4rem;
+}
+section.menu-settings>div.w-panel__content div.w-field>div.w-field__help,
+section.menu-settings>div.w-panel__content div.w-field>div.w-field__errors {
+    order: 1;
+}
+section.menu-settings>div.w-panel__content div.w-field>div.w-field__help>div.help,
+section.menu-settings>div.w-panel__content div.w-field>div.w-field__errors>* {
+    margin-top: 0.3rem;
+}
+section.menu-settings>div.w-panel__content>div.menu-title {
+    flex-basis: calc(60% - 2rem);
+    min-width: 250px
+}
+section.menu-settings>div.w-panel__content>div.menu-slug {
+    flex-basis: calc(40% - 2rem);
+    min-width: 250px
+}
+section.menu-settings>div.w-panel__content>div.menu-breakpoint {
+    flex-basis: 100%;
+}
+section.menu-settings>div.w-panel__content>div.menu-breakpoint div.w-field__input>select {
+    width: calc(60% - 2rem);
+}
+section.menu-settings>div.w-panel__content>div.menu-brand-title {
+    flex-basis: calc(60% - 2rem);
+    min-width: 250px
+}
+section.menu-settings>div.w-panel__content>div.menu-brand-logo {
+    flex-basis: calc(40% - 2rem);
+    min-width: 250px
+}
+section.menu-settings>div.w-panel__content>div.menu-brand-logo>div.w-field__wrapper {
+    margin-bottom: 0rem;
+}
+
+/* menu structblock styles */
+
+/* menu item options */
+div.structblock.menu-item-options {
+    display: grid;
+    position: relative;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    column-gap: 2.5rem;
+    padding: 1rem 0 0 1rem;
+    font-family: var(--font-family-body);
+}
+div.structblock.menu-item-options::before {
+    content: "";
+    position: absolute;
+    top: 0.3em;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-top: 1px dotted var(--w-color-text-context);
+    opacity: 0.3;
+    pointer-events: none;
+}
+/* add space between submenu/user menu items and options block */
+div.sub-menu-block div[data-contentpath="options"],
+div.user-menu div[data-contentpath="options"] {
+    margin-top: 1rem;
+}
+
+/* menu-link */
+div.struct-block.menu-link-block.hide-label>div[data-contentpath="link"]>label.w-field__label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+/* autofill-submenu */
+div.autofill-submenu-block {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 2rem;
+}
+div.autofill-submenu-block>div[data-contentpath="title"] {
+    flex-basis: calc(40% - 2rem);
+    flex-grow: 1;
+}
+div.autofill-submenu-block>div[data-contentpath="parent_page"] {
+    flex-basis: calc(60% - 2rem);
+    flex-grow: 1;
+}
+div.autofill-submenu-block>div[data-contentpath="order_by"] {
+    flex-basis: 100%;
+}
+div.autofill-submenu-block>div[data-contentpath="include_parent_page"] {
+    flex-basis: calc(33% - 4rem);
+    flex-grow: 1;
+}
+div.autofill-submenu-block>div[data-contentpath="only_show_in_menus"] {
+    flex-basis: calc(33% - 4rem);
+    flex-grow: 1;
+}
+div.autofill-submenu-block>div[data-contentpath="max_items"] {
+    flex-basis: calc(33% - 4rem);
+    flex-grow: 1;
+}
+div.autofill-submenu-block div[data-contentpath="options"] {
+    flex-basis: 100%;
+}
+
+/* user menu */
+div.user-menu-block {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 2rem;
+}
+div.user-menu-block>div[data-contentpath="logged_in_title"] {
+    flex-basis: calc(40% - 2rem);
+    flex-grow: 1;
+}
+div.user-menu-block>div[data-contentpath="logged_in_icon"] {
+    flex-basis: calc(60% - 2rem);
+    flex-grow: 1;
+}
+div.user-menu-block>div[data-contentpath="logged_in_text"] {
+    flex-basis: 100%;
+}
+div.user-menu-block>div[data-contentpath="logged_out_title"] {
+    flex-basis: calc(40% - 2rem);
+    flex-grow: 1;
+}
+div.user-menu-block>div[data-contentpath="logged_out_icon"] {
+    flex-basis: calc(60% - 2rem);
+    flex-grow: 1;
+}
+div.user-menu-block>div[data-contentpath="items"] {
+    flex-basis: 100%;
+}
+div.user-menu-block div[data-contentpath="options"] {
+    flex-basis: 100%;
+}
+
+/* image chooser modal */
+div.modal-content {
+    margin-top: 1rem;
+    padding-bottom: 0;
+}
+div.modal-content>button.close {
+    height: 2rem !important;
+    width: 2rem !important;
+}
+div.modal-body>header>div.row {
+    padding-top: 1rem;
+}
+div.modal-body>div.w-tabs>div.w-tabs__wrapper {
+    display: none;
+}
+div.modal-body>div.w-tabs>div.tab-content {
+    padding-top: 1rem;
+}
+.side-panel-open div.modal-body>div.w-tabs>div.tab-content {
+    width: unset;
+}
+div.modal-body>div.w-tabs>div.tab-content>section#tab-search>form {
+    padding-bottom: 1rem;
+}
+div.modal-body>div.w-tabs>div.tab-content>section#tab-search>form[data-chooser-modal-search]>ul.fields>li>div.w-field__wrapper {
+    margin-bottom: 0;
+}
+div.modal-body>div.w-tabs>div.tab-content>section#tab-search>form[data-chooser-modal-search]>ul.fields>li+li {
+    display: none;
+}
+div.modal-body>div.w-tabs>div.tab-content>section#tab-search>div.listing>h2 {
+    display: none;
+}
+div.modal-body>div.w-tabs>div.tab-content>section#tab-search>div.listing>ul.listing.images.chooser {
+    border: 0;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    display: grid;
+    gap: 1rem 1.5rem;
+}
+div.modal-body>div.w-tabs>div.tab-content>section#tab-search>div.listing>ul.listing.images.chooser>li {
+    align-self: start;
+    padding: 0;
+    display: inline-block;
+    width: min(110px, 150px);
+    border-bottom: 0;
+}
+div.modal-body>div.w-tabs>div.tab-content>section#tab-search>div.listing>ul.listing.images.chooser>li>a.image-choice>div.image {
+    height: auto;
+}

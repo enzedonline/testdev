@@ -1,229 +1,263 @@
+from dataclasses import dataclass
+
+from django import forms
+from django.core.exceptions import ImproperlyConfigured
+from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
-from wagtail.blocks import (BooleanBlock, CharBlock, IntegerBlock, ListBlock,
-                            StreamBlock, StructBlock, StructValue)
+from wagtail.blocks import (BooleanBlock, CharBlock, ChoiceBlock, IntegerBlock,
+                            ListBlock, StaticBlock, StreamBlock, StructBlock)
+from wagtail.blocks.stream_block import StreamBlockAdapter
+from wagtail.telepath import register
 
-from blocks.wagtail.blocks import (ChoiceBlock, ImageChooserBlock,
-                                   PageChooserBlock, URLBlock)
+from blocks.base_blocks import CustomImageChooserBlock, CustomPageChooserBlock
+from blocks.models import LinkBlock
 
 
-class DisplayWhenChoiceBlock(ChoiceBlock):        
-    choices=[
+class DisplayWhenChoiceBlock(ChoiceBlock):
+    def __init__(self, **kwargs):
+        kwargs['default'] = 'ALWAYS'
+        kwargs['required'] = True
+        kwargs['help_text'] = _(
+            "Shown if user logged in, logged out or always")
+        super().__init__(**kwargs)
+
+    choices = [
         ('ALWAYS', _("Always")),
-        ('True', _("When logged in")),
-        ('False', _("When not logged in"))
+        ('True', _("Logged in")),
+        ('False', _("Not logged in"))
     ]
-    default='ALWAYS'
-    help_text=_("Determines if menu item is only shown if user logged in, logged out or always")
+
+
+@dataclass
+class MenuItemOptions:
+    icon: bool = True
+    display_when: bool = True
+    sticky: bool = False
+
 
 class MenuStructBlock(StructBlock):
-    icon = ImageChooserBlock(
-        required=False,
-        widget_attrs={"show_edit_link":False},
-        label=_("Optional image for display")
-    )
-    display_when = DisplayWhenChoiceBlock(required=True)
+    def __init__(self, local_blocks=(), show_options: MenuItemOptions = MenuItemOptions(), _depth=1, **kwargs):
+        if type(show_options) != MenuItemOptions:
+            raise ImproperlyConfigured(
+                "show_options must be declared as MenuItemOptions instance")
 
-class StickyOptionBlock(StructBlock):
-    sticky = BooleanBlock(
-        required=False,
-        help_text=_("Item remains on menu bar in mobile view")
-    )
+        option_blocks = ()
+        if show_options.icon:
+            option_blocks += (
+                ("icon", CustomImageChooserBlock(
+                    required=False,
+                    widget_attrs={"show_edit_link": False},
+                    chooser_attrs={"classname": "image-chooser no-upload"},
+                    form_classname="compact-image-chooser",
+                    label=_("Optional menu icon")
+                )),
+            )
+        if show_options.display_when:
+            option_blocks += (
+                ("display_when", DisplayWhenChoiceBlock(required=True)),
+            )
+        if show_options.sticky and _depth==1:
+            option_blocks += (("sticky", BooleanBlock(
+                required=False,
+                help_text=_("Item remains on menu bar in mobile view")
+            )),
+            )
+        if option_blocks:
+            local_blocks += (
+                ("options", StructBlock(
+                    option_blocks,
+                    form_classname="structblock menu-item-options",
+                    label=_(f"{self._meta_class.label} Options")
+                )),
+            )
+        super().__init__(local_blocks, **kwargs)
 
-class PageLinkValue(StructValue):
-    @property
-    def url(self) -> str:
-        page = self.get("page")
-        return page.url if page else ''
 
-    @property
-    def title(self) -> str:
-        display_title = self.get("display_title")
-        page = self.get("page")
-        return display_title or page.title if page else ''
-    
-class PageLinkBlock(MenuStructBlock):
-    page = PageChooserBlock(widget_attrs={"show_edit_link":False})
-    display_title = CharBlock(
-        max_length=255, 
-        required=False,
-        label="Optional Text to Display on Menu",
-        help_text="Leave blank to use page title."
-    )
-
-    class Meta:
-        icon = 'doc-empty'
-        template = "menu/link_block.html"
-        value_class = PageLinkValue
-        label = _("Link to Internal Page")
-        label_format = label + ": {page}"
-
-class PageLinkMenuBlock(StickyOptionBlock, PageLinkBlock):
-    pass
-
-class PageLinkSubMenuBlock(PageLinkBlock):
-    pass
-
-class URLLinkValue(StructValue):
-    @property
-    def url(self) -> str:
-        return self.get("url")
-
-    @property
-    def title(self) -> str:
-        return self.get("title")
-
-class URLLinkBlock(MenuStructBlock):
-    url = URLBlock(label="URL")
-    title = CharBlock(
-        max_length=255, 
-        label=_("Text to Display on Menu")
+class MenulLinkBlock(MenuStructBlock):
+    link = LinkBlock(
+        link_types=['page', 'url_link'],
     )
 
     class Meta:
-        icon = 'link'
-        template = "menu/link_block.html"
-        label = _("URL Link")
-        label_format = label + ": {title} ({url})"
-        value_class = URLLinkValue
+        icon = "link"
+        label = _("Menu Link")
+        template = "menu/menu-link.html"
+        label_format = label
+        form_classname = "struct-block menu-link-block hide-label"
 
-class URLLinkMenuBlock(StickyOptionBlock, URLLinkBlock):
-    pass
-
-class URLLinkSubMenuBlock(URLLinkBlock):
-    pass
 
 class AutoFillBlock(MenuStructBlock):
     # @TODO - look at autofilling from routable pages
     title = CharBlock(
-        max_length=50, 
-        label="Text to Display on Menu"
+        label=_("Submenu Label"),
+        max_length=50,
     )
-    parent_page = PageChooserBlock()
-    include_parent_page = BooleanBlock(
-        verbose_name = _("Include Parent Page in Sub-Menu"),
-        default=False,
-        required=False,
-        help_text=_("If selected, linked page will included before auto-filled items followed by dividing line")
-    )
-    only_show_in_menus = BooleanBlock(
-        verbose_name = _("Include only 'Show In Menu' pages"),
-        default=False,
-        required=False,
-        help_text=_("If selected, only child pages with 'Show In Menu' selected will be shown.")
+    parent_page = CustomPageChooserBlock(
+        label=_("Parent Page"),
+        form_classname="autofill-parent-page"
     )
     order_by = ChoiceBlock(
+        label=_("Order By"),
         choices=[
-            ("-last_published_at", _("Newest (by most recently updated)")),
             ("-first_published_at", _("Newest to Oldest (by date originally published)")),
-            ("first_published_at", _("Oldest to Newest")),
+            ("first_published_at", _("Oldest to Newest (by date originally published)")),
+            ("-last_published_at", _("Newest to Oldest (by date of last update)")),
+            ("last_published_at", _("Oldest to Newest (by date of last update)")),
             ("title", _("Title (A-Z)")),
         ],
         default="-first_published_at",
         help_text=_("Choose the order in which to show results")
     )
+    include_parent_page = BooleanBlock(
+        label=_("Include Parent Page in Submenu"),
+        default=False,
+        required=False,
+        help_text=_(
+            "If selected, linked page will included before auto-filled items followed by dividing line")
+    )
+    only_show_in_menus = BooleanBlock(
+        label=_("Only 'Show In Menu' Pages"),
+        default=False,
+        required=False,
+        help_text=_(
+            "If selected, only child pages with 'Show In Menu' selected will be shown.")
+    )
     max_items = IntegerBlock(
+        label=_("Maximum Items"),
         default=4,
         min_value=1,
         blank=False,
-        help_text=_("Maximum results to display in the menu")
+        help_text=_("Maximum number of results to display in the menu")
     )
 
     class Meta:
         icon = 'list-ul'
-        template = "menu/autolink_menu.html"
-        label = _("Auto Links Sub-Menu")
+        template = "menu/autofill-submenu.html"
+        label = _("Auto Links Submenu")
         label_format = label + ": {title} ({parent_page})"
+        form_classname = "struct-block autofill-submenu-block"
 
-class AutoFillMenuBlock(StickyOptionBlock, AutoFillBlock):
-    pass
-
-class AutoFillSubMenuBlock(AutoFillBlock):
-    open_direction = ChoiceBlock(
-        choices=[
-            ("end", _("Open items to the right")),
-            ("start", _("Open items to the left")),
-            ("inline", _("Expand submenu inline (accordian)")),
-        ],
-        default="inline",
-        help_text=_("Choose submenu direction.")
-    )
-
+class SubMenuDividerBlock(StaticBlock):
     class Meta:
-        template = "menu/autolink_submenu.html"
+        label = _("Divider")
+        admin_text = _("Inserts a horizontal line in the submenu.")
+        icon = 'horizontalrule'
+        template = "menu/submenu-divider.html"
 
-class SubMenuLinkBlock(StreamBlock):
-    page_link = PageLinkSubMenuBlock()
-    url_link = URLLinkSubMenuBlock()
-
-class SubMenuStreamBlock(SubMenuLinkBlock):
-    autofill_submenu = AutoFillSubMenuBlock()
-
-class SubMenuBlock(StickyOptionBlock, MenuStructBlock):
-    title = CharBlock(
-        max_length=50, 
-        label=_("Text to Display on Menu")
-    )
-    items = SubMenuStreamBlock()
+class RecursiveSubMenuBlock(MenuStructBlock):
+    def __init__(
+            self, 
+            local_blocks=(), 
+            max_depth=3, 
+            _depth=0, 
+            *args, 
+            **kwargs
+        ):
+        _depth += 1
+        if _depth <= max_depth:
+            streamblocks = (
+                ("sub_menu", RecursiveSubMenuBlock(local_blocks, max_depth, _depth, *args, **kwargs)),
+                ("autofill_submenu", AutoFillBlock()),
+             ) if _depth < max_depth else ()
+            streamblocks += (
+                ("link", MenulLinkBlock(link_types=['page', 'url_link'])),
+                ("divider", SubMenuDividerBlock())
+            )
+            local_blocks += (
+                ("title", CharBlock(max_length=50, label=_("Submenu Display Title"))),
+                ("items", StreamBlock(streamblocks)),
+                *local_blocks
+            )
+        super().__init__(local_blocks, _depth=_depth, *args, **kwargs)
 
     class Meta:
         icon = 'folder-open-1'
         template = "menu/submenu.html"
         label = _("Sub Menu")
         label_format = label + ": {title}"
+        form_classname = "struct-block sub-menu-block"
 
-class StickyValue(StructValue):
-    @property
-    def sticky(self):
-        return True
-    
-class SearchMenuBlock(StructBlock):
-    display_when = DisplayWhenChoiceBlock(required=True)
+
+class SearchMenuBlock(MenuStructBlock):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    title = CharBlock(
+        label = _("Menu label"),
+        max_length=20,
+    )
 
     class Meta:
         icon = 'search'
         template = "menu/search.html"
         label = _("Search Form")
         label_format = label
-        value_class = StickyValue
 
-class DisplayAlwaysValue(StructValue):
-    @property
-    def display_when(self):
-        return "ALWAYS"
-        
-class UserMenuBlock(StickyOptionBlock, StructBlock):
+
+class UserMenuBlock(MenuStructBlock):
+    def __init__(self, show_options=MenuItemOptions(icon=False, display_when=False), **kwargs):
+        show_options.icon = False
+        show_options.display_when = False
+        super().__init__(show_options=show_options, **kwargs)
+
     logged_in_title = CharBlock(
         max_length=50,
         help_text=_("Menu title when user is logged in.")
     )
+    logged_in_icon = CustomImageChooserBlock(
+        required=False,
+        widget_attrs={"show_edit_link": False},
+        form_classname="compact-image-chooser",
+        label=_("Optional icon when logged in")
+    )
     logged_in_text = CharBlock(
         max_length=150,
         required=False,
-        help_text=_("Message to display to logged in users. Use @username or @display_name to display those values inline.")
+        help_text=_(
+            "Message to display to logged in users. \
+             Use @username or @display_name to display those values inline.")
     )
     logged_out_title = CharBlock(
         max_length=50,
         help_text=_("Menu title when user is not logged in.")
     )
-    items = SubMenuLinkBlock()
+    logged_out_icon = CustomImageChooserBlock(
+        required=False,
+        widget_attrs={"show_edit_link": False},
+        form_classname="compact-image-chooser",
+        label=_("Optional icon when logged out")
+    )
+    items = ListBlock(MenulLinkBlock(), label=_("User Menu Links"))
 
     class Meta:
         icon = 'user'
         template = "menu/user.html"
         label = _("User Menu")
         label_format = label
-        value_class = DisplayAlwaysValue
+        form_classname = "struct-block user-menu-block"
+
 
 class MenuStreamBlock(StreamBlock):
-    page_link = PageLinkMenuBlock()
-    url_link = URLLinkMenuBlock()
-    autofill_menu = AutoFillMenuBlock()
-    sub_menu = SubMenuBlock()
-    search_form = SearchMenuBlock(max_num=1)
-    user_menu = UserMenuBlock(max_num=1)
+    submenu = RecursiveSubMenuBlock(show_options=MenuItemOptions(sticky=True))
+    autofill_menu = AutoFillBlock(show_options=MenuItemOptions(sticky=True))
+    link = MenulLinkBlock(show_options=MenuItemOptions(sticky=True))
+    search_form = SearchMenuBlock(show_options=MenuItemOptions(sticky=True))
+    user_menu = UserMenuBlock(show_options=MenuItemOptions(sticky=True))
 
     class Meta:
+        form_classname = "menustreamblock"
         block_counts = {
             'search_form': {'min_num': 0, 'max_num': 1},
             'user_menu': {'min_num': 0, 'max_num': 1},
         }
+
+
+class MenuStreamBlockAdapter(StreamBlockAdapter):
+    @cached_property
+    def media(self):
+        return forms.Media(
+            css={"all": ("css/admin/menustream.css",)},
+        )
+
+
+register(MenuStreamBlockAdapter(), MenuStreamBlock)

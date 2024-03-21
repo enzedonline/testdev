@@ -1,8 +1,5 @@
-{% load static wagtailadmin_tags %}
-<div class="d-none">
-    {% include "menu/icons/search.svg" %}
-</div>
-<li class="nav-item">
+{% load static wagtailadmin_tags wagtailimages_tags menu_tags %}
+<li class="nav-item dropdown search-menu">
     <a class="nav-link dropdown-toggle"
        title="{{ self.title }}"
        data-bs-toggle="dropdown"
@@ -11,33 +8,24 @@
        aria-haspopup="true"
        aria-expanded="false"
        aria-label="{{ self.title }}"
-       onclick="$('#menu-searchbox').focus();">
-        <svg class="menustream-icon">
-            <use href="#icon-search" />
-        </svg>
+       onclick="(function(event) { event.target.closest('.search-menu').querySelector('#menu-searchbox').focus(); })(event);">
+        {% if self.options.icon %}
+            {% menu_icon self.options.icon 'fill-25x25' %}
+        {% endif %}
+        <div class="search-label">{{ self.title }}</div>
     </a>
-    <ul class="dropdown-menu search-menu">
+    <ul class="dropdown-menu">
         <li>
             <form role="search" action="{% url 'search' %}" method="get">
                 <div class="form-group row g-1 my-1 pb-1">
                     <div class="col">
-                        <input type="search" 
-                            placeholder="Search" 
-                            onfocus="this.select();" 
-                            onmouseup="return false;" 
-                            name="query" 
-                            id="menu-searchbox" 
-                            class="form-control py-1 ps-2" 
-                            aria-label="Desktop search form" 
-                            value={{ request.GET.query }}
-                        >
+                        <input type="search" placeholder="Search" onfocus="this.select();" onmouseup="return false;" name="query" id="menu-searchbox" class="form-control py-1 ps-2" aria-label="Desktop search form" value={{ request.GET.query }}>
                     </div>
                     <div class="col-auto">
                         <input role="button"
-                            type="submit"
-                            value="Search"
-                            class="btn-primary form-control py-1"
-                        >
+                               type="submit"
+                               value="Search"
+                               class="btn-primary form-control py-1">
                     </div>
                 </div>
             </form>

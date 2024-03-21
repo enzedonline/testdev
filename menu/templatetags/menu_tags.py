@@ -1,4 +1,7 @@
 from django import template
+from django.utils.safestring import mark_safe
+
+from core.utils import strip_svg_markup
 from menu.models import Menu
 
 register = template.Library()
@@ -10,14 +13,35 @@ def load_menu(menu_slug):
     except:
         return Menu.objects.filter(slug=menu_slug).first()
    
-@register.simple_tag(takes_context=True)
-def show_on_menu(context, item):
-    display_when = item.get('display_when', getattr(item, 'display_when', True)) # If not specified, only show if user is authenticated.
-    return (display_when == 'ALWAYS' or str(context['request'].user.is_authenticated) == display_when)
+@register.filter()
+def show_on_menu(item, request):
+    try:
+        display_when = item.get('options').get('display_when')
+        return (display_when in ['ALWAYS', None] or str(request.user.is_authenticated) == display_when)
+    except:
+        return True
 
 @register.simple_tag(takes_context=True)
 def link_active(context, link):
-    return ' active' if (getattr(link, 'url', None) == context['request'].path) else ''
+    try:
+        return ' active' if link.url() == context['request'].path else ''
+    except:
+        return ''
+
+@register.simple_tag()
+@mark_safe
+def menu_icon(image, redition_token=None):
+    if image:
+        if image.filename[-4:].lower()==".svg":
+            svg_file = image.file.file
+            if svg_file.closed: svg_file.open()
+            svg = svg_file.read().decode('utf-8')
+            svg_file.close()
+            return strip_svg_markup(svg)
+        else:
+            r = image.get_rendition(redition_token)
+            return r.img_tag()
+    return ''
 
 @register.simple_tag(takes_context=True)
 def get_autofill_pages(context):
@@ -67,6 +91,6 @@ def render_user_info(context, msg):
     user = context['request'].user
     if user and "@username" in msg:
         msg = msg.replace("@username", user.username)
-    elif user and "@display_name" in msg:
+    if user and "@display_name" in msg:
         msg = msg.replace("@display_name", getattr(user, 'display_name', user.get_full_name()))
     return msg

@@ -1,21 +1,21 @@
 {% load wagtailcore_tags wagtailimages_tags menu_tags %}
-<li class="nav-item dropdown">
-    <a class="nav-link dropdown-toggle"
+<li class="{% if link_type == 'nav-item' %}nav-item dropdown{% else %}dropdown-item submenu dropinline{% endif %}">
+    <a class="nav-link dropdown-toggle" 
        title="{{ self.title }}"
        role="button"
        data-bs-toggle="dropdown"
-       aria-expanded="false">
-        {% if self.icon %}
-            {% image self.icon fill-25x25 %}
+       aria-expanded="false"
+       {% if link_type == 'dropdown-item' %}onclick="event.stopPropagation();"{% endif %}>
+        {% if self.options.icon %}
+            {% menu_icon self.options.icon 'fill-25x25|format-webp' %}
         {% endif %}
         {% if self.title %}
-            <div{% if self.icon %} class="ps-2"{% endif %}>{{ self.title }}</div>
+            <div>{{ self.title }}</div>
         {% endif %}
     </a>
-    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-w20{% if self.sticky %} position-absolute{% endif %}">
+    <ul class="dropdown-menu dropdown-menu-end {% if self.sticky %} position-absolute{% endif %}">
         {% for item in self.items %}
-            {% show_on_menu item.value as show %}
-            {% if show %}
+            {% if item.value|show_on_menu:request %}
                 {% include_block item with link_type="dropdown-item" link_colour="link-dark" %}
             {% endif %}
         {% endfor %}

@@ -1,13 +1,16 @@
 {% load wagtailcore_tags core_tags menu_tags %}
 {# pass menu object variable in context #}
-<nav class="navbar navbar-expand{{ menu.breakpoint }} p-1 position-fixed bg-dark menustream menustream{{ menu.breakpoint }} menustream-{{ menu.slug }}" data-bs-theme="dark">
+<nav class="navbar navbar-expand{{ menu.breakpoint }} menustream menustream-{{ menu.slug }}"
+     data-bs-theme="dark">
   <div class="container-fluid menustream-container">
     {% include "menu/brand.html" %}
     {% for item in menu.items %}
-      {% show_on_menu item.value as show %}
-      {% if show %}
-        <div class="{% if item.value.sticky %}d-flex{% if menu.breakpoint %} order-0{% endif %}{% else %} collapse navbar-collapse collapse-{{ menu.slug }} flex{{ menu.breakpoint }}-grow-0{% if menu.breakpoint %} order-1 order{{ menu.breakpoint }}-0{% endif %}{% endif %}">
-          <ul class="navbar-nav">
+      {% if item.value|show_on_menu:request %}
+        <div class="{% if item.value.options.sticky and menu.breakpoint %}d-flex order-0 sticky
+                    {% else %}collapse navbar-collapse collapse-{{ menu.slug }} flex{{ menu.breakpoint }}-grow-0
+                      {% if menu.breakpoint %} order-1 order{{ menu.breakpoint }}-0{% endif %}
+                    {% endif %}">
+          <ul class="navbar-nav {% if not item.value.options.sticky %}navbar-nav-scroll{% endif %}">
             {% include_block item with link_type='nav-item' %}
           </ul>
         </div>
@@ -15,15 +18,28 @@
     {% endfor %}
     <div class="sub-menu-spacer collapse collapse-{{ menu.slug }} d{{ menu.breakpoint }}-none order-1 py-1"></div>
     <button class="navbar-toggler navbar-dark"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target=".collapse-{{ menu.slug }}"
-            aria-controls="navbar-{{ menu.slug }}"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-            onclick="document.activeElement.blur();">
+      id="navbar-toggler-{{ menu.slug }}"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target=".collapse-{{ menu.slug }}"
+      aria-controls="navbar-{{ menu.slug }}"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+      onclick="document.activeElement.blur();">
       <span class="navbar-toggler-icon"></span>
     </button>
   </div>
 </nav>
 <div class="menustream menu-spacer"></div>
+<script>
+  const navbarToggler = document.getElementById("navbar-toggler-{{ menu.slug }}");
+  document.querySelectorAll("div.sticky li.nav-item.dropdown").forEach(item => {
+      item.addEventListener("show.bs.dropdown", handleDropdownShow);
+  });
+
+  function handleDropdownShow() {
+      if (navbarToggler.getAttribute("aria-expanded") === "true") {
+          navbarToggler.click();
+      }
+  }
+</script>

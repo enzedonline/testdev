@@ -13,18 +13,26 @@
        aria-label="{{ self.title }}"
        >
         {% if request.user.is_authenticated %}
-            <svg class="menustream-icon">
+            {% comment %} <svg class="menustream-icon">
                 <use href="#icon-user-logged-in" />
-            </svg>
-            <div class="ps-1">{{ self.logged_in_title }}</div>
+            </svg> {% endcomment %}
+            {% if self.logged_in_icon %}
+            {% menu_icon self.logged_in_icon 'fill-25x25' %}
+        {% endif %}
+
+            <div>{{ self.logged_in_title }}</div>
         {% else %}
-            <svg class="menustream-icon">
+            {% comment %} <svg class="menustream-icon">
                 <use href="#icon-user-logged-out" />
-            </svg>
-            <div class="ps-1">{{ self.logged_out_title }}</div>
+            </svg> {% endcomment %}
+            {% if self.logged_in_icon %}
+            {% menu_icon self.logged_in_icon 'fill-25x25' %}
+        {% endif %}
+
+            <div>{{ self.logged_out_title }}</div>
         {% endif %}
     </a>
-    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-w20{% if self.sticky %} position-absolute{% endif %}">
+    <ul class="dropdown-menu dropdown-menu-end{% if self.sticky %} position-absolute{% endif %}">
         {% if request.user.is_authenticated and self.logged_in_text %}
         <li class="dropdown-item nav-label">
             <span class="nav-link" onclick="event.stopPropagation();">
@@ -36,8 +44,7 @@
         </li>
         {% endif %}
         {% for item in self.items %}
-            {% show_on_menu item.value as show %}
-            {% if show %}
+            {% if item.value|show_on_menu:request %}
                 {% include_block item with link_type="dropdown-item" link_colour="link-dark" %}
             {% endif %}
         {% endfor %}
