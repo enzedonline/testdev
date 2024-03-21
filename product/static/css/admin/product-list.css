@@ -1,0 +1,48 @@
+header.w-header {
+    margin-bottom: 0;
+}
+header.w-header>div.row {
+    padding-top: 1rem;
+}
+div.filterable {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+}
+div.filterable>div.snippets {
+    order: 1;
+    flex-basis: 100%;
+}
+div.filterable>div.snippets>h2 {
+    font-size: var(--font-size-4);
+    margin: 1rem 0;
+}
+div.filterable>div.filterable__filters {
+    display: flex;
+    flex-wrap: wrap;
+    flex-basis: 100%;
+}
+div.filterable>div.filterable__filters>h2 {
+    margin: 0;
+    padding-inline-end: 2rem;
+    align-self: end;
+}
+div.filterable>div.filterable__filters>form {
+    flex-wrap: wrap;
+    display: flex;
+    gap: 1rem;
+    align-items: flex-end;
+}
+div.filterable>div.filterable__filters>form>button {
+    order: 1;
+    margin-bottom: 0;
+    height: 2.8rem;
+}
+div.filterable>div.filterable__filters>form>div.w-field__wrapper {
+    flex-basis: 250px;
+    flex-grow: 1;
+    margin-bottom: 0;
+}
+div.filterable>section.footer {
+    order: 2;
+}
