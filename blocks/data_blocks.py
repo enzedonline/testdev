@@ -2,8 +2,8 @@ from django.utils.functional import cached_property
 from wagtail.blocks import CharBlock, PageChooserBlock
 from wagtail.documents.blocks import DocumentChooserBlock
 
-from .base_blocks import ExtendedURLBlock
-from product.blocks import ProductChooser
+from .base_blocks import ExtendedURLBlock, CustomChooserMixin
+from product.blocks import ProductChooserBlock
 
 
 class DataFieldBlockMixin:    
@@ -17,25 +17,16 @@ class DataCharBlock(DataFieldBlockMixin, CharBlock):
 class DataExtendedURLBlock(DataFieldBlockMixin, ExtendedURLBlock):
     pass
 
-class DataChooserBlockMixin:
+class DataChooserBlockMixin(CustomChooserMixin):
     def __init__(self, *args, attrs={}, chooser_attrs={}, **kwargs):
-        super().__init__(*args, **kwargs)
+        super().__init__(chooser_attrs=chooser_attrs, *args, **kwargs)
         self.attrs = attrs
-        self.chooser_attrs = chooser_attrs
 
     @cached_property
     def field(self):
         field = super().field
         field.widget.attrs.update(self.attrs)
         return field
-        
-    @cached_property
-    def widget(self):
-        chooser = super().widget
-        for key, value in self.chooser_attrs.items():
-            if hasattr(chooser, key):
-                setattr(chooser, key, value)
-        return chooser
 
 class DataPageChooserBlock(DataChooserBlockMixin, PageChooserBlock):
     pass
@@ -43,5 +34,5 @@ class DataPageChooserBlock(DataChooserBlockMixin, PageChooserBlock):
 class DataDocumentChooserBlock(DataChooserBlockMixin, DocumentChooserBlock):
     pass
 
-class DataProductChooserBlock(DataChooserBlockMixin, ProductChooser):
+class DataProductChooserBlock(DataChooserBlockMixin, ProductChooserBlock):
     pass
