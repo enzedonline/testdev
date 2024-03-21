@@ -36,7 +36,7 @@ class ProductFilterMixin(forms.Form):
     )
 
     def filter(self, objects):
-        objects = super().filter(objects)
+        objects = super().filter(objects).filter(live=True)
         search_query = self.cleaned_data.get("q")
         if search_query:
             objects = objects.filter(
