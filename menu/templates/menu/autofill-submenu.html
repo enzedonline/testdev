@@ -1,10 +1,6 @@
 {% load wagtailcore_tags wagtailimages_tags menu_tags %}
 {% get_autofill_pages as links %}
-{% if link_type == 'nav-item' %}
-<li class="nav-item dropdown">
-{% else %}
-<li class="dropdown-item submenu submenu{{ menu.breakpoint }} dropinline">
-{% endif %}    
+<li class="{% if link_type == 'nav-item' %}nav-item dropdown{% else %}dropdown-item submenu submenu{{ menu.breakpoint }} dropinline{% endif %}">
     <a role="button"
        title="{{ self.title }}"
        class="nav-link dropdown-toggle"
