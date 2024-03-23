@@ -85,7 +85,7 @@ class MenulLinkBlock(MenuStructBlock):
         form_classname = "struct-block menu-link-block hide-label"
 
 
-class AutoFillBlock(MenuStructBlock):
+class AutoPageLinksBlock(MenuStructBlock):
     # @TODO - look at autofilling from routable pages
     title = CharBlock(
         label=_("Submenu Label"),
@@ -131,10 +131,10 @@ class AutoFillBlock(MenuStructBlock):
 
     class Meta:
         icon = 'list-ul'
-        template = "menu/autofill-submenu.html"
-        label = _("Auto Links Submenu")
+        template = "menu/auto-page-links-submenu.html"
+        label = _("Auto Page Links Submenu")
         label_format = label + ": {title} ({parent_page})"
-        form_classname = "struct-block autofill-submenu-block"
+        form_classname = "struct-block auto-page-links-block"
 
 class SubMenuDividerBlock(StaticBlock):
     class Meta:
@@ -156,7 +156,7 @@ class RecursiveSubMenuBlock(MenuStructBlock):
         if _depth <= max_depth:
             streamblocks = (
                 ("sub_menu", RecursiveSubMenuBlock(local_blocks, max_depth, _depth, *args, **kwargs)),
-                ("autofill_submenu", AutoFillBlock()),
+                ("autofill_submenu", AutoPageLinksBlock()),
              ) if _depth < max_depth else ()
             streamblocks += (
                 ("link", MenulLinkBlock(link_types=['page', 'url_link'])),
@@ -238,7 +238,7 @@ class UserMenuBlock(MenuStructBlock):
 
 class MenuStreamBlock(StreamBlock):
     submenu = RecursiveSubMenuBlock(show_options=MenuItemOptions(sticky=True))
-    autofill_menu = AutoFillBlock(show_options=MenuItemOptions(sticky=True))
+    autofill_menu = AutoPageLinksBlock(show_options=MenuItemOptions(sticky=True))
     link = MenulLinkBlock(show_options=MenuItemOptions(sticky=True))
     search_form = SearchMenuBlock(show_options=MenuItemOptions(sticky=True))
     user_menu = UserMenuBlock(show_options=MenuItemOptions(sticky=True))
