@@ -9,6 +9,8 @@ $menustream-navbar-active-color: var(--bs-navbar-active-color);
 $menustream-navbar-nav-max-width: 12rem;
 $menustream-nav-link-color: var(--bs-nav-link-color);
 $menustream-nav-link-hover-color: var(--bs-nav-link-hover-color);
+$menustream-nav-link-image-opacity: 0.9;
+$menustream-nav-link-image-hover-opacity: 0.95;
 $menustream-dropdown-font-size: var(--bs-dropdown-font-size);
 $menustream-dropdown-font-weight: 500;
 $menustream-dropdown-menu-box-shadow: 8px 13px 5px -5px rgba(0, 0, 0, 0.2);
@@ -48,21 +50,27 @@ nav.navbar.menustream {
     padding-right: 0.25rem !important;
     justify-content: space-evenly !important;
     max-height: 95vh;
-  }
 
-  a.navbar-brand {
-    font-size: $menustream-navbar-brand-font-size;
-    font-weight: $menustream-navbar-brand-font-weight;
-    display: flex;
-    align-items: center;
+    >a.navbar-brand {
+      font-size: $menustream-navbar-brand-font-size;
+      font-weight: $menustream-navbar-brand-font-weight;
+      display: flex;
+      align-items: center;
 
-    >img {
-      height: $menustream-brand-height;
+      >img {
+        height: $menustream-brand-height;
+      }
     }
+
   }
 
   ul.navbar-nav {
+    margin-bottom: 0.3em;
     text-wrap: wrap;
+
+    >li.nav-item {
+      margin-top: 0.3em;
+    }
   }
 
   li.nav-item {
@@ -73,6 +81,7 @@ nav.navbar.menustream {
       color: $menustream-nav-link-color;
       font-size: $menustream-navbar-item-font-size !important;
       font-weight: $menustream-navbar-item-font-weight;
+      transition: opacity 0.15s ease-in-out, color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out;
 
       >div {
         border-bottom: 1px solid transparent;
@@ -80,14 +89,14 @@ nav.navbar.menustream {
       }
 
       >img {
-        opacity: 0.92;
+        opacity: $menustream-nav-link-image-opacity;
       }
 
       &:hover {
         color: $menustream-nav-link-hover-color;
 
         >img {
-          opacity: 0.96;
+          opacity: $menustream-nav-link-image-hover-opacity;
         }
       }
 
@@ -109,7 +118,7 @@ nav.navbar.menustream {
       }
 
       >img {
-        opacity: 0.96;
+        opacity: 1;
       }
     }
 
@@ -166,16 +175,17 @@ nav.navbar.menustream {
         font-size: $menustream-dropdown-font-size;
         color: $menustream-nav-link-color;
         text-wrap: wrap;
+        transition: opacity 0.15s ease-in-out, color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out;
 
         >img {
-          opacity: 0.92;
+          opacity: $menustream-nav-link-image-opacity;
         }
 
         &:hover {
           color: $menustream-nav-link-hover-color;
 
           >img {
-            opacity: 0.96;
+            opacity: $menustream-nav-link-image-hover-opacity;
           }
         }
 
@@ -194,11 +204,19 @@ nav.navbar.menustream {
         >a.nav-link {
           color: $menustream-navbar-active-color;
 
+          >img {
+            opacity: 1;
+          }
+
           >div::after {
             content: "🗸";
             padding-left: 0.5em;
           }
         }
+      }
+
+      &:active {
+        background-color: $menustream-dropdown-item-active-background-color;
       }
 
       >a.nav-link>svg+div {
@@ -207,8 +225,15 @@ nav.navbar.menustream {
     }
   }
 
-  a.nav-link>img+div {
+  a.nav-link>img+div,
+  a.nav-link>svg+div {
     margin-left: 0.5rem;
+  }
+
+  a.nav-link>div {
+    min-height: $menustream-icon-size;
+    align-items: center;
+    display: flex;
   }
 
   a.nav-link svg {
@@ -341,6 +366,15 @@ nav.navbar.menustream {
   ul.navbar-nav {
     max-width: $menustream-navbar-nav-max-width;
     margin: 0.5rem 0;
+
+    >li.nav-item {
+      margin-top: 0;
+      display: flex;
+
+      &.active>a.nav-link {
+        margin-bottom: unset;
+      }
+    }
   }
 
   li.nav-item>ul.dropdown-menu {
@@ -356,14 +390,6 @@ nav.navbar.menustream {
 
   div.collapse>ul.navbar-nav>li.nav-item.dropdown>a.nav-link.dropdown-toggle::after {
     transform: rotate(0deg);
-  }
-
-  li.nav-item {
-    display: flex;
-
-    &.active>a.nav-link {
-      margin-bottom: unset;
-    }
   }
 
   a.nav-link {
