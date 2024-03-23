@@ -110,36 +110,36 @@ div.struct-block.menu-link-block.hide-label>div[data-contentpath="link"]>label.w
     border: 0;
 }
 
-/* autofill-submenu */
-div.autofill-submenu-block {
+/* auto-page-links-block submenu */
+div.auto-page-links-block {
     display: flex;
     flex-wrap: wrap;
     column-gap: 2rem;
 }
-div.autofill-submenu-block>div[data-contentpath="title"] {
+div.auto-page-links-block>div[data-contentpath="title"] {
     flex-basis: calc(40% - 2rem);
     flex-grow: 1;
 }
-div.autofill-submenu-block>div[data-contentpath="parent_page"] {
+div.auto-page-links-block>div[data-contentpath="parent_page"] {
     flex-basis: calc(60% - 2rem);
     flex-grow: 1;
 }
-div.autofill-submenu-block>div[data-contentpath="order_by"] {
+div.auto-page-links-block>div[data-contentpath="order_by"] {
     flex-basis: 100%;
 }
-div.autofill-submenu-block>div[data-contentpath="include_parent_page"] {
+div.auto-page-links-block>div[data-contentpath="include_parent_page"] {
     flex-basis: calc(33% - 4rem);
     flex-grow: 1;
 }
-div.autofill-submenu-block>div[data-contentpath="only_show_in_menus"] {
+div.auto-page-links-block>div[data-contentpath="only_show_in_menus"] {
     flex-basis: calc(33% - 4rem);
     flex-grow: 1;
 }
-div.autofill-submenu-block>div[data-contentpath="max_items"] {
+div.auto-page-links-block>div[data-contentpath="max_items"] {
     flex-basis: calc(33% - 4rem);
     flex-grow: 1;
 }
-div.autofill-submenu-block div[data-contentpath="options"] {
+div.auto-page-links-block div[data-contentpath="options"] {
     flex-basis: 100%;
 }
 
