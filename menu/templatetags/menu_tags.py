@@ -30,7 +30,7 @@ def link_active(context, link):
 
 @register.simple_tag()
 @mark_safe
-def menu_icon(image, redition_token=None):
+def menu_icon(image, redition_token='fill-25x25|format-png'):
     if image:
         if image.filename[-4:].lower()==".svg":
             svg_file = image.file.file
