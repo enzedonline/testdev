@@ -2,7 +2,7 @@ $menustream-font-family: "Quicksand", sans-serif;
 $menustream-brand-height: clamp(26px, calc(26px + (55 - 26) * ((100vw - 375px) / (1500 - 375))), 55px);
 $menustream-navbar-brand-font-size: clamp(1.4rem, 1.293rem + 0.4507vw, 1.8rem);
 $menustream-navbar-brand-font-weight: 600 !important;
-$menustream-navbar-item-font-size: clamp(1.2rem, 1.1331rem + 0.2817vw, 1.45rem);
+$menustream-navbar-item-font-size: clamp(1.2rem, 1.075rem + 0.3571vw, 1.45rem);
 $menustream-navbar-item-font-weight: 500 !important;
 $menustream-navbar-background-color: var(--bs-body-bg);
 $menustream-navbar-active-color: var(--bs-navbar-active-color);
@@ -19,6 +19,7 @@ $menustream-dropdown-item-active-background-color: var(--bs-secondary-bg);
 $menustream-dropdown-item-hover-background-color: var(--bs-secondary-bg);
 $menustream-dropdown-min-width: 12rem;
 $menustream-dropdown-max-width: 20rem;
+$menustream-icon-size: 25px;
 $menustream-search-menu-expanded-width: min(30rem, 100%) !important;
 $menustream-search-menu-expanded-padding: 0.3em 1em !important;
 $menustream-search-menu-expanded-top: calc(0.7em + $menustream-brand-height) !important;
@@ -66,40 +67,57 @@ nav.navbar.menustream {
 
   li.nav-item {
     >a.nav-link {
-      border-bottom: 1px solid transparent;
       width: fit-content;
-      fill: $menustream-nav-link-color;
       padding: 0;
       text-wrap: wrap;
+      color: $menustream-nav-link-color;
       font-size: $menustream-navbar-item-font-size !important;
       font-weight: $menustream-navbar-item-font-weight;
-    
+
+      >div {
+        border-bottom: 1px solid transparent;
+        display: inline-flex;
+      }
+
+      >img {
+        opacity: 0.92;
+      }
+
       &:hover {
-        fill: $menustream-nav-link-hover-color;
+        color: $menustream-nav-link-hover-color;
+
+        >img {
+          opacity: 0.96;
+        }
       }
 
       &.show {
-        fill: $menustream-navbar-active-color;
+        color: $menustream-nav-link-hover-color;
+
+        >img {
+          opacity: 1;
+        }
       }
     }
 
     &.active>a.nav-link {
-      border-bottom-color: unset;
-      fill: $menustream-navbar-active-color;
+      color: $menustream-navbar-active-color;
       margin-bottom: 0.3em;
-    }
 
-    > {
-      a.nav-link>div {
-        display: inline-flex;
+      >div {
+        border-bottom-color: unset;
       }
 
-      ul.dropdown-menu {
-        margin-top: 0.5em;
-        padding-bottom: 1em;
+      >img {
+        opacity: 0.96;
       }
-
     }
+
+    >ul.dropdown-menu {
+      margin-top: 0.5em;
+      padding-bottom: 1em;
+    }
+
   }
 
   div.collapse {
@@ -131,7 +149,7 @@ nav.navbar.menustream {
       padding-top: 0;
       padding-bottom: 0;
 
-      &:active {
+      &.active {
         background-color: $menustream-dropdown-item-hover-background-color;
       }
 
@@ -146,16 +164,45 @@ nav.navbar.menustream {
         width: -webkit-fill-available;
         font-weight: $menustream-dropdown-font-weight;
         font-size: $menustream-dropdown-font-size;
+        color: $menustream-nav-link-color;
         text-wrap: wrap;
+
+        >img {
+          opacity: 0.92;
+        }
+
+        &:hover {
+          color: $menustream-nav-link-hover-color;
+
+          >img {
+            opacity: 0.96;
+          }
+        }
+
+        &.show {
+          color: $menustream-nav-link-hover-color;
+
+          >img {
+            opacity: 1;
+          }
+        }
       }
 
       &.active {
         background-color: $menustream-dropdown-item-active-background-color;
 
-        >a.nav-link>div::after {
-          content: "🗸";
-          padding-left: 0.5em;
+        >a.nav-link {
+          color: $menustream-navbar-active-color;
+
+          >div::after {
+            content: "🗸";
+            padding-left: 0.5em;
+          }
         }
+      }
+
+      >a.nav-link>svg+div {
+        margin-left: 0.5rem;
       }
     }
   }
@@ -165,8 +212,8 @@ nav.navbar.menustream {
   }
 
   a.nav-link svg {
-    width: 1em;
-    height: 1em;
+    width: $menustream-icon-size;
+    height: $menustream-icon-size;
   }
 
   ul.dropdown-menu>li.submenu>a.dropdown-toggle>div {
@@ -233,6 +280,13 @@ nav.navbar.menustream {
       form {
         margin-block-end: 0;
       }
+    }
+  }
+
+  li.user-menu {
+    span.user-message {
+      cursor: default;
+      color: $menustream-navbar-active-color;
     }
   }
 

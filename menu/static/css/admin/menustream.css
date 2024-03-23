@@ -94,7 +94,7 @@ div.structblock.menu-item-options::before {
 }
 /* add space between submenu/user menu items and options block */
 div.sub-menu-block div[data-contentpath="options"],
-div.user-menu div[data-contentpath="options"] {
+div.user-menu-block div[data-contentpath="options"] {
     margin-top: 1rem;
 }
 
@@ -193,7 +193,7 @@ div.modal-body>div.w-tabs>div.w-tabs__wrapper {
 div.modal-body>div.w-tabs>div.tab-content {
     padding-top: 1rem;
 }
-.side-panel-open div.modal-body>div.w-tabs>div.tab-content {
+body.side-panel-open div.modal-body>div.w-tabs>div.tab-content {
     width: unset;
 }
 div.modal-body>div.w-tabs>div.tab-content>section#tab-search>form {
@@ -217,10 +217,10 @@ div.modal-body>div.w-tabs>div.tab-content>section#tab-search>div.listing>ul.list
 div.modal-body>div.w-tabs>div.tab-content>section#tab-search>div.listing>ul.listing.images.chooser>li {
     align-self: start;
     padding: 0;
-    display: inline-block;
     width: min(110px, 150px);
     border-bottom: 0;
 }
 div.modal-body>div.w-tabs>div.tab-content>section#tab-search>div.listing>ul.listing.images.chooser>li>a.image-choice>div.image {
-    height: auto;
+    height: min(110px, 150px);
 }
+

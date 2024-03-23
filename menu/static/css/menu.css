@@ -29,28 +29,42 @@ nav.navbar.menustream ul.navbar-nav {
   text-wrap: wrap;
 }
 nav.navbar.menustream li.nav-item > a.nav-link {
-  border-bottom: 1px solid transparent;
   width: -moz-fit-content;
   width: fit-content;
-  fill: var(--bs-nav-link-color);
   padding: 0;
   text-wrap: wrap;
-  font-size: clamp(1.2rem, 1.1331rem + 0.2817vw, 1.45rem) !important;
+  color: var(--bs-nav-link-color);
+  font-size: clamp(1.2rem, 1.075rem + 0.3571vw, 1.45rem) !important;
   font-weight: 500 !important;
 }
+nav.navbar.menustream li.nav-item > a.nav-link > div {
+  border-bottom: 1px solid transparent;
+  display: inline-flex;
+}
+nav.navbar.menustream li.nav-item > a.nav-link > img {
+  opacity: 0.92;
+}
 nav.navbar.menustream li.nav-item > a.nav-link:hover {
-  fill: var(--bs-nav-link-hover-color);
+  color: var(--bs-nav-link-hover-color);
+}
+nav.navbar.menustream li.nav-item > a.nav-link:hover > img {
+  opacity: 0.96;
 }
 nav.navbar.menustream li.nav-item > a.nav-link.show {
-  fill: var(--bs-navbar-active-color);
+  color: var(--bs-nav-link-hover-color);
+}
+nav.navbar.menustream li.nav-item > a.nav-link.show > img {
+  opacity: 1;
 }
 nav.navbar.menustream li.nav-item.active > a.nav-link {
-  border-bottom-color: unset;
-  fill: var(--bs-navbar-active-color);
+  color: var(--bs-navbar-active-color);
   margin-bottom: 0.3em;
 }
-nav.navbar.menustream li.nav-item > a.nav-link > div {
-  display: inline-flex;
+nav.navbar.menustream li.nav-item.active > a.nav-link > div {
+  border-bottom-color: unset;
+}
+nav.navbar.menustream li.nav-item.active > a.nav-link > img {
+  opacity: 0.96;
 }
 nav.navbar.menustream li.nav-item > ul.dropdown-menu {
   margin-top: 0.5em;
@@ -77,7 +91,7 @@ nav.navbar.menustream ul .dropdown-menu > li.dropdown-item {
   padding-top: 0;
   padding-bottom: 0;
 }
-nav.navbar.menustream ul .dropdown-menu > li.dropdown-item:active {
+nav.navbar.menustream ul .dropdown-menu > li.dropdown-item.active {
   background-color: var(--bs-secondary-bg);
 }
 nav.navbar.menustream ul .dropdown-menu > li.dropdown-item.nav-label:hover {
@@ -90,21 +104,43 @@ nav.navbar.menustream ul .dropdown-menu > li.dropdown-item > a.nav-link {
   width: -webkit-fill-available;
   font-weight: 500;
   font-size: var(--bs-dropdown-font-size);
+  color: var(--bs-nav-link-color);
   text-wrap: wrap;
+}
+nav.navbar.menustream ul .dropdown-menu > li.dropdown-item > a.nav-link > img {
+  opacity: 0.92;
+}
+nav.navbar.menustream ul .dropdown-menu > li.dropdown-item > a.nav-link:hover {
+  color: var(--bs-nav-link-hover-color);
+}
+nav.navbar.menustream ul .dropdown-menu > li.dropdown-item > a.nav-link:hover > img {
+  opacity: 0.96;
+}
+nav.navbar.menustream ul .dropdown-menu > li.dropdown-item > a.nav-link.show {
+  color: var(--bs-nav-link-hover-color);
+}
+nav.navbar.menustream ul .dropdown-menu > li.dropdown-item > a.nav-link.show > img {
+  opacity: 1;
 }
 nav.navbar.menustream ul .dropdown-menu > li.dropdown-item.active {
   background-color: var(--bs-secondary-bg);
+}
+nav.navbar.menustream ul .dropdown-menu > li.dropdown-item.active > a.nav-link {
+  color: var(--bs-navbar-active-color);
 }
 nav.navbar.menustream ul .dropdown-menu > li.dropdown-item.active > a.nav-link > div::after {
   content: "🗸";
   padding-left: 0.5em;
 }
+nav.navbar.menustream ul .dropdown-menu > li.dropdown-item > a.nav-link > svg + div {
+  margin-left: 0.5rem;
+}
 nav.navbar.menustream a.nav-link > img + div {
   margin-left: 0.5rem;
 }
 nav.navbar.menustream a.nav-link svg {
-  width: 1em;
-  height: 1em;
+  width: 25px;
+  height: 25px;
 }
 nav.navbar.menustream ul.dropdown-menu > li.submenu > a.dropdown-toggle > div {
   display: inline-flex;
@@ -155,6 +191,10 @@ nav.navbar.menustream li.search-menu > ul.dropdown-menu {
 }
 nav.navbar.menustream li.search-menu > ul.dropdown-menu form {
   margin-block-end: 0;
+}
+nav.navbar.menustream li.user-menu span.user-message {
+  cursor: default;
+  color: var(--bs-navbar-active-color);
 }
 nav.navbar.menustream div.navbar-collapse li.search-menu {
   position: relative;
