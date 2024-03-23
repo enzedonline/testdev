@@ -46,8 +46,7 @@ class MenuStructBlock(StructBlock):
             option_blocks += (
                 ("icon", CustomImageChooserBlock(
                     required=False,
-                    widget_attrs={"show_edit_link": False},
-                    chooser_attrs={"classname": "image-chooser no-upload"},
+                    chooser_attrs={"show_edit_link": False},
                     form_classname="compact-image-chooser",
                     label=_("Optional menu icon")
                 )),
@@ -141,7 +140,7 @@ class SubMenuDividerBlock(StaticBlock):
     class Meta:
         label = _("Divider")
         admin_text = _("Inserts a horizontal line in the submenu.")
-        icon = 'horizontalrule'
+        icon = 'minus'
         template = "menu/submenu-divider.html"
 
 class RecursiveSubMenuBlock(MenuStructBlock):
@@ -206,7 +205,7 @@ class UserMenuBlock(MenuStructBlock):
     )
     logged_in_icon = CustomImageChooserBlock(
         required=False,
-        widget_attrs={"show_edit_link": False},
+        chooser_attrs={"show_edit_link": False},
         form_classname="compact-image-chooser",
         label=_("Optional icon when logged in")
     )
@@ -223,7 +222,7 @@ class UserMenuBlock(MenuStructBlock):
     )
     logged_out_icon = CustomImageChooserBlock(
         required=False,
-        widget_attrs={"show_edit_link": False},
+        chooser_attrs={"show_edit_link": False},
         form_classname="compact-image-chooser",
         label=_("Optional icon when logged out")
     )
