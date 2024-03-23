@@ -1,47 +1,32 @@
 {% load wagtailcore_tags menu_tags %}
 {# User menu - Add social logins after loaded menu #}
-<div class="d-none">
-    {% include "menu/icons/user-logged-in.svg" %}
-    {% include "menu/icons/user-logged-out.svg" %}
-</div>
-<li class="nav-item dropdown">
+<li class="nav-item dropdown user-menu">
     <a class="nav-link dropdown-toggle"
-       title="{{ self.title }}" 
+       title="{{ self.title }}"
        role="button"
        data-bs-toggle="dropdown"
        aria-expanded="false"
-       aria-label="{{ self.title }}"
-       >
+       aria-label="{{ self.title }}">
         {% if request.user.is_authenticated %}
-            {% comment %} <svg class="menustream-icon">
-                <use href="#icon-user-logged-in" />
-            </svg> {% endcomment %}
             {% if self.logged_in_icon %}
-            {% menu_icon self.logged_in_icon 'fill-25x25' %}
-        {% endif %}
-
+                {% menu_icon self.logged_in_icon 'fill-25x25' %}
+            {% endif %}
             <div>{{ self.logged_in_title }}</div>
         {% else %}
-            {% comment %} <svg class="menustream-icon">
-                <use href="#icon-user-logged-out" />
-            </svg> {% endcomment %}
             {% if self.logged_in_icon %}
-            {% menu_icon self.logged_in_icon 'fill-25x25' %}
-        {% endif %}
-
+                {% menu_icon self.logged_in_icon 'fill-25x25' %}
+            {% endif %}
             <div>{{ self.logged_out_title }}</div>
         {% endif %}
     </a>
     <ul class="dropdown-menu dropdown-menu-end{% if self.sticky %} position-absolute{% endif %}">
         {% if request.user.is_authenticated and self.logged_in_text %}
-        <li class="dropdown-item nav-label">
-            <span class="nav-link" onclick="event.stopPropagation();">
-               {% render_user_info self.logged_in_text %}
-            </span>
-        </li>
-        <li>
-            <hr class="dropdown-divider">
-        </li>
+            <li class="dropdown-item nav-label">
+                <span class="nav-link user-message" onclick="event.stopPropagation();">{% render_user_info self.logged_in_text %}</span>
+            </li>
+            <li>
+                <hr class="dropdown-divider">
+            </li>
         {% endif %}
         {% for item in self.items %}
             {% if item.value|show_on_menu:request %}

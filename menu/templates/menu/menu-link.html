@@ -5,7 +5,7 @@
            href="{{ self.link.url }}"
            title="{{ self.link.text }}">
             {% if self.options.icon %}
-                {% image self.options.icon fill-25x25 %}
+                {% menu_icon self.options.icon 'fill-25x25' %}
             {% endif %}
             {% if self.link.text %}
                 <div>{{ self.link.text }}</div>

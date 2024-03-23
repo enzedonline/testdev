@@ -16,13 +16,13 @@
         {% endif %}
         <div>{{ self.title }}</div>
     </a>
-    <ul class="dropdown-menu dropdown-menu-end {% if self.sticky %} position-absolute{% endif %}">
+    <ul class="dropdown-menu dropdown-menu-end{% if self.sticky %} position-absolute{% endif %}">
         {% for link in links %}
             <li class="dropdown-item {{ link.active }}">
                 <a class="nav-link {{ link.active }}"
                    href="{{ link.url }}"
                    title="{{ link.title }}">
-                    <span>{{ link.title }}</span>
+                    <div>{{ link.title }}</div>
                 </a>
             </li>
             {% if forloop.first and self.include_parent_page %}
