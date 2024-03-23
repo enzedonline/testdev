@@ -9,12 +9,12 @@
        aria-label="{{ self.title }}">
         {% if request.user.is_authenticated %}
             {% if self.logged_in_icon %}
-                {% menu_icon self.logged_in_icon 'fill-25x25' %}
+                {% menu_icon self.logged_in_icon %}
             {% endif %}
             <div>{{ self.logged_in_title }}</div>
         {% else %}
             {% if self.logged_in_icon %}
-                {% menu_icon self.logged_in_icon 'fill-25x25' %}
+                {% menu_icon self.logged_in_icon %}
             {% endif %}
             <div>{{ self.logged_out_title }}</div>
         {% endif %}

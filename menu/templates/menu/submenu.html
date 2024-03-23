@@ -7,7 +7,7 @@
        aria-expanded="false"
        {% if link_type == 'dropdown-item' %}onclick="event.stopPropagation();"{% endif %}>
         {% if self.options.icon %}
-            {% menu_icon self.options.icon 'fill-25x25|format-webp' %}
+            {% menu_icon self.options.icon %}
         {% endif %}
         {% if self.title %}
             <div>{{ self.title }}</div>

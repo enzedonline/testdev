@@ -1,6 +1,6 @@
 {% load wagtailcore_tags wagtailimages_tags menu_tags %}
 {% get_autofill_pages as links %}
-<li class="{% if link_type == 'nav-item' %}nav-item dropdown{% else %}dropdown-item submenu submenu{{ menu.breakpoint }} dropinline{% endif %}">
+<li class="{% if link_type == 'nav-item' %}nav-item dropdown{% else %}dropdown-item submenu dropinline{% endif %}">
     <a role="button"
        title="{{ self.title }}"
        class="nav-link dropdown-toggle"
@@ -8,7 +8,7 @@
        aria-expanded="false"
        {% if link_type == 'dropdown-item' %}onclick="event.stopPropagation();"{% endif %}>
         {% if self.options.icon %}
-            {% image self.options.icon fill-25x25 %}
+            {% menu_icon self.options.icon %}
         {% endif %}
         <div>{{ self.title }}</div>
     </a>
