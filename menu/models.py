@@ -1,28 +1,19 @@
-from django import forms
+from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel
-from wagtail.admin.ui.tables import UpdatedAtColumn, LiveStatusTagColumn
+from wagtail.admin.ui.tables import LiveStatusTagColumn, UpdatedAtColumn
 from wagtail.admin.widgets.slug import SlugInput
 from wagtail.fields import StreamField
 from wagtail.images.widgets import AdminImageChooser
-from wagtail.models import (DraftStateMixin, Locale, LockableMixin,
-                            PreviewableMixin, RevisionMixin, WorkflowMixin)
+from wagtail.models import (DraftStateMixin, LockableMixin, PreviewableMixin,
+                            RevisionMixin, TranslatableMixin, WorkflowMixin)
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.snippets import SnippetViewSet
 
 from .blocks import MenuStreamBlock
 
-BREAKPOINT_CHOICES = (
-    ("", _("Always expanded")),
-    ("-sm", _("Mobile only (<576px)")),
-    ("-md", _("Medium (<768px)")),
-    ("-lg", _("Large (<992px)")),
-    ("-xl", _("Extra Large (<1200px)")),
-    ("-none", _("Always collapsed")),
-)
-
-class Menu(
+class BaseMenu(
     PreviewableMixin,
     WorkflowMixin,
     DraftStateMixin,
@@ -31,13 +22,12 @@ class Menu(
     models.Model,
 ):
     icon = "menu"
-    
+
     title = models.CharField(
-        max_length=255, 
+        max_length=255,
         verbose_name=_("Menu Title"),
         help_text=_("A descriptive name for this menu (not displayed)")
     )
-    slug = models.SlugField(unique=True)
     brand_logo = models.ForeignKey(
         "wagtailimages.Image",
         null=True,
@@ -47,7 +37,7 @@ class Menu(
         verbose_name=_("Optional Brand Logo"),
     )
     brand_title = models.CharField(
-        max_length=50, 
+        max_length=50,
         null=True,
         blank=True,
         verbose_name=_("Optional Brand Display Title")
@@ -57,7 +47,14 @@ class Menu(
     )
     breakpoint = models.CharField(
         max_length=5,
-        choices=BREAKPOINT_CHOICES,
+        choices=(
+            ("", _("Always expanded")),
+            ("-sm", _("Mobile only (<576px)")),
+            ("-md", _("Medium (<768px)")),
+            ("-lg", _("Large (<992px)")),
+            ("-xl", _("Extra Large (<1200px)")),
+            ("-none", _("Always collapsed")),
+        ),
         default="-lg",
         blank=True,
         null=False,
@@ -84,11 +81,23 @@ class Menu(
 
     class Meta:
         verbose_name = _("Menu")
+        abstract = True
+
+
+if getattr(settings, "WAGTAIL_I18N_ENABLED", False):
+    class Menu(TranslatableMixin, BaseMenu):
+        slug = models.SlugField()
+        class Meta:
+            unique_together = ('translation_key', 'locale'), ('locale', 'slug')            
+else:
+    class Menu(BaseMenu):
+        slug = models.SlugField(unique=True)
 
 class MenuViewSet(SnippetViewSet):
     model = Menu
     icon = "menu"
     list_display = ["title", "slug", UpdatedAtColumn(), LiveStatusTagColumn()]
     ordering = ["title"]
+
 
 register_snippet(MenuViewSet)
