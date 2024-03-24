@@ -13,10 +13,10 @@
             <div>{{ self.title }}</div>
         {% endif %}
     </a>
-    <ul class="dropdown-menu dropdown-menu-end {% if self.sticky %} position-absolute{% endif %}">
+    <ul class="dropdown-menu dropdown-menu-end{% if self.sticky %} position-absolute{% endif %}">
         {% for item in self.items %}
             {% if item.value|show_on_menu:request %}
-                {% include_block item with link_type="dropdown-item" link_colour="link-dark" %}
+                {% include_block item with link_type="dropdown-item" %}
             {% endif %}
         {% endfor %}
     </ul>

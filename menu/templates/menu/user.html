@@ -30,7 +30,7 @@
         {% endif %}
         {% for item in self.items %}
             {% if item.value|show_on_menu:request %}
-                {% include_block item with link_type="dropdown-item" link_colour="link-dark" %}
+                {% include_block item with link_type="dropdown-item" %}
             {% endif %}
         {% endfor %}
     </ul>
