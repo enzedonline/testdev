@@ -43,7 +43,7 @@ class BaseMenu(
         verbose_name=_("Optional Brand Display Title")
     )
     items = StreamField(
-        MenuStreamBlock(), verbose_name=_("Menu Items"), blank=True, use_json_field=True
+        MenuStreamBlock(), verbose_name=_("Menu Items"), use_json_field=True
     )
     breakpoint = models.CharField(
         max_length=5,
