@@ -57,8 +57,14 @@ nav.navbar.menustream {
       display: flex;
       align-items: center;
 
-      >img {
+      >img,
+      >svg {
         height: $menustream-brand-height;
+      }
+
+      >img+span,
+      svg+span {
+        padding-left: 0.5em;
       }
     }
 
@@ -396,10 +402,6 @@ nav.navbar.menustream {
     display: flex;
     align-items: center;
     line-height: 1.2;
-  }
-
-  a.nav-link svg+div {
-    margin-left: 0.2em;
   }
 
   li.submenu>ul.dropdown-menu {

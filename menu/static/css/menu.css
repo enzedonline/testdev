@@ -22,8 +22,13 @@ nav.navbar.menustream > div.menustream-container > a.navbar-brand {
   display: flex;
   align-items: center;
 }
-nav.navbar.menustream > div.menustream-container > a.navbar-brand > img {
+nav.navbar.menustream > div.menustream-container > a.navbar-brand > img,
+nav.navbar.menustream > div.menustream-container > a.navbar-brand > svg {
   height: clamp(26px, 26px + 29 * (100vw - 375px) / 1125, 55px);
+}
+nav.navbar.menustream > div.menustream-container > a.navbar-brand > img + span,
+nav.navbar.menustream > div.menustream-container > a.navbar-brand svg + span {
+  padding-left: 0.5em;
 }
 nav.navbar.menustream ul.navbar-nav {
   margin-bottom: 0.3em;
@@ -283,9 +288,6 @@ nav.navbar.menustream ::-webkit-scrollbar-thumb:hover {
     align-items: center;
     line-height: 1.2;
   }
-  nav.navbar.menustream.navbar-expand a.nav-link svg + div {
-    margin-left: 0.2em;
-  }
   nav.navbar.menustream.navbar-expand li.submenu > ul.dropdown-menu {
     border-width: var(--bs-dropdown-border-width);
     padding-top: var(--bs-dropdown-padding-y);
@@ -365,9 +367,6 @@ nav.navbar.menustream ::-webkit-scrollbar-thumb:hover {
     display: flex;
     align-items: center;
     line-height: 1.2;
-  }
-  nav.navbar.menustream.navbar-expand-sm a.nav-link svg + div {
-    margin-left: 0.2em;
   }
   nav.navbar.menustream.navbar-expand-sm li.submenu > ul.dropdown-menu {
     border-width: var(--bs-dropdown-border-width);
@@ -449,9 +448,6 @@ nav.navbar.menustream ::-webkit-scrollbar-thumb:hover {
     align-items: center;
     line-height: 1.2;
   }
-  nav.navbar.menustream.navbar-expand-md a.nav-link svg + div {
-    margin-left: 0.2em;
-  }
   nav.navbar.menustream.navbar-expand-md li.submenu > ul.dropdown-menu {
     border-width: var(--bs-dropdown-border-width);
     padding-top: var(--bs-dropdown-padding-y);
@@ -532,9 +528,6 @@ nav.navbar.menustream ::-webkit-scrollbar-thumb:hover {
     align-items: center;
     line-height: 1.2;
   }
-  nav.navbar.menustream.navbar-expand-lg a.nav-link svg + div {
-    margin-left: 0.2em;
-  }
   nav.navbar.menustream.navbar-expand-lg li.submenu > ul.dropdown-menu {
     border-width: var(--bs-dropdown-border-width);
     padding-top: var(--bs-dropdown-padding-y);
@@ -614,9 +607,6 @@ nav.navbar.menustream ::-webkit-scrollbar-thumb:hover {
     display: flex;
     align-items: center;
     line-height: 1.2;
-  }
-  nav.navbar.menustream.navbar-expand-xl a.nav-link svg + div {
-    margin-left: 0.2em;
   }
   nav.navbar.menustream.navbar-expand-xl li.submenu > ul.dropdown-menu {
     border-width: var(--bs-dropdown-border-width);
