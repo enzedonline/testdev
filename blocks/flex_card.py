@@ -1,18 +1,17 @@
+from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
-from wagtail.blocks import StructBlock
+from wagtail.blocks import BooleanBlock, IntegerBlock, StructBlock
 from wagtail.blocks.struct_block import StructBlockAdapter
 from wagtail.telepath import register
 
+from .choices import (BreakpointChoiceBlock, ColourThemeChoiceBlock,
+                      FlexCardLayoutChoiceBlock)
+from .links import LinkBlock
+from .rich_text import SimpleRichTextBlock
+from .seo_image_chooser import SEOImageChooserBlock
+
 
 class FlexCardBlock(StructBlock):
-    from wagtail.blocks import BooleanBlock, IntegerBlock
-
-    from .choices import (BreakpointChoiceBlock, ColourThemeChoiceBlock,
-                          FlexCardLayoutChoiceBlock)
-    from .links import LinkBlock
-    from .rich_text import SimpleRichTextBlock
-    from .seo_image_chooser import SEOImageChooserBlock
-
     text = SimpleRichTextBlock(
         label=_("Card Body Text"),
         help_text=_("Body text for this card."),
@@ -84,8 +83,6 @@ class FlexCardBlock(StructBlock):
 
 
 class FlexCardBlockAdapter(StructBlockAdapter):
-    from django.utils.functional import cached_property
-
     js_constructor = "blocks.models.FlexCardBlock"
 
     @cached_property

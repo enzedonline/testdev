@@ -1,10 +1,12 @@
+from django.utils.translation import gettext_lazy as _
+from wagtail.blocks import StructBlock
 from wagtail.blocks.struct_block import StructBlockAdapter
 from wagtail.telepath import register
-from wagtail.blocks import StructBlock
+
 
 class ExternalLinkEmbedBlock(StructBlock):
     from django.utils.translation import gettext_lazy as _
-    from wagtail.blocks import RichTextBlock, CharBlock, TextBlock
+    from wagtail.blocks import CharBlock, RichTextBlock, TextBlock
     from wagtail.blocks.field_block import IntegerBlock, URLBlock
 
     external_link = URLBlock(
@@ -18,8 +20,7 @@ class ExternalLinkEmbedBlock(StructBlock):
     )
 
     class Meta:
-        # template='blocks/external_link_embed.html',
-        from django.utils.translation import gettext_lazy as _
+        template='blocks/external_link_embed.html',
         icon = 'link-external'
         label = _("Embed External Article")
     
