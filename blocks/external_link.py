@@ -1,13 +1,12 @@
+from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
-from wagtail.blocks import StructBlock
+from wagtail.blocks import CharBlock, RichTextBlock, StructBlock
+from wagtail.blocks.field_block import URLBlock
 from wagtail.blocks.struct_block import StructBlockAdapter
 from wagtail.telepath import register
 
 
 class ExternalLinkEmbedBlock(StructBlock):
-    from django.utils.translation import gettext_lazy as _
-    from wagtail.blocks import CharBlock, RichTextBlock, TextBlock
-    from wagtail.blocks.field_block import IntegerBlock, URLBlock
 
     external_link = URLBlock(
         label=_("URL to External Article"),
@@ -25,8 +24,6 @@ class ExternalLinkEmbedBlock(StructBlock):
         label = _("Embed External Article")
     
 class ExternalLinkEmbedBlockAdapter(StructBlockAdapter):
-    from django.utils.functional import cached_property
-
     js_constructor = "blocks.models.ExternalLinkEmbedBlock"
 
     @cached_property
