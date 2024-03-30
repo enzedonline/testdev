@@ -1,13 +1,13 @@
-from wagtail.blocks import StructBlock
+from django.utils.translation import gettext_lazy as _
+from wagtail.blocks import BooleanBlock, RichTextBlock, StructBlock
+from wagtail.blocks.field_block import IntegerBlock
+
+from .choices import TextAlignmentChoiceBlock
+from .heading import HeadingBlock
+from .import_text import ImportTextBlock
+
 
 class CSVTableBlock(StructBlock):
-    from django.utils.translation import gettext_lazy as _
-    from wagtail.blocks import BooleanBlock, RichTextBlock
-    from wagtail.blocks.field_block import IntegerBlock
-
-    from .choices import TextAlignmentChoiceBlock
-    from .heading import HeadingBlock
-    from .import_text import ImportTextBlock
 
     title = HeadingBlock(required=False, label=_("Table Title"))
     data = ImportTextBlock(

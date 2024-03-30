@@ -1,5 +1,8 @@
 from django import forms
+from django.utils.functional import cached_property
 from wagtail.blocks import TextBlock
+
+from core.widgets.models import ImportTextAreaWidget
 
 
 class ImportTextBlock(TextBlock):
@@ -8,9 +11,6 @@ class ImportTextBlock(TextBlock):
     file_type_filter: any valid accept string
     https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/accept
     """
-
-    from django.utils.functional import cached_property
-
     def __init__(
         self,
         required=True,
@@ -29,7 +29,6 @@ class ImportTextBlock(TextBlock):
 
     @cached_property
     def field(self):
-        from core.widgets.models import ImportTextAreaWidget
         field_kwargs = {
             "widget": ImportTextAreaWidget(
                 self.file_type_filter, attrs={"rows": self.rows}
