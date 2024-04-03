@@ -3,12 +3,16 @@ div.csv-table-block>div[data-contentpath="data"],
 div.csv-table-block>div[data-contentpath="caption"] {
   flex-basis: 100%;
 }
-
 div.csv-table-block>div[data-contentpath="column_headers"],
 div.csv-table-block>div[data-contentpath="row_headers"],
 div.csv-table-block>div[data-contentpath="compact"],
 div.csv-table-block>div[data-contentpath="caption_alignment"] {
   flex-grow: 0;
+}
+/* hidden blocks */
+div.csv-table-block>div[data-contentpath="html"],
+div.csv-table-block>div[data-contentpath="rendered"] {
+  display: none;
 }
 
 /* rendering message */
@@ -26,7 +30,7 @@ div.csv-table-block>div.csv-table-rendering-message {
   margin-inline-start: calc(5rem - 0.75em);
   opacity: 0;
   height: 0;
-  transition: opacity 1.5s, height 1.5s ease-in-out;
+  transition: opacity 2s, height 2s ease-in-out;
   z-index: 999;
 }
 
