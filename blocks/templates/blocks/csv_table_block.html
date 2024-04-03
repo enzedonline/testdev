@@ -1,14 +1,16 @@
 {% load wagtailcore_tags csv_table_block_tags %}
-<div class="mx-auto" style="width:{{ self.width }}%;{% if self.max_width %}max-width: {{ self.max_width }}rem;{% endif %}">
-    {% include_block self.title %}
-    <div style="overflow-x: auto;">
-        {{ self|render_html_table }}
+{% if self.rendered and self.html %}
+    <style>div.table-caption>p {text-align: inherit;}</style>
+    <div class="mx-auto mb-4"
+         style="width:{{ self.width }}%;
+                {% if self.max_width %}max-width: {{ self.max_width }}rem;{% endif %}">
+        <p class="text-{{ self.title.alignment }} {{ self.title.heading_size }}"
+           {% if self.title.anchor_id %}id="{{ self.title.anchor_id }}"{% endif %}>{{ self.title.title }}</p>
+        <div style="overflow-x: auto;">{{ self.html|safe }}</div>
+        {% if self.caption %}
+            <div class="table-caption text-{{ self.caption_alignment }} py-2">{{ self.caption }}</div>
+        {% else %}
+            &nbsp;
+        {% endif %}
     </div>
-    {% if self.caption %}
-        <div class="table-caption text-{{ self.caption_alignment }}">
-            {{ self.caption }}
-        </div>
-    {% else %}
-        &nbsp;
-    {% endif %}
-</div>
+{% endif %}

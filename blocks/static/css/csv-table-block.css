@@ -1,0 +1,43 @@
+/* child block layout */
+div.csv-table-block>div[data-contentpath="data"],
+div.csv-table-block>div[data-contentpath="caption"] {
+  flex-basis: 100%;
+}
+
+div.csv-table-block>div[data-contentpath="column_headers"],
+div.csv-table-block>div[data-contentpath="row_headers"],
+div.csv-table-block>div[data-contentpath="compact"],
+div.csv-table-block>div[data-contentpath="caption_alignment"] {
+  flex-grow: 0;
+}
+
+/* rendering message */
+div.csv-table-block>div.csv-table-rendering-message {
+  position: fixed;
+  left: 4rem;
+  bottom: 4.5rem;
+  background-color: var(--w-color-warning-100);
+  color: var(--w-color-grey-600);
+  padding: 0.5em;
+  border-radius: 0.5em;
+  border-color: var(--w-color-warning-50);
+  border-style: solid;
+  border-width: 1px;
+  margin-inline-start: calc(5rem - 0.75em);
+  opacity: 0;
+  height: 0;
+  transition: opacity 1.5s, height 1.5s ease-in-out;
+  z-index: 999;
+}
+
+div.csv-table-block>div.csv-table-rendering-message.working {
+  opacity: 1;
+  height: 3rem;
+  transition: opacity 0s, height 0s;
+}
+
+div.csv-table-block>div.csv-table-rendering-message>svg {
+  height: 1.2em;
+  vertical-align: text-bottom;
+  width: 2em;
+}

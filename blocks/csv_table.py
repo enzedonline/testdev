@@ -1,9 +1,15 @@
+from django.forms.utils import ErrorList
+from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from wagtail.blocks import BooleanBlock, RichTextBlock, StructBlock
 from wagtail.blocks.field_block import IntegerBlock
+from wagtail.blocks.struct_block import (StructBlockAdapter,
+                                         StructBlockValidationError)
+from wagtail.telepath import register
 
 from .choices import TextAlignmentChoiceBlock
 from .heading import HeadingBlock
+from .hidden import HiddenBooleanBlock, HiddenCharBlock
 from .import_text import ImportTextBlock
 
 
@@ -17,20 +23,18 @@ class CSVTableBlock(StructBlock):
     )
     precision = IntegerBlock(
         label=_("Float Precision"),
-        default=2, help_text=_("Number of decimal places to display for float type.")
     )
     column_headers = BooleanBlock(
         label=_("Column Headers"),
-        required=False, default=True, help_text=_("First row contains column headers")
+        required=False, 
     )
     row_headers = BooleanBlock(
         label=_("Row Headers"),
-        required=False, help_text=_("First column contains row headers")
+        required=False, 
     )
     compact = BooleanBlock(
-        label=_("Compact Table Style"),
+        label=_("Compact"),
         required=False, 
-        help_text=_("Cell padding reduced by half")
     )
     caption = RichTextBlock(
         label=_("Table Caption"),
@@ -40,21 +44,41 @@ class CSVTableBlock(StructBlock):
     )
     caption_alignment = TextAlignmentChoiceBlock(
         label=_("Caption Alignment"),
-        required=False, 
         default="end"
     )
     width = IntegerBlock(
         label=_("Table Width (%)"),
         default=100,
-        help_text=_("Table width (as percentage of container)"),
     )
     max_width = IntegerBlock(
         label=_("Maximum Table Width (rem)"),
         required=False,
-        help_text=_("Optional: Maximum width (in rem) the table can grow to"),
     )
+    html = HiddenCharBlock()
+    rendered = HiddenBooleanBlock(required=False, default=True)
 
     class Meta:
         template = "blocks/csv_table_block.html"
         icon = "table"
         label = "CSV Table"
+        form_classname = "struct-block flex-block csv-table-block"
+
+    def clean(self, value):
+        rendered = value.get('rendered')
+        if not rendered:
+            raise StructBlockValidationError(non_block_errors=['There was an error rendering the CSV table.'])
+        return super().clean(value)
+    
+class CSVTableBlockAdapter(StructBlockAdapter):
+    js_constructor = "blocks.csv_table.CSVTableBlock"
+
+    @cached_property
+    def media(self):
+        from django import forms
+        structblock_media = super().media
+        return forms.Media(
+            js=structblock_media._js + ["js/csv-table-block.js"],
+            css={"all": ("css/csv-table-block.css",)},
+        )
+    
+register(CSVTableBlockAdapter(), CSVTableBlock)
