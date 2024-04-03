@@ -14,7 +14,7 @@ class ExternalLinkEmbedBlockDefinition extends window.wagtailStreamField.blocks
             const imageUrl = block.imageInput.value;
             if (imageUrl) {
                 try {
-                    const response = await fetch(`/check-image-url/?url=${encodeURIComponent(imageUrl)}`);
+                    const response = await fetch(`/blocks/check-image-url/?url=${encodeURIComponent(imageUrl)}`);
                     const data = await response.json();
                     if (data.valid) {
                         block.imagePreview.innerHTML = `<img src="${imageUrl}" alt="Image Preview" class="external-link-embed-block-image-preview">`;
@@ -36,7 +36,7 @@ class ExternalLinkEmbedBlockDefinition extends window.wagtailStreamField.blocks
             if (url) {
                 try {
                     block.getMetadataButton.classList.toggle('spinner', true);
-                    const response = await fetch(`/external-content-proxy/?url=${encodeURIComponent(url)}`);
+                    const response = await fetch(`/blocks/external-content-proxy/?url=${encodeURIComponent(url)}`);
                     const metadata = await response.json();
 
                     // Handle metadata error
