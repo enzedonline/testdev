@@ -42,6 +42,7 @@ class CSVTableBlockDefinition extends window.wagtailStreamField.blocks
         });
         this.renderingMessageDiv = this.csvTableBlock.structBlock.appendChild(document.createElement('div'));
         this.renderingMessageDiv.className = 'csv-table-rendering-message';
+        this.renderingMessageDiv.style.display = 'none';
         this.renderingMessageDiv.textContent = 'Rendering CSV Table HTML';
         const svgElement = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         svgElement.innerHTML = '<use href="#icon-spinner"></use>';
@@ -52,6 +53,7 @@ class CSVTableBlockDefinition extends window.wagtailStreamField.blocks
         this.renderSuccess.checked = false;
         this.renderField.value = '';
         this.renderingMessageDiv.classList.add('working');
+        this.renderingMessageDiv.style.display = 'block';
         if (!this.footerButtons) {
             this.footerButtons = document.querySelectorAll('footer button')
         }
@@ -93,6 +95,9 @@ class CSVTableBlockDefinition extends window.wagtailStreamField.blocks
                 });
                 this.renderSuccess.checked = true;
                 this.renderingMessageDiv.classList.remove('working');
+                setTimeout(() => {
+                    this.renderingMessageDiv.style.display = 'none';
+                }, 2500);
             });
     }
 }
