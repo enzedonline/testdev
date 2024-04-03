@@ -41,7 +41,6 @@ class ImportTextAreaWidget {
         event.preventDefault();
         const input = event.dataTransfer.files[0];
         this.readFile(input, this.textArea);
-        console.log(event.dataTransfer.files[0])
     }
 
     isElementInViewport(element) {
