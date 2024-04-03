@@ -20,8 +20,6 @@ class HeadingBlock(StructBlock):
     anchor_id = CharBlock(
         required=False,
         label=_("Optional Anchor Identifier"),
-        help_text=_(
-            "Anchor identifier must be a compatible slug format without spaces or special characters")
     )
 
     class Meta:
