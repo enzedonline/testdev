@@ -14,7 +14,13 @@ from .choices import HeadingSizeChoiceBlock, TextAlignmentChoiceBlock
 
 
 class HeadingBlock(StructBlock):
-    def __init__(self, required=True, default_size='h2', default_alignment='start', **kwargs):
+    def __init__(
+            self, 
+            required=True, 
+            heading_range=('h2', 'h4'), 
+            default_size='h2', 
+            default_alignment='start', 
+            **kwargs):
         local_blocks = (
             ("title", CharBlock(
                 label=_("Title"),
@@ -22,6 +28,7 @@ class HeadingBlock(StructBlock):
             )),
             ("heading_size", HeadingSizeChoiceBlock(
                 label=_("Size"),
+                heading_range=heading_range,
                 default=default_size
             )),
             ("alignment", TextAlignmentChoiceBlock(
@@ -32,7 +39,7 @@ class HeadingBlock(StructBlock):
                 label=_("Optional Anchor Identifier"),
                 required=False,
             )),
-        )   
+        )
         super().__init__(local_blocks, **kwargs)
 
     class Meta:

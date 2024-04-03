@@ -17,6 +17,7 @@ class CSVTableBlock(StructBlock):
     title = HeadingBlock(
         label=_("Optional Table Title"),
         required=False, 
+        heading_range=('h3', 'h5'),
         default_size='h4',
         default_alignment='center'
     )
