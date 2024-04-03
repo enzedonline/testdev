@@ -230,3 +230,24 @@ div.tippy-content div.w-combobox__option div.w-combobox__option-icon .icon {
   width: 1.2rem;
   margin-right: 0.5em;
 }
+/* stop modals switching to 66% width when side panel open */
+.minimap-open .tab-content, .side-panel-open .tab-content {
+  width: 100%;
+}
+/* remove excess space under field */
+.w-panel--nested .w-field__wrapper {
+  padding-bottom: 0;
+}
+div.w-field__input>input,
+div.w-field__input>select {
+  font-size: 1em;
+}
+/* common flex-box struct block styles */
+div.flex-block {
+  flex-wrap: wrap;
+  display: flex;
+  column-gap: 2rem;
+}
+div.flex-block>div[data-contentpath] {
+  flex-grow: 1;
+}
