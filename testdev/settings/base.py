@@ -173,6 +173,7 @@ MEDIA_URL = "/media/"
 
 WAGTAIL_SITE_NAME = "testdev"
 WAGTAILIMAGES_EXTENSIONS = ["gif", "jpg", "jpeg", "png", "webp", "svg"]
+WAGTAILIMAGES_CHOOSER_PAGE_SIZE = 20
 WAGTAILEMBEDS_RESPONSIVE_HTML = True
 
 # Search
