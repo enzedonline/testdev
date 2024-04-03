@@ -14,8 +14,12 @@ from .import_text import ImportTextBlock
 
 
 class CSVTableBlock(StructBlock):
-
-    title = HeadingBlock(required=False, label=_("Table Title"))
+    title = HeadingBlock(
+        label=_("Optional Table Title"),
+        required=False, 
+        default_size='h4',
+        default_alignment='center'
+    )
     data = ImportTextBlock(
         label=_("Comma Separated Data"),
         help_text=_("Paste in CSV data or import from .csv file"),
@@ -23,10 +27,12 @@ class CSVTableBlock(StructBlock):
     )
     precision = IntegerBlock(
         label=_("Float Precision"),
+        default=2,
     )
     column_headers = BooleanBlock(
         label=_("Column Headers"),
         required=False, 
+        default=True,
     )
     row_headers = BooleanBlock(
         label=_("Row Headers"),
@@ -35,6 +41,7 @@ class CSVTableBlock(StructBlock):
     compact = BooleanBlock(
         label=_("Compact"),
         required=False, 
+        default=True,
     )
     caption = RichTextBlock(
         label=_("Table Caption"),
@@ -55,7 +62,7 @@ class CSVTableBlock(StructBlock):
         required=False,
     )
     html = HiddenCharBlock()
-    rendered = HiddenBooleanBlock(required=False, default=True)
+    rendered = HiddenBooleanBlock(default=True)
 
     class Meta:
         template = "blocks/csv_table_block.html"
