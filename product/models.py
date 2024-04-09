@@ -149,7 +149,7 @@ class ProductPage(RoutablePageMixin, Page):
     @path("index/")
     @path("index/<str:sort>/")
     def product_list(self, request, sort=None):
-        products = Product.objects.all()
+        products = Product.objects.filter(live=True)
         if sort:
             try:
                 products = products.order_by(sort)
