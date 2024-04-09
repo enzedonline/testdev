@@ -1,0 +1,74 @@
+{% load static wagtailcore_tags video_embed_tags %}
+<link rel="stylesheet"
+      type="text/css"
+      href="{% static 'css/video-list.css' %}" />
+{# svg's for youtube logo and prev/next arrow #}      
+<div class="d-none">
+    <svg viewBox="0 0 68 48" id="icon-youtube-logo">
+        <path d="M66.52,7.74c-0.78-2.93-2.49-5.41-5.42-6.19C55.79,.13,34,0,34,0S12.21,.13,6.9,1.55 C3.97,2.33,2.27,4.81,1.48,7.74C0.06,13.05,0,24,0,24s0.06,10.95,1.48,16.26c0.78,2.93,2.49,5.41,5.42,6.19 C12.21,47.87,34,48,34,48s21.79-0.13,27.1-1.55c2.93-0.78,4.64-3.26,5.42-6.19C67.94,34.95,68,24,68,24S67.94,13.05,66.52,7.74z" fill="#f00" />
+        <path d="M 45,24 27,14 27,34" fill="#fff" />
+    </svg>
+    <svg id="icon-adjacent"
+         viewBox="0 0 16 16"
+         preserveAspectRatio="xMinYMid meet"
+         fill="currentColor">
+        <path d="M5.29 14.71a1 1 0 0 0 1.41 0l6-6a1 1 0 0 0 0-1.41l-6-6a1 1 0 0 0-1.41 1.41L10.59 8l-5.3 5.29a1 1 0 0 0 0 1.42z" />
+    </svg>
+</div>
+{# card list #}
+<div class="video-list loading" id="video-list">
+    {% for video in self.videos.all %}
+        {% get_embed_code video.url as embed %}
+        {% if embed %}
+            {# video card #}
+            <div class="card bg-dark youtube-card" data-video-id="{{ embed.video_id }}">
+                <div class="card-video">
+                    {# thumbnail + youtube logo overlaid #}
+                    <img class="card-video-placeholder" src="{{ embed.thumbnail_url }}">
+                    <svg>
+                        <use href="#icon-youtube-logo">
+                    </svg>
+                </div>
+                <div class="card-body">
+                    {# title/author/description #}
+                    <p class="h5 card-title">{{ embed.title }}</p>
+                    <p class="h6 card-text card-subtle-text">{{ embed.author_name }}</p>
+                    {% if video.description %}{{ video.description|richtext }}{% endif %}
+                </div>
+                <div class="card-footer">
+                    {# date #}
+                    <p class="h6 card-text card-subtle-text">Updated {{ embed.last_updated|date:"D d M Y" }}</p>
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+</div>
+
+{# pop-out video player modal #}
+<div id="video-modal">
+    {# previous video - data-target will be id of previous video If none, button is hidden #}
+    <div class="adjacent-arrow prev" id="previous-video-button" data-target="" title="Previous video">
+        <svg>
+            <use href="#icon-adjacent">
+        </svg>
+    </div>
+    {# simle card with close button and player iframe #}
+    <div class="card" data-bs-theme="dark">
+        <div class="title-bar">
+            <button type="button"
+                    class="btn-close btn-small"
+                    aria-label="Close"
+                    onclick="closeModal();" />
+        </div>
+        {# this element replaced by youtube player iframe #}
+        <div id="card-video-iframe"></div>
+    </div>
+    {# next video - data-target will be id of next video If none, button is hidden #}
+    <div class="adjacent-arrow next" id="next-video-button" data-target="" title="Next video">
+        <svg>
+            <use href="#icon-adjacent">
+        </svg>
+        <div class="button-overlay"></div>
+    </div>
+</div>
+<script src="{% static 'js/video-list.js'%}"></script>

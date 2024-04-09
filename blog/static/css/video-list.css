@@ -1,0 +1,139 @@
+/* video list container */
+div.video-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+}
+/* styles while waiting for player to finish loading */
+@keyframes spin {0% {transform: rotate(0deg);} 100% {transform: rotate(360deg);}}
+div.video-list.loading div.card-video::before {
+    content: "";
+    position: absolute;
+    opacity: .8;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    border: 8px solid red;
+    border-top: 5px solid transparent;
+    animation: spin 1s linear infinite;
+    z-index: 1;
+    height: 3em;
+    width: 3em;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+}
+div.video-list.loading div.card-video>svg#icon-youtube-logo {
+    display: none;
+}
+/* card width & wrap settings */
+div.video-list div.youtube-card {
+    flex-basis: 275px;
+    /* take out these next two lines to make fixed width */
+    flex-grow: 1;
+    max-width: 325px;
+}
+/* card styles only applied after player loaded */
+div.video-list:not(.loading) div.youtube-card {
+    cursor: pointer;
+}
+div.video-list:not(.loading) div.youtube-card:hover>div.card-video>svg#icon-youtube-logo {
+    opacity: 1;
+}
+/* video thumbnail section */
+div.video-list div.card-video {
+    position: relative;
+    border-top-left-radius: var(--bs-card-inner-border-radius);
+    border-top-right-radius: var(--bs-card-inner-border-radius);
+}
+div.video-list div.card-video>img {
+    width: 100%;
+    min-height: 200px;
+}
+div.video-list div.card-video>svg {
+    width: 5rem;
+    height: auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: .8;
+}
+/* card body styles */
+div.video-list div.card-body {
+    padding-bottom: 0;
+}
+div.video-list div.card-body>p.card-title {
+    margin-bottom: 0;
+}
+div.video-list p.card-subtle-text {
+    color: var(--bs-secondary-bg-subtle);
+}
+
+/* video player modal */
+
+/* modal background (covers screen) */
+div#video-modal {
+    display: none;
+    width: 100vw;
+    height: 100vh;
+    background-color: #000000bf;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999; /* make sure it is top object */
+}
+div#video-modal.show {
+    display: block;
+}
+/* video player card */
+div#video-modal>div.card {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 70%;
+    max-height: 72%;
+    aspect-ratio: 100 / 56.5;
+    transform: translate(-50%, -50%);
+}
+div#video-modal>div.card>div.title-bar {
+    text-align: right;
+}
+div#video-modal>div.card>div.title-bar>button.btn-close {
+    padding: 0.7rem;
+}
+iframe#card-video-iframe {
+    width: 100%;
+    height: 100%;
+    border-radius: 0 0 var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius);
+}
+/* previous/next arrows */
+div#video-modal>div.adjacent-arrow {
+    position: fixed;
+    top: 50%;
+    cursor: pointer;
+}
+div#video-modal>div.adjacent-arrow.prev {
+    right: 85%;
+    transform: translateY(-50%) scaleX(-1);
+} 
+div#video-modal>div.adjacent-arrow.next {
+    left: 85%;
+    transform: translateY(-50%);
+} 
+div#video-modal>div.adjacent-arrow>svg {
+    height: clamp(2.25rem, 1.486rem + 2.444vw, 5rem);
+    width: clamp(2.25rem, 1.486rem + 2.444vw, 5rem);
+}
+div#video-modal>div.adjacent-arrow:hover {
+    color: #e9e8e8;
+}
+div#video-modal>div.adjacent-arrow {
+    color: #b9c8d5;
+}
+div#video-modal>div.adjacent-arrow[data-target=""] {
+    display: none;
+}
+

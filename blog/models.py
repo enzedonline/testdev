@@ -101,12 +101,12 @@ class SimpleVideoOrderable(Orderable):
     from wagtail.fields import RichTextField
 
     page = ParentalKey("blog.BlogPage", related_name="videos")
-    description = RichTextField()
     url = models.URLField()
+    description = RichTextField(null=True, blank=True)
 
     panels = [
+        FieldPanel('url'),
         FieldPanel('description'),
-        FieldPanel('url')
     ]
 
     class Meta(Orderable.Meta):
@@ -222,10 +222,10 @@ class BlogPage(Page):
 
     content_panels = Page.content_panels + [
         # AuthorPanel('author'),
-        # MultiFieldPanel(
-        #     [InlinePanel("videos", min_num=1)],
-        #     heading="Videos",
-        # ),
+        MultiFieldPanel(
+            [InlinePanel("videos", min_num=1)],
+            heading="Videos",
+        ),
         # UtilityPanel(
         #     '<b>Word Count:</b> {{wordcount}}', {'wordcount': 'wordcount'},
         #     style = 'margin-bottom: 2em;display: block;background-color: antiquewhite;padding: 1em;border-radius: 1em;'
