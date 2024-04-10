@@ -21,12 +21,12 @@
         {% get_embed_code video.url as embed %}
         {% if embed %}
             {# video card #}
-            <div class="card bg-dark youtube-card" data-video-id="{{ embed.video_id }}">
+            <div class="card youtube-card" data-video-id="{{ embed.video_id }}" data-bs-theme="dark">
                 <div class="card-video">
                     {# thumbnail + youtube logo overlaid #}
                     <img class="card-video-placeholder" src="{{ embed.thumbnail_url }}">
-                    <svg>
-                        <use href="#icon-youtube-logo">
+                    <svg class="youtube-logo">
+                        <use href="#icon-youtube-logo" />
                     </svg>
                 </div>
                 <div class="card-body">
@@ -49,7 +49,7 @@
     {# previous video - data-target will be id of previous video If none, button is hidden #}
     <div class="adjacent-arrow prev" id="previous-video-button" data-target="" title="Previous video">
         <svg>
-            <use href="#icon-adjacent">
+            <use href="#icon-adjacent" />
         </svg>
     </div>
     {# simle card with close button and player iframe #}
@@ -66,7 +66,7 @@
     {# next video - data-target will be id of next video If none, button is hidden #}
     <div class="adjacent-arrow next" id="next-video-button" data-target="" title="Next video">
         <svg>
-            <use href="#icon-adjacent">
+            <use href="#icon-adjacent" />
         </svg>
         <div class="button-overlay"></div>
     </div>

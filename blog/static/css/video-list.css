@@ -25,7 +25,7 @@ div.video-list.loading div.card-video::before {
     bottom: 0;
     margin: auto;
 }
-div.video-list.loading div.card-video>svg#icon-youtube-logo {
+div.video-list.loading div.card-video>svg.youtube-logo {
     display: none;
 }
 /* card width & wrap settings */
@@ -39,7 +39,7 @@ div.video-list div.youtube-card {
 div.video-list:not(.loading) div.youtube-card {
     cursor: pointer;
 }
-div.video-list:not(.loading) div.youtube-card:hover>div.card-video>svg#icon-youtube-logo {
+div.video-list:not(.loading) div.youtube-card:hover>div.card-video>svg.youtube-logo {
     opacity: 1;
 }
 /* video thumbnail section */
@@ -65,11 +65,19 @@ div.video-list div.card-video>svg {
 div.video-list div.card-body {
     padding-bottom: 0;
 }
+/* extra bottom padding when body has no rich text block */
+div.video-list div.card-body:has(:not(p[data-block-key])) {
+    padding-bottom: 1em;
+}
 div.video-list div.card-body>p.card-title {
     margin-bottom: 0;
 }
+/* rich text line spacing */
+div.video-list div.card-body>p[data-block-key] {
+    line-height: 1.2;
+}
 div.video-list p.card-subtle-text {
-    color: var(--bs-secondary-bg-subtle);
+    color: var(--bs-secondary-text-emphasis);
 }
 
 /* video player modal */

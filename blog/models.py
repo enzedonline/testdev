@@ -46,7 +46,7 @@ class AuthorPanel(FieldPanel):
 class BlogIndex(Page):
     from wagtail.fields import RichTextField
     parent_page_types = ['home.HomePage']
-    subpage_types = ['blog.BlogPage']
+    subpage_types = ['blog.BlogPage', 'blog.VideoPage']
     max_count = 1
 
     intro = RichTextField()
@@ -95,22 +95,6 @@ class CarouselImages(Orderable):
     class Meta(Orderable.Meta):
         verbose_name = "Carousel Image"
 
-class SimpleVideoOrderable(Orderable):
-    from django.db import models
-    from modelcluster.fields import ParentalKey
-    from wagtail.fields import RichTextField
-
-    page = ParentalKey("blog.BlogPage", related_name="videos")
-    url = models.URLField()
-    description = RichTextField(null=True, blank=True)
-
-    panels = [
-        FieldPanel('url'),
-        FieldPanel('description'),
-    ]
-
-    class Meta(Orderable.Meta):
-        verbose_name = "Video"
 
 class BlogPage(Page):
     from django.contrib.auth.models import User
@@ -222,10 +206,6 @@ class BlogPage(Page):
 
     content_panels = Page.content_panels + [
         # AuthorPanel('author'),
-        MultiFieldPanel(
-            [InlinePanel("videos", min_num=1)],
-            heading="Videos",
-        ),
         # UtilityPanel(
         #     '<b>Word Count:</b> {{wordcount}}', {'wordcount': 'wordcount'},
         #     style = 'margin-bottom: 2em;display: block;background-color: antiquewhite;padding: 1em;border-radius: 1em;'

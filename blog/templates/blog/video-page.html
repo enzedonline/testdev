@@ -1,0 +1,9 @@
+{% extends "base.html" %} 
+{% load wagtailcore_tags %}
+{% block content %}
+<article>
+    <h1>{{ self.title }}</h1>
+    {{ self.intro|richtext }}
+    {% include "blog/video_list.html" %}
+</article>
+{% endblock content %}
