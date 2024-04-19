@@ -4,9 +4,16 @@ import string
 from django import template
 from wagtail.documents.models import Document
 from wagtail.templatetags.wagtailcore_tags import richtext
-
+from wagtail.models import Page
 register = template.Library()
 
+@register.filter()
+def localised_slugurl(slug):
+    try:
+        return Page.objects.live().filter(slug=slug).first().localized.url
+    except:
+        return ''
+    
 @register.filter(name='is_in_group') 
 def is_in_group(user, group_name):
     if user.id==None:

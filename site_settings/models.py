@@ -3,14 +3,14 @@ from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
 from wagtail.admin.panels import FieldPanel, InlinePanel, MultiFieldPanel
-from wagtail.contrib.settings.models import BaseSiteSetting, register_setting
+from wagtail.contrib.settings.models import BaseGenericSetting, register_setting
 from wagtail.models import Orderable
 from wagtail.snippets.models import register_snippet
 from wagtail.blocks import StreamBlock, CharBlock, StructBlock, TextBlock
 from wagtail.fields import StreamField
 
 @register_setting(icon='password')
-class Tokens(BaseSiteSetting):
+class Tokens(BaseGenericSetting):
     mapbox = models.CharField(
         max_length=100,
         null=True,
@@ -40,6 +40,11 @@ class Tokens(BaseSiteSetting):
         null=True,
         blank=True,
         verbose_name=_("OpenAI Key")
+    )
+    gmail_service_account = models.JSONField(
+        null=True,
+        blank=True,
+        verbose_name=_("Gmail Service Account Details")
     )
 
 
