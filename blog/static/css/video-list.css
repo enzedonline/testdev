@@ -1,20 +1,28 @@
 /* video list container */
+div.video-list-container {
+    margin-bottom: 4rem;
+}
 div.video-list {
     display: flex;
     flex-wrap: wrap;
     gap: 2rem;
     justify-content: center;
+    margin-bottom: 2rem;
 }
+
 /* styles while waiting for player to finish loading */
+div[data-player-loading=true].video-list-container div.youtube-card {
+    cursor: wait;
+}
 @keyframes spin {0% {transform: rotate(0deg);} 100% {transform: rotate(360deg);}}
-div.video-list.loading div.card-video::before {
+div[data-player-loading=true].video-list-container div.card-video::before {
     content: "";
     position: absolute;
     opacity: .8;
     border-radius: 50%;
     transform: translate(-50%, -50%);
     border: 8px solid red;
-    border-top: 5px solid transparent;
+    border-top: 8px solid transparent;
     animation: spin 1s linear infinite;
     z-index: 1;
     height: 3em;
@@ -25,7 +33,20 @@ div.video-list.loading div.card-video::before {
     bottom: 0;
     margin: auto;
 }
-div.video-list.loading div.card-video>svg.youtube-logo {
+div[data-player-loading=true].video-list-container div.card-video>svg.youtube-logo {
+    display: none;
+}
+/* styles while loading card with new page - pulsate image */
+div[data-cards-loading=true].video-list-container div.card-video>img.card-video-thumbnail {
+    display: inline-block;
+    vertical-align: middle;
+    cursor: wait;
+    background-color: currentcolor;
+    opacity: .5;  
+    animation: placeholder-glow 2s ease-in-out infinite;
+}
+/* hide cards with no video-id */
+div.video-list div.youtube-card[data-video-id=""] {
     display: none;
 }
 /* card width & wrap settings */
@@ -36,23 +57,23 @@ div.video-list div.youtube-card {
     max-width: 325px;
 }
 /* card styles only applied after player loaded */
-div.video-list:not(.loading) div.youtube-card {
+div[data-player-loading=false].video-list-container div.youtube-card {
     cursor: pointer;
 }
-div.video-list:not(.loading) div.youtube-card:hover>div.card-video>svg.youtube-logo {
+div[data-player-loading=false].video-list-container div.youtube-card:hover>div.card-video>svg.youtube-logo {
     opacity: 1;
 }
 /* video thumbnail section */
 div.video-list div.card-video {
     position: relative;
-    border-top-left-radius: var(--bs-card-inner-border-radius);
-    border-top-right-radius: var(--bs-card-inner-border-radius);
 }
 div.video-list div.card-video>img {
     width: 100%;
     min-height: 200px;
+    border-top-left-radius: var(--bs-card-inner-border-radius);
+    border-top-right-radius: var(--bs-card-inner-border-radius);
 }
-div.video-list div.card-video>svg {
+div.video-list div.card-video:not(.placeholder)>svg {
     width: 5rem;
     height: auto;
     position: absolute;
@@ -60,6 +81,7 @@ div.video-list div.card-video>svg {
     left: 50%;
     transform: translate(-50%, -50%);
     opacity: .8;
+    transition: opacity 0.2s ease-in-out;
 }
 /* card body styles */
 div.video-list div.card-body {
@@ -144,4 +166,14 @@ div#video-modal>div.adjacent-arrow {
 div#video-modal>div.adjacent-arrow[data-target=""] {
     display: none;
 }
-
+nav.video-list-pagination li.page-item[data-target-page] {
+    cursor: pointer;
+}
+nav.video-list-pagination a.page-link>svg {
+    width: 1rem;
+    height: 1rem;
+    vertical-align: -2px;
+}
+nav.video-list-pagination a.page-link.prev>svg {
+    transform: scaleX(-1);
+}

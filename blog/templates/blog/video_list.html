@@ -1,74 +1,81 @@
 {% load static wagtailcore_tags video_embed_tags %}
-<link rel="stylesheet"
-      type="text/css"
-      href="{% static 'css/video-list.css' %}" />
-{# svg's for youtube logo and prev/next arrow #}      
+<link rel="stylesheet" type="text/css" href="{% static 'css/video-list.css' %}"/>
+{# svg's for youtube logo and prev/next arrow #}
 <div class="d-none">
-    <svg viewBox="0 0 68 48" id="icon-youtube-logo">
+    <svg id="icon-youtube-logo" viewBox="0 0 68 48">
         <path d="M66.52,7.74c-0.78-2.93-2.49-5.41-5.42-6.19C55.79,.13,34,0,34,0S12.21,.13,6.9,1.55 C3.97,2.33,2.27,4.81,1.48,7.74C0.06,13.05,0,24,0,24s0.06,10.95,1.48,16.26c0.78,2.93,2.49,5.41,5.42,6.19 C12.21,47.87,34,48,34,48s21.79-0.13,27.1-1.55c2.93-0.78,4.64-3.26,5.42-6.19C67.94,34.95,68,24,68,24S67.94,13.05,66.52,7.74z" fill="#f00" />
         <path d="M 45,24 27,14 27,34" fill="#fff" />
     </svg>
-    <svg id="icon-adjacent"
-         viewBox="0 0 16 16"
-         preserveAspectRatio="xMinYMid meet"
-         fill="currentColor">
-        <path d="M5.29 14.71a1 1 0 0 0 1.41 0l6-6a1 1 0 0 0 0-1.41l-6-6a1 1 0 0 0-1.41 1.41L10.59 8l-5.3 5.29a1 1 0 0 0 0 1.42z" />
+    <svg id="icon-adjacent" viewBox="0 0 512 512">
+        <path d="m 395.01582,230.18007 c 14.64557,14.28094 14.64557,37.47317 0,51.7541 L 170.05975,501.2893 c -14.64557,14.28093 -38.42999,14.28093 -53.07557,0 -14.64557,-14.28093 -14.64557,-37.47317 0,-51.7541 L 315.46104,256 117.10135,62.4648 c -14.64558,-14.280933 -14.64558,-37.473168 0,-51.7541 14.64557,-14.2809332 38.42999,-14.2809332 53.07557,0 l 224.95606,219.35513 z" style="fill:currentColor;stroke-width:1.15697" />
     </svg>
 </div>
-{# card list #}
-<div class="video-list loading" id="video-list">
-    {% for video in self.videos.all %}
-        {% get_embed_code video.url as embed %}
-        {% if embed %}
+
+<div class="video-list-container"
+     id="video-list-container"
+     data-player-loading="true"
+     data-cards-loading="true">
+    {# card list #}
+    <div class="video-list" id="video-list" data-bs-theme="dark">
+        {% for video in videos %}
             {# video card #}
-            <div class="card youtube-card" data-video-id="{{ embed.video_id }}" data-bs-theme="dark">
+            <div class="card youtube-card" id="{{ video.card_id }}" data-video-id="{{ video.video_id }}">
                 <div class="card-video">
                     {# thumbnail + youtube logo overlaid #}
-                    <img class="card-video-placeholder" src="{{ embed.thumbnail_url }}">
+                    <img class="card-video-thumbnail" src="{{ video.thumbnail_url }}">
                     <svg class="youtube-logo">
-                        <use href="#icon-youtube-logo" />
+                        <use href="#icon-youtube-logo"></use>
                     </svg>
                 </div>
                 <div class="card-body">
                     {# title/author/description #}
-                    <p class="h5 card-title">{{ embed.title }}</p>
-                    <p class="h6 card-text card-subtle-text">{{ embed.author_name }}</p>
-                    {% if video.description %}{{ video.description|richtext }}{% endif %}
+                    <p class="h5 card-title">{{ video.title }}</p>
+                    <p class="h6 card-text card-author">{{ video.author_name }}</p>
+                    <div class="card-description">
+                        {% if video.description %}{{ video.description|richtext }}{% endif %}
+                    </div>
                 </div>
                 <div class="card-footer">
-                    {# date #}
-                    <p class="h6 card-text card-subtle-text">Updated {{ embed.last_updated|date:"D d M Y" }}</p>
+                    <p class="h6 card-updated">
+                        Updated <span class="card-date">{{ video.last_updated|date:"D d M Y" }}</span>
+                    </p>
                 </div>
             </div>
-        {% endif %}
-    {% endfor %}
-</div>
-
-{# pop-out video player modal #}
-<div id="video-modal">
-    {# previous video - data-target will be id of previous video If none, button is hidden #}
-    <div class="adjacent-arrow prev" id="previous-video-button" data-target="" title="Previous video">
-        <svg>
-            <use href="#icon-adjacent" />
-        </svg>
+        {% endfor %}
     </div>
-    {# simle card with close button and player iframe #}
-    <div class="card" data-bs-theme="dark">
-        <div class="title-bar">
-            <button type="button"
-                    class="btn-close btn-small"
-                    aria-label="Close"
-                    onclick="closeModal();" />
+    {# data for the front-end javascript class #}
+    {{ pagination | json_script:"pagination" }}
+    {# pop-out video player modal #}
+    <div id="video-modal">
+        {# previous video - data-target will be id of previous video If none, button is hidden #}
+        <div class="adjacent-arrow prev"
+             id="video-modal-previous"
+             data-target=""
+             title="Previous video">
+            <svg>
+                <use href="#icon-adjacent" />
+            </svg>
         </div>
-        {# this element replaced by youtube player iframe #}
-        <div id="card-video-iframe"></div>
-    </div>
-    {# next video - data-target will be id of next video If none, button is hidden #}
-    <div class="adjacent-arrow next" id="next-video-button" data-target="" title="Next video">
-        <svg>
-            <use href="#icon-adjacent" />
-        </svg>
-        <div class="button-overlay"></div>
+        {# simple card with close button and player iframe #}
+        <div class="card" data-bs-theme="dark">
+            <div class="title-bar">
+                <button id="video-modal-dismiss"
+                        type="button"
+                        class="btn-close btn-small"
+                        aria-label="Close" />
+            </div>
+            {# this element replaced by youtube player iframe #}
+            <div id="card-video-iframe"></div>
+        </div>
+        {# next video - data-target will be id of next video If none, button is hidden #}
+        <div class="adjacent-arrow next"
+             id="video-modal-next"
+             data-target=""
+             title="Next video">
+            <svg>
+                <use href="#icon-adjacent" />
+            </svg>
+        </div>
     </div>
 </div>
-<script src="{% static 'js/video-list.js'%}"></script>
+<script src="{% static 'js/video-list.js'%}" onload="new VideoList();"></script>
