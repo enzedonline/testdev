@@ -13,8 +13,8 @@
             {% endif %}
             <div>{{ self.logged_in_title }}</div>
         {% else %}
-            {% if self.logged_in_icon %}
-                {% menu_icon self.logged_in_icon %}
+            {% if self.logged_out_icon %}
+                {% menu_icon self.logged_out_icon %}
             {% endif %}
             <div>{{ self.logged_out_title }}</div>
         {% endif %}
