@@ -10,8 +10,6 @@ from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
-from site_settings.models import Tokens
-
 class GmailBackend(BaseEmailBackend):
     """
     Django email backend for sending with Google Workspace
@@ -19,7 +17,6 @@ class GmailBackend(BaseEmailBackend):
     def __init__(self, fail_silently=False, **kwargs):
         self.fail_silently = fail_silently
         self._lock = threading.RLock()
-        # service_account_key = Tokens.load().gmail_service_account
         service_account_key = settings.GMAIL_SERVICE_KEY
         # base_credentials used to build user specific credentials in send method
         self.base_credentials = service_account.Credentials.from_service_account_info(
@@ -68,7 +65,7 @@ class GmailBackend(BaseEmailBackend):
             # Send email
             service.users().messages().send(userId='me', body=raw).execute()
         except HttpError as e:
-            logging.warning(
+            logging.error(
                 f"{type(e).__name__} at line {e.__traceback__.tb_lineno} of {__file__}: {e}"
             )
             if not self.fail_silently:
