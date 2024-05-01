@@ -36,7 +36,7 @@ div[data-player-loading=true].video-list-container div.card-video::before {
 div[data-player-loading=true].video-list-container div.card-video>svg.youtube-logo {
     display: none;
 }
-/* styles while loading card with new page - pulsate image */
+/* styles while loading extra cards - pulsate image */
 div[data-cards-loading=true].video-list-container div.card-video>img.card-video-thumbnail {
     display: inline-block;
     vertical-align: middle;
