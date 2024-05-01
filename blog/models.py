@@ -1,38 +1,43 @@
+from bs4 import BeautifulSoup
+from django import forms
+from django.contrib.auth.models import User
+from django.db import models
+from django.utils.functional import cached_property
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
-# from bs4 import BeautifulSoup
-# from django import forms
-# from django.contrib.auth.models import User
-# from django.db import models
-# from django.utils.functional import cached_property
-# from django.utils.safestring import mark_safe
-# from django.utils.translation import gettext_lazy as _
-# from modelcluster.fields import ParentalKey, ParentalManyToManyField
+from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from wagtail.admin.panels import (FieldPanel, InlinePanel, MultiFieldPanel,
                                   MultipleChooserPanel)
 from wagtail.admin.widgets.slug import SlugInput
-# from wagtail.blocks import RawHTMLBlock, RichTextBlock
-# from wagtail.fields import RichTextField, StreamField
+from wagtail.blocks import CharBlock, FloatBlock, RichTextBlock
+from wagtail.contrib.table_block.blocks import TableBlock
+from wagtail.contrib.typed_table_block.blocks import TypedTableBlock
+from wagtail.fields import RichTextField, StreamField
+from wagtail.images.blocks import ImageChooserBlock
 from wagtail.models import Orderable, Page
 
 from blocks.models import *
+from blocks.models import (CollapsibleCardBlock, CSVTableBlock,
+                           ExternalLinkEmbedBlock, FlexCardBlock, HeadingBlock,
+                           ImportTextBlock, LinkBlock, SEOImageChooserBlock)
+from core.forms.restricted_panels_admin_forms import \
+    RestrictedPanelsAdminPageForm
+from core.panels.models import (ImportTextAreaPanel, M2MChooserPanel,
+                                RegexPanel, RestrictedFieldPanel,
+                                RestrictedInlinePanel, UtilityPanel)
+from core.utils import count_words, get_streamfield_text
+from core.widgets.import_textarea_widget import ImportTextAreaWidget
+from core.widgets.input_char_limit import CharLimitTextArea, CharLimitTextInput
+from product.blocks import ProductChooserBlock
 
-# from core.forms import RestrictedPanelsAdminPageForm
-# from core.panels import (ImportTextAreaPanel, M2MChooserPanel, RegexPanel,
-#                          RestrictedFieldPanel, RestrictedInlinePanel,
-#                          UtilityPanel)
-# from core.utils import count_words, get_streamfield_text
-# from core.widgets.import_textarea_widget import ImportTextAreaWidget
-# from product.blocks import ProductChooserBlock
+from .categories import BlogCategory
 
-# from .categories import BlogCategory
 
 class AuthorPanel(FieldPanel):
     class BoundPanel(FieldPanel.BoundPanel):
         def render_html(self, parent_context=None):
             html = super().render_html(parent_context)
             if self.instance.id==None:
-                from bs4 import BeautifulSoup
-                from django.utils.safestring import mark_safe
                 soup = BeautifulSoup(html, "html.parser")
                 chosen = soup.find("input")
                 chosen['value'] = self.request.user.id
@@ -97,30 +102,6 @@ class CarouselImages(Orderable):
 
 
 class BlogPage(Page):
-    from django.contrib.auth.models import User
-    from django.db import models
-    from django.utils.functional import cached_property
-    from django.utils.translation import gettext_lazy as _
-    from modelcluster.fields import ParentalManyToManyField
-    from wagtail.blocks import RawHTMLBlock, RichTextBlock
-    from wagtail.fields import RichTextField, StreamField
-
-    from blocks.models import (CollapsibleCardBlock, CSVTableBlock,
-                               ExternalLinkEmbedBlock, FlexCardBlock,
-                               HeadingBlock, ImportTextBlock, LinkBlock,
-                               SEOImageChooserBlock)
-    from core.forms.restricted_panels_admin_forms import \
-        RestrictedPanelsAdminPageForm
-    from core.panels.models import (ImportTextAreaPanel, M2MChooserPanel,
-                                    RegexPanel, RestrictedFieldPanel,
-                                    RestrictedInlinePanel, UtilityPanel)
-    from core.widgets.import_textarea_widget import ImportTextAreaWidget
-    from core.widgets.input_char_limit import (CharLimitTextArea,
-                                               CharLimitTextInput)
-    from product.blocks import ProductChooserBlock
-
-    from .categories import BlogCategory
-
     parent_page_types = ['blog.BlogIndex']
     subpage_types = []
     wordcount = models.IntegerField(
@@ -180,7 +161,13 @@ class BlogPage(Page):
     content = StreamField(
         [
             ("rich_text", RichTextBlock()),
-            ("html", RawHTMLBlock()),
+            ("typed_table", TypedTableBlock([
+                ('text', CharBlock()),
+                ('numeric', FloatBlock()),
+                ('rich_text', RichTextBlock()),
+                ('image', ImageChooserBlock())
+            ])),
+            ("table", TableBlock()),
             ("code", BaseCodeBlock()),
             ("import_text_block", ImportTextBlock()),
             ("csv_table", CSVTableBlock()),
