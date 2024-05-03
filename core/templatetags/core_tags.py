@@ -1,10 +1,12 @@
 import secrets
 import string
 
+from bs4 import BeautifulSoup
 from django import template
 from wagtail.documents.models import Document
-from wagtail.templatetags.wagtailcore_tags import richtext
 from wagtail.models import Page
+from wagtail.templatetags.wagtailcore_tags import richtext
+
 register = template.Library()
 
 @register.filter()
@@ -51,3 +53,10 @@ def get_picture_rendition(image, width):
             return image.get_rendition(f"width-{width}|format-webp")
         else:
             return image.get_rendition("original|format-webp")
+
+@register.filter()
+def insert_footer_class(rich_text):
+    soup = BeautifulSoup(rich_text, 'html.parser')
+    for p_tag in soup.find_all('p'):
+        p_tag['class'] = p_tag.get('class', []) + ['fr-footer__content-desc']
+    return str(soup)
