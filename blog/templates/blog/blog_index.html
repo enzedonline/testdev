@@ -3,8 +3,7 @@
 {% block content %}
 <div class="px-2">
     <h2>{{ self.title }}</h2>
-    <p>{{ self.menu_title|default:self.title }}</p>
-    <p>{{ self.intro|richtext }}</p>
+    {{ self.intro|richtext }}
     <ul>
         {% for article in self.get_children.live %}
             <li>
