@@ -54,9 +54,15 @@ def get_picture_rendition(image, width):
         else:
             return image.get_rendition("original|format-webp")
 
-@register.filter()
-def insert_footer_class(rich_text):
+@register.simple_tag()
+def richtext_with_css(rich_text, classlist, target_elements=None):
+    """
+    Inserts css classes into rich text html
+    classlist (str): css classes to insert, separate multiple values with space'
+    target_elements(str: elements to apply classes to. None will apply to all. Separate multiple values with space.
+    """
+    target_elements = target_elements.split() if target_elements else True
     soup = BeautifulSoup(rich_text, 'html.parser')
-    for p_tag in soup.find_all('p'):
-        p_tag['class'] = p_tag.get('class', []) + ['fr-footer__content-desc']
-    return str(soup)
+    for p_tag in soup.find_all(target_elements):
+        p_tag['class'] = p_tag.get('class', []) + [classlist]
+    return richtext(str(soup))
