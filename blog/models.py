@@ -49,7 +49,6 @@ class AuthorPanel(FieldPanel):
             return html
         
 class BlogIndex(Page):
-    from wagtail.fields import RichTextField
     parent_page_types = ['home.HomePage']
     subpage_types = ['blog.BlogPage', 'blog.VideoPage']
     max_count = 1
@@ -61,12 +60,7 @@ class BlogIndex(Page):
     ]
 
 class CarouselImages(Orderable):
-    from django.db import models
-    from modelcluster.fields import ParentalKey
-    from wagtail.fields import RichTextField
-
     """Between 1 and 5 images for the blog page carousel."""
-
     page = ParentalKey("blog.BlogPage", related_name="carousel_images")
     carousel_image = models.ForeignKey(
         "wagtailimages.Image",
@@ -161,13 +155,13 @@ class BlogPage(Page):
     content = StreamField(
         [
             ("rich_text", RichTextBlock()),
-            ("typed_table", TypedTableBlock([
-                ('text', CharBlock()),
-                ('numeric', FloatBlock()),
-                ('rich_text', RichTextBlock()),
-                ('image', ImageChooserBlock())
-            ])),
-            ("table", TableBlock()),
+            # ("typed_table", TypedTableBlock([
+            #     ('text', CharBlock()),
+            #     ('numeric', FloatBlock()),
+            #     ('rich_text', RichTextBlock()),
+            #     ('image', ImageChooserBlock())
+            # ])),
+            # ("table", TableBlock()),
             ("code", BaseCodeBlock()),
             ("import_text_block", ImportTextBlock()),
             ("csv_table", CSVTableBlock()),
@@ -199,7 +193,7 @@ class BlogPage(Page):
         # ),
         # FieldPanel('owner'),
         # RegexPanel('some_slug'),
-        # ImportTextFieldPanel('some_text_area', file_type_filter=".csv, .tsv"),
+        # FieldPanel('some_text_area', widget=ImportTextAreaWidget(file_type_filter=".csv, .tsv")),
         # MultiFieldPanel(
         #     [RestrictedInlinePanel("carousel_images", max_num=5, min_num=1)],
         #     heading="Carousel Images",
