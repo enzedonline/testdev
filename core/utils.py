@@ -312,10 +312,10 @@ def get_custom_icons():
     # Initialize an empty list to store relative file paths
     icons = []
 
-    # Construct the path to the 'enzedonline/templates/icons' folder
+    # Construct the path to the '/templates/icons' folder
     icons_path = os.path.join(root_folder, icons_folder)
 
-    # Walk through the directory and find .svg files in the 'enzedonline/templates/icons' folder
+    # Walk through the directory and find .svg files in the '/templates/icons' folder
     for foldername, subfolders, filenames in os.walk(icons_path):
         for filename in fnmatch.filter(filenames, file_extension):
             file_path = os.path.join(foldername, filename)
