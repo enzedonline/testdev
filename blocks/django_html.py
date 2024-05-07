@@ -8,5 +8,5 @@ class DjangoTemplateFragmentBlock(StructBlock):
     class Meta:
         template='blocks/django_code_block.html'
         icon = 'laptop-code'
-        label = _("Raw Django HTML")
+        label = _("Django Fragment")
         label_format = label
