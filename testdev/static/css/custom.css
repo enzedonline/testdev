@@ -181,3 +181,29 @@ code {
   border-radius: 0.4em;
   list-style: none;
 }
+
+div.csv-table-block {
+  margin: 0 auto 1rem auto;
+}
+div.csv-table-block>div.csv-table-container {
+  overflow-x: auto;
+}
+div.csv-table-block>div.csv-table-container>table.csv-table {
+  margin-bottom: 0;
+}
+div.csv-table-block>div.csv-table-container>table.csv-table.table-sm {
+  font-size: var(--font-size-6);
+}
+div.csv-table-block>div.csv-table-container>table.csv-table .csv-table-right-align {
+  text-align: right;
+  padding-right: 0.7rem !important;
+}
+div.csv-table-block>div.table-caption {
+  padding: 0.5rem;
+  color: var(--bs-secondary);
+}
+div.csv-table-block>div.table-caption>p {
+  text-align: inherit;
+  font-size: var(--font-size-6);
+  margin-bottom: 0;
+}
