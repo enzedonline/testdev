@@ -27,6 +27,7 @@ class CSVTableBlockDefinition extends window.wagtailStreamField.blocks
             'row_headers': this.csvTableBlock.structBlock.querySelector(`#${prefix}-row_headers`),
             'compact': this.csvTableBlock.structBlock.querySelector(`#${prefix}-compact`)
         };
+        this.dataErrorElement = this.csvTableBlock.structBlock.querySelector('div[data-contentpath="data"]').querySelector('div.w-field__errors')
         Object.values(this.inputElements).forEach(element => {
             if (element) {
                 element.addEventListener('input', () => {
@@ -76,18 +77,32 @@ class CSVTableBlockDefinition extends window.wagtailStreamField.blocks
         })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    return response.text().then(errorMessage => {
+                        throw new Error(errorMessage);
+                    });
                 }
-                return response.text(); // Assuming the response is text
+                return response.text(); 
             })
             .then(data => {
-                // Now you can work with the data returned by the API
                 this.renderField.value = data;
-                // Here you can render your table based on the data
-                // For example, you can parse the CSV data and generate HTML table dynamically
+                // clear any error messages
+                this.dataErrorElement.querySelectorAll('p').forEach((p) => {
+                    p.remove();
+                });
+                this.dataErrorElement.querySelector('svg').setAttribute('hidden', '');
+                this.inputElements.data.classList.remove("csv-table-block-error");
             })
             .catch(error => {
-                console.error('Error:', error);
+                console.error(error.message);
+                this.dataErrorElement.querySelectorAll('p').forEach((p) => {
+                    p.remove();
+                });
+                const errorMessage = document.createElement('p');
+                errorMessage.textContent = error.message;
+                errorMessage.classList = "error-message csv-table-block-error";
+                this.dataErrorElement.appendChild(errorMessage);
+                this.dataErrorElement.querySelector('svg').removeAttribute('hidden');
+                this.inputElements.data.classList.add("csv-table-block-error");
             })
             .finally(() => {
                 this.footerButtons.forEach(button => {
