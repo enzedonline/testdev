@@ -45,3 +45,7 @@ div.csv-table-block>div.csv-table-rendering-message>svg {
   vertical-align: text-bottom;
   width: 2em;
 }
+
+textarea.csv-table-block-error {
+  border-color: var(--w-color-critical-200);
+}
