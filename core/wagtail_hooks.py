@@ -209,22 +209,18 @@ def check_page_permissions(request, page, page_class=None):
 @hooks.register('insert_global_admin_js')
 def register_admin_js():
     admin_js = static('js/admin.js')
-    import_text_field_panel_js = static('js/import_text_field_panel.js')
     m2m_chooser_js = static('js/m2m_chooser.js')
     return mark_safe(
         f'<script src="{admin_js}"></script>' +
-        f'<script src="{import_text_field_panel_js}"></script>' +
         f'<script src="{m2m_chooser_js}"></script>'
     )
 
 @hooks.register('insert_global_admin_css')
 def register_admin_css():
     admin_css = static('css/admin.css')
-    import_text_field_css = static('css/import_text_field.css')
     m2m_chooser_css = static('css/m2m_chooser.css')
     return mark_safe(
         f'<link rel="stylesheet" href="{admin_css}">' +
-        f'<link rel="stylesheet" href="{import_text_field_css}">' +
         f'<link rel="stylesheet" href="{m2m_chooser_css}">'
     )
 

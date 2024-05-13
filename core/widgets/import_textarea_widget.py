@@ -26,9 +26,10 @@ class ImportTextAreaWidget(AdminAutoHeightTextInput):
             "help": self.msg["help"],
             "accept": self.accept,
         }
-        return super().render(name, value, attrs, renderer) + render_to_string(
+        html = super().render(name, value, attrs, renderer) + render_to_string(
             "widgets/import_textarea_widget.html", context
         )
+        return html
 
     @cached_property
     def media(self):
