@@ -9,7 +9,7 @@ from wagtail.models import Page
 from .draftail_extensions import (DRAFTAIL_ICONS, register_block_feature,
                                   register_inline_styling)
 from .sitemap import SiteMap
-from .thumbnails import ThumbnailOperation
+from .images.image_operations import ThumbnailOperation
 from .utils import has_role, get_custom_icons
 
 import wagtail.admin.rich_text.editors.draftail.features as draftail_features
