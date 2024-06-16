@@ -25,18 +25,20 @@ BASE_DIR = os.path.dirname(PROJECT_DIR)
 
 INSTALLED_APPS = [
     "blocks",
-    "blog",	
+    "blog",
     "core",
     "chatbot",
     # "custom_user",
+    "front_editor",
     "home",
     "menu",
     "product",
+    "quill",
     "search",
     "site_settings",
     'svg',
     "wagtail.contrib.typed_table_block",
-	"wagtail.contrib.routable_page",
+    "wagtail.contrib.routable_page",
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
     "wagtail.contrib.search_promotions",
@@ -62,6 +64,8 @@ INSTALLED_APPS = [
     'django_extensions',
     'generic_chooser',
     "crequest",
+    "django_tiptap",
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [
@@ -137,12 +141,13 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
-LANGUAGE_CODE = "en-gb"
+LANGUAGE_CODE = "en"
 TIME_ZONE = "UTC"
 USE_I18N = True
-USE_L10N = True
+# USE_L10N = True
 USE_TZ = True
-DATETIME_FORMAT='j N Y p'
+# DATETIME_FORMAT = 'j N Y p'
+FORMAT_MODULE_PATH = ["core.formats"]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
@@ -196,9 +201,9 @@ WAGTAILADMIN_RICH_TEXT_EDITORS = {
             'features': [
                 'h2', 'h3', 'h4', 'h5', 'h6', 'bold', 'italic', 'ol', 'ul',
                 'link', 'hr', 'document-link', 'help-text',
-                'underline', 'small', 'code', 'fa', 'checklist', 
+                'underline', 'small', 'code', 'fa', 'checklist',
                 'quoteblock', 'left-align', 'centre-align', 'right-align', 'code-block'
-                ]
+            ]
         }
     },
     'minimal': {
@@ -219,3 +224,104 @@ WAGTAILADMIN_RICH_TEXT_EDITORS = {
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 RESTRICTED_PANEL_OVERRIDE_ROLES = ['Site Managers', 'Something']
+
+DJANGO_TIPTAP_CONFIG = {
+    "width": "500px",
+    "height": "500px",
+    "extensions": [
+        # to see what each extension does, refer to [tiptap.dev](https://www.tiptap.dev/)
+        "bold",
+        "italic",
+        "underline",
+        "strikethrough",
+        "h1",
+        "h2",
+        "h3",
+        "h4",
+        "h5",
+        "h6",
+        "textAlign",
+        "indent",
+        "table",
+        "bulletList",
+        "orderedList",
+        "typography",
+        "clearFormat"
+    ],
+    "placeholderText": "Begin typing here...",  # set None to skip display
+    "unsavedChangesWarningText": "You have unsaved changes",  # set None to skip display
+    "lang": "EN", # if you want to use default tooltips and translations, use this. Valid Options => EN/DE(for now)
+    "tooltips": {
+        # if you want to use your custom tooltips(maybe because you don't prefer default or the language you want isn't there)
+        "bold": "Bold | (ctrl / ⌘) + B",
+        "italic": "Italic | (ctrl / ⌘) + I",
+        "underline": "Underline | (ctrl / ⌘) + U",
+        "strike": "Strikethrough | (ctrl / ⌘) + shift + X",
+        "h1": "Header 1 | (ctrl + alt) / (⌘ + ⌥) + 1",
+        "h2": "Header 2 | (ctrl + alt) / (⌘ + ⌥) + 2",
+        "h3": "Header 3 | (ctrl + alt) / (⌘ + ⌥) + 3",
+        "h4": "Header 4 | (ctrl + alt) / (⌘ + ⌥) + 4",
+        "h5": "Header 5 | (ctrl + alt) / (⌘ + ⌥) + 5",
+        "h6": "Header 6 | (ctrl + alt) / (⌘ + ⌥) + 6",
+        "alignLeft": "Align Left | (ctrl + shift ⇧) / (⌘ + shift ⇧) + L",
+        "alignCenter": "Align Center | (ctrl + shift ⇧) / (⌘ + shift ⇧) + E",
+        "alignRight": "Align Right | (ctrl + shift ⇧) / (⌘ + shift ⇧) + R",
+        "alignJustify": "Justify | (ctrl + shift ⇧) / (⌘ + shift ⇧) + J",
+        "indent": "Indent (Tab ↹)",
+        "outdent": "Outdent (shift ⇧ + Tab ↹)",
+        "bulletList": "Bullet List | (ctrl + shift ⇧) / (⌘ + shift ⇧) + 8",
+        "orderedList": "Numbered List | (ctrl + shift ⇧) / (⌘ + shift ⇧) + 7",
+        "addTable": "Add Table",
+        "deleteTable": "Delete Table",
+        "addColumnBefore": "Add Column Before",
+        "addColumnAfter": "Add Column After",
+        "deleteColumn": "Delete Column",
+        "addRowBefore": "Add Row Before",
+        "addRowAfter": "Add Row After",
+        "deleteRow": "Delete Row",
+        "mergeCells": "Merge Cells",
+        "splitCell": "Split Cell",
+        "toggleHeaderColumn": "Toggle Header Column",
+        "toggleHeaderRow": "Toggle Header Row",
+        "toggleHeaderCell": "Toggle Header Cell",
+        "clearFormat": "Clear Format",
+    },
+    "translations": {
+        # if the lang you defined exists in the default langs, then no need to define translations
+        "row": "Row",
+        "column": "Column",
+        "add": "Add"
+    },
+    "custom_extensions": [],
+    "tiptapOutputFormat": "html",  # options : "html", "json"
+
+}
+
+QUILL_MEDIA_JS = [
+    # syntax-highlight - must be before quilljs
+    "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js",
+    # quill
+    "https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js",
+    # quill-better-table
+    "https://unpkg.com/quill-better-table-plus@0.1.6/dist/quill-better-table-plus.js",
+    # quill-image-compress
+    "https://cdn.jsdelivr.net/npm/quill-image-compress@1.2.21/dist/quill.imageCompressor.min.js",
+    # quill-blot-formatter
+    "https://cdn.jsdelivr.net/npm/quill-blot-formatter@1.0.5/dist/quill-blot-formatter.min.js",
+    # quill-magic-url
+    "https://unpkg.com/quill-magic-url@3.0.0/dist/index.js",
+    # quill-paste-smart - not yet compatible with quill 2 https://github.com/Artem-Schander/quill-paste-smart/issues/33
+    # "https://unpkg.com/quill-paste-smart@latest/dist/quill-paste-smart.js", 
+    # custom
+    "js/quill.js",
+]
+QUILL_MEDIA_CSS = [
+    # quill
+    "https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css",
+    # syntax-highlight
+    "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css",
+    # quill-better-table
+    "https://unpkg.com/quill-better-table-plus@0.1.6/dist/quill-better-table-plus.css",
+    # custom
+    "css/quill.css",
+]
