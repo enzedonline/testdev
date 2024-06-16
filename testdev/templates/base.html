@@ -33,6 +33,7 @@
                 crossorigin="anonymous"
                 async=""></script>
         <script src="{% static 'js/common.js'%}"></script>
+        {% block extra_head %}{% endblock extra_head %}
         {% block extra_css %}
             {# Override this in templates to add extra stylesheets #}
         {% endblock extra_css %}
