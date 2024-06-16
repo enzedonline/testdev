@@ -66,3 +66,7 @@ def richtext_with_css(rich_text, classlist, target_elements=None):
     for p_tag in soup.find_all(target_elements):
         p_tag['class'] = p_tag.get('class', []) + [classlist]
     return richtext(str(soup))
+
+@register.filter(name='is_integer')
+def is_integer(value):
+    return isinstance(value, int)
