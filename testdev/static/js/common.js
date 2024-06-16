@@ -1,39 +1,52 @@
-let localDateTime = (element, date) => {
+const localDateTime = (elementID, dateString) => {
+  const element = document.getElementById(elementID);
   // Only run if element exists and date is valid
-  if (element != null && date instanceof Date && !isNaN(date)) {
+  if (element != null) {
     const date_options = {
-      weekday: "short",
+      // weekday: "short",
       year: "numeric",
       month: "long",
       day: "numeric",
     };
-    const time_options = { 
-      hour: "2-digit", 
-      minute: "2-digit", 
-      hour12: false 
+    const time_options = {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false
     };
-    element.innerText = convertUTCDateToLocalDate(date, date_options, time_options);
+    element.innerText = convertUTCDateToLocalDate(dateString, date_options, time_options);
   }
   else {
-    if (element == null) {
-      console.warn('An null element was passed to localDate, check the element exists on the current page.')
-    }
-    if (!(date instanceof Date) || isNaN(date)) {
-      console.warn('A non-date value was passed to localDate, check a valid datetime object is being passed.')
-    }
+    console.warn('An null element was passed to localDate, check the element exists on the current page.')
   }
 }
 
 // Usage: document.getElementById("id").innerText = convertUTCDateToLocalDate(new Date('2021-08-12 09:58:22'));
 // Non-numeric month format will cause errors in multi-lingual setting
-let convertUTCDateToLocalDate = (date, date_options, time_options) => {
-  local_date = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
-  return (
-    local_date.toLocaleDateString(undefined, date_options) +
-    " " +
-    local_date.toLocaleTimeString(undefined, time_options)
-  );
+const convertUTCDateToLocalDate = (dateString, date_options, time_options) => {
+  const date = new Date(Date.parse(dateString + " UTC"));
+  if (date instanceof Date && !isNaN(date)) {
+    const formattedDate = date.toLocaleDateString(undefined, date_options);
+    const formattedTime = date.toLocaleTimeString(undefined, time_options);
+    const localTimezone = date.toLocaleDateString(navigator.language, { timeZoneName: 'short' }).split(/\s+/).pop();
+    return `${formattedDate} ${formattedTime} (${localTimezone})`;
+  } else {
+    console.warn('Date string could not be parsed, check a valid ISO formatted datetime string is being passed.')
+  }
 };
+
+const localiseDates = (
+  className,
+  date_options = { weekday: "short", year: "numeric", month: "long", day: "numeric" },
+  time_options = { hour: "numeric", minute: "2-digit", hour12: true }
+) => {
+  document.querySelectorAll(`.${className}`).forEach((element) => {
+    const utcDateString = element.innerText;
+    const localDateString = convertUTCDateToLocalDate(utcDateString, date_options, time_options);
+    element.innerText = localDateString;
+  });
+
+}
+
 
 // set all external links to open in new tab
 document.addEventListener('DOMContentLoaded', () => {
@@ -58,24 +71,24 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-const include_js = (js, id) => {
-  return new Promise((resolve, reject) => {
-    let script_tag = document.getElementById(id);
+// const include_js = (js, id) => {
+//   return new Promise((resolve, reject) => {
+//     let script_tag = document.getElementById(id);
 
-    if (!script_tag) {
-      const head = document.head || document.getElementsByTagName('head')[0];
-      script_tag = document.createElement('script');
-      script_tag.type = 'text/javascript';
-      script_tag.src = js;
-      script_tag.id = id;
-      script_tag.onload = resolve; // Resolve the promise when script is loaded
-      script_tag.onerror = reject; // Reject the promise on error
-      head.appendChild(script_tag);
-    } else {
-      resolve(); // Resolve the promise if script is already loaded
-    }
-  });
-};
+//     if (!script_tag) {
+//       const head = document.head || document.getElementsByTagName('head')[0];
+//       script_tag = document.createElement('script');
+//       script_tag.type = 'text/javascript';
+//       script_tag.src = js;
+//       script_tag.id = id;
+//       script_tag.onload = resolve; // Resolve the promise when script is loaded
+//       script_tag.onerror = reject; // Reject the promise on error
+//       head.appendChild(script_tag);
+//     } else {
+//       resolve(); // Resolve the promise if script is already loaded
+//     }
+//   });
+// };
 
 const highlightCodeBlock = (blockID, codeBlockCSS, theme, themeCSS, highlightScript, language, languageScript) => {
   include_css(codeBlockCSS, "code-block-style");
@@ -90,20 +103,20 @@ const highlightCodeBlock = (blockID, codeBlockCSS, theme, themeCSS, highlightScr
   });
 }
 
-const include_css = (css, id) => {
-  let link_tag = document.getElementById(id);
+// const include_css = (css, id) => {
+//   let link_tag = document.getElementById(id);
 
-  if (!link_tag) {
-    const head = document.head || document.getElementsByTagName('head')[0];
-    link_tag = document.createElement('link');
-    link_tag.rel = 'stylesheet';
-    link_tag.href = css;
-    link_tag.id = id;
-    head.appendChild(link_tag);
-  }
+//   if (!link_tag) {
+//     const head = document.head || document.getElementsByTagName('head')[0];
+//     link_tag = document.createElement('link');
+//     link_tag.rel = 'stylesheet';
+//     link_tag.href = css;
+//     link_tag.id = id;
+//     head.appendChild(link_tag);
+//   }
 
-  return link_tag;
-};
+//   return link_tag;
+// };
 
 
 const copyToClipboard = (event, id) => {
