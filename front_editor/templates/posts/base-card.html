@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load static %}
+{% block extra_head %}
+    {{ form.media }}
+    <link rel="stylesheet" href="{% static 'css/posts.css' %}">
+    {% comment %} <link rel="stylesheet" href="{% static 'django_tiptap/css/styles.css' %}"> {% endcomment %}
+{% endblock extra_head %}
+{% block content %}
+    {% include "posts/icons.html" %}
+    <div class="container-fluid pt-0 px-2 px-sm-5 pb-4">
+        <div class="row justify-content-center">
+            <div class="w-90">
+                <div class="card post-form-card">
+                    <div class="card-header">
+                        {% block card-header %}
+                        {% endblock card-header %}
+                    </div>
+                    <div class="card-body">
+                        {% block card-body %}
+                        {% endblock card-body %}
+                    </div>
+                    {% block card-footer %}
+                    {% endblock card-footer %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{% static 'js/post-form.js' %}"></script>
+{% endblock content %}

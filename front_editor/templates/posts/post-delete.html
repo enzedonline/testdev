@@ -1,0 +1,38 @@
+{% extends "posts/base-card.html" %}
+{% block card-header %}
+    Delete Post
+{% endblock card-header %}
+{% block card-body %}
+    <h5>{{ post.title }}</h5>
+    <div class="pb-3">
+        <p class="h6 text-muted">
+            Created by {{ post.author }}, <span class="localise-date">{{ post.first_published_at|date:'Y-m-d H:i:s' }} UTC</span>
+            {% if post.first_published_at != post.last_published_at %}
+                <br>
+                Last updated <span class="localise-date">{{ post.last_published_at|date:'Y-m-d H:i:s' }} UTC</span>
+            {% endif %}
+        </p>
+    </div>
+    <div class="alert alert-danger" role="alert">
+        <span class="post-action-icon" style="transform: translateY(-10%);">
+            <svg>
+                <use href="#icon-warning" />
+            </svg>
+        </span>
+        Deleting this post cannot be undone afterwards.
+    </div>
+    <form method="post" class="post-form">
+        {% csrf_token %}
+        <input type="hidden" name="confirm" value="true">
+        <div class="row">
+            <div class="col">
+                <a href="{{ self.url }}{{ post.id }}/edit/" class="btn btn-outline-success">Cancel</a>
+            </div>
+            <div class="col text-end">
+                <button type="submit" class="btn btn-danger">Delete Post</button>
+            </div>
+        </div>
+    </form>
+    <script>localiseDates("localise-date")</script>
+{% endblock card-body %}
+

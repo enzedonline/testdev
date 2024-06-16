@@ -1,0 +1,42 @@
+<div class="accordion accordion-flush post-search-form" id="accordionFlushExample">
+    <div class="accordion-item position-relative">
+        <h5 class="accordion-header">
+            <button class="accordion-button{% if not filter %} collapsed{% endif %}"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#flush-collapseOne"
+                    aria-expanded="{% if filter %}true{% else %}false{% endif %}"
+                    aria-controls="flush-collapseOne">
+                    Filter 
+            </button>
+            {% if filter %}
+                <span class="badge rounded-pill text-bg-secondary filter-badge">
+                    {{ filter }} 
+                    <a class="clear-filter ps-2" title="Clear" href="{{ page.url }}"><span role="button" aria-label="Clear filter">X</span></a>
+                </span>
+            {% endif %}
+        </h5>
+        <div id="flush-collapseOne"
+             class="accordion-collapse collapse"
+             data-bs-parent="#accordionFlushExample">
+             <form action="{{ page.url }}" method="get">
+                <div class="form-group row gx-2 accordion-body pb-1">
+                    <div class="col">
+                        <input type="text"
+                               onfocus="this.select();"
+                               onmouseup="return false;"
+                               name="q"
+                               class="form-control px-3"
+                               value="{{ request.GET.q }}"
+                               placeholder="Enter search term ...">
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-primary form-control">Search</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<hr>
+

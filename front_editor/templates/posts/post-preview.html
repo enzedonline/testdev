@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %} 
+{% block content %}
+<style>
+    .quill-post {
+        width: 80%;
+        margin: 0 auto 0 auto;
+    }
+    .quill-post img {
+        max-width: 100%;
+    }
+</style>
+<div class="quill-post">
+<h4>{{ object.title }}</h4>
+{{ object.content.html|safe }}
+<hr>
+<p>{{ object.author }}</p>
+</div>
+{% endblock content %}

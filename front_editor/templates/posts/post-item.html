@@ -1,0 +1,50 @@
+{% load post_tags %}
+<div class="card post-form-card mb-2" id="post-{{ post.id }}">
+    <div class="card-body post-card">
+        <div class="row">
+            <div class="col">
+                <h5>{{ post.title }}</h5>
+            </div>
+            <div class="col-auto">
+                <a href="#"
+                   onclick="copyPostUrl('{{ self.full_url }}with/{{ post.id }}/'); return false;"
+                   title="Share Link">
+                    <span class="post-action-icon">
+                        <svg>
+                            <use href="#icon-share"></use>
+                        </svg>
+                    </span>
+                </a>
+                {% if request.user|can_edit:post %}
+                    <a href="{{ self.url }}{{ post.id }}/edit/" title="Edit post">
+                        <span class="post-action-icon ms-3">
+                            <svg>
+                                <use href="#icon-edit"></use>
+                            </svg>
+                        </span>
+                    </a>
+                {% endif %}
+                <span class="h6 text-muted mx-2">{{ post.author }}</span>
+                <span class="author-avatar">
+                    {% if post.author.wagtail_userprofile.avatar %}
+                        <img src="{{ post.author.wagtail_userprofile.avatar.url }}">
+                    {% else %}
+                        <svg>
+                            <use href="#icon-user"></use>
+                        </svg>
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+        <hr class="mt-2 mb-4">
+        <div class="ql-editor">{{ post.content.html|safe }}</div>
+        <hr class="mt-4">
+        <p class="h6 text-muted text-end mb-0">
+            Published <span class="localise-date">{{ post.first_published_at|date:'Y-m-d H:i:s' }}</span>
+            {% if post.first_published_at != post.last_published_at %}
+                <br>
+                Last updated <span class="localise-date">{{ post.last_published_at|date:'Y-m-d H:i:s' }}</span>
+            {% endif %}
+        </p>
+    </div>
+</div>

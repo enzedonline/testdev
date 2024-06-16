@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load static tz %}
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'css/posts.css' %}">
+    <script src="{% static 'js/post-list.js' %}"></script>
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+{% endblock extra_head %}
+{% block content %}
+    {% include "posts/icons.html" %}
+    <div class="container-fluid pt-0 px-2 px-sm-5 pb-4">
+        <div class="row justify-content-center">
+            <div class="w-90">
+                <div class="row">
+                    <div class="col">
+                        <h1>{{ page.title }}</h1>
+                    </div>
+                    <div class="col-auto">
+                        <a class="btn btn-lg btn-primary mt-2" href="{{ page.url }}new" role="button">
+                            <svg><use href="#icon-plus"></use></svg>New Post
+                        </a>
+                    </div>
+                </div>
+                {% include "posts/search-form.html" %}
+                {% if posts %}
+                    {% for post in posts %}
+                        {% include "posts/post-item.html" %}
+                    {% endfor %}
+                {% else %}
+                    <h5>No posts match your search</h5>
+                {% endif %}
+                {% if posts.has_other_pages %}
+                    {% include "posts/pagination.html" %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% include "posts/copy-toast.html" %}
+    {% if with_id %}
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {scrollToId("post-{{ with_id }}");});
+        </script>
+    {% endif %}
+{% endblock content %}

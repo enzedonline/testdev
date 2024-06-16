@@ -1,0 +1,62 @@
+{% extends "posts/base-card.html" %}
+{% block card-header %}
+    {% if post %}
+        Edit Post
+    {% else %}
+        Create a New Post
+    {% endif %}
+{% endblock card-header %}
+{% block card-body %}
+    <form method="post" id="PostForm" class="post-form">
+        {% csrf_token %}
+        {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+        {% with field=form.title %}
+            {% include "posts/form-field.html" %}
+        {% endwith %}
+        <div class="p-2"></div>
+        {% with field=form.content %}
+            {% include "posts/form-field.html" %}
+        {% endwith %}
+        <div class="p-2"></div>
+        {% comment %} {% with field=form.tiptap %}
+            {% include "posts/form-field.html" %}
+        {% endwith %} {% endcomment %}
+        {% comment %} {{ form.tiptap }} {% endcomment %}
+    </form>
+    <div class="pt-4 row">
+        <div class="col">
+            <a href="{{ self.url }}{% if post %}with/{{ post.id }}/{% endif %}" class="btn btn-outline-danger">Cancel</a>
+        </div>
+        <div class="col text-end">
+            <button type="submit" class="btn btn-primary" form="PostForm">
+                {% if post %}
+                    Save Changes
+                {% else %}
+                    Create Post
+                {% endif %}
+            </button>
+        </div>
+    </div>
+{% endblock card-body %}
+{% block card-footer %}
+    {% if post %}
+        <div class="card-footer">
+            <div class="row">
+                <div class="col-auto my-auto">
+                    <a href="{{ self.url }}{{ post.id }}/delete/"
+                       class="btn btn-danger btn-sm">Delete Post</a>
+                </div>
+                <div class="col text-end">
+                    <span class="h6 text-muted">
+                        Created by {{ post.author }}, <span class="localise-date">{{ post.first_published_at|date:'Y-m-d H:i:s' }} UTC</span>
+                        {% if post.first_published_at != post.last_published_at %}
+                            <br>
+                            Last updated <span class="localise-date">{{ post.last_published_at|date:'Y-m-d H:i:s' }} UTC</span>
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    <script>localiseDates("localise-date")</script>
+{% endblock card-footer %}
