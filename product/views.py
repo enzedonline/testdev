@@ -18,10 +18,10 @@ from .models import Product
 
 class ProductViewSet(SnippetViewSet):
     model = Product
-    list_display = ["title", "sku", "get_department_subcategory", ImageColumn("image"), UpdatedAtColumn()]
+    list_display = ["title", ImageColumn("image"), "get_department_subcategory", "sku", UpdatedAtColumn()]
     list_filter = {"title": ["icontains"], "sku": ["icontains"], "dept_subcategory": ["exact"]}
     list_per_page = 50
-    ordering = ["sku"]
+    ordering = ["dept_subcategory", "title"]
 
 setattr(Product.get_department_subcategory, 'admin_order_field', "dept_subcategory")
 setattr(Product.get_department_subcategory, 'short_description', Product.dept_subcategory.field.verbose_name)
