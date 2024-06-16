@@ -3,7 +3,7 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.forms.models import ModelChoiceIterator, ModelMultipleChoiceField
 from django.forms.widgets import SelectMultiple
-from django.template import Context, Template
+from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import FieldPanel
@@ -24,7 +24,7 @@ class M2MChooserPanel(FieldPanel):
             search_text=_("Search"),
             cancel_text=_("Close without changes"),
             clear_filter_text=_("Clear filter"),
-            filter_no_results_text=_("Sorry, no matching records found."),
+            filter_no_results_text=_("No matching records found."),
             widget=None, 
             disable_comments=None, 
             permission=None, 
@@ -132,8 +132,9 @@ class M2MChooserPanel(FieldPanel):
                 f'm2mchooser-{self.opts["field_id"]}'
             ]
             # add rendered chooser html to wrapper element
-            chooser_html = Template(
-                '{% include "panels/m2m_chooser.html" %}'
-            ).render(Context(self.get_context_data()))
+            chooser_html = render_to_string(
+                "panels/m2m_chooser.html", 
+                self.get_context_data()
+            )
             wrapper.append(BeautifulSoup(chooser_html, "html.parser"))
             return str(soup)
