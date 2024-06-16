@@ -1,0 +1,36 @@
+{% load static %}
+<div class="vLargeTextField quill-widget-container">
+    <div id="quill-{{ id }}" class="quill-widget" data-config="{{ config }}" data-type="quill"></div>
+    <input id="quill-input-{{ id }}" name="{{ name }}" type="hidden">
+    {% with script_id=labels|add:id %}
+        {{ labels_json|json_script:script_id }}
+    {% endwith %}
+    <script>
+        (() => {
+            const wrapper = new QuillWrapper(
+                `quill-{{ id }}`,
+                `quill-input-{{ id }}`,
+                JSON.parse(`{{ config|safe|escapejs }}`),
+                {{ labels|safe }}
+            );
+    
+            {% if quill and quill.delta %}
+                // try quill/quill.py/Quill instance
+                const contents = JSON.parse(`{{ quill.delta|safe|escapejs }}`);
+                wrapper.quill.setContents(contents);
+            {% elif quill and quill.html %}
+                wrapper.quill.clipboard.dangerouslyPasteHTML(0, `{{ quill.html|safe }}`);
+            {% elif value %}
+                // try Parsing value as JSON
+                try {
+                    const value = JSON.parse(`{{ value|safe|escapejs }}`);
+                    wrapper.quill.setContents(JSON.parse(value.delta));
+                } catch (e) {
+                    // When a parsing error occurs, the contents are regarded as HTML and the contents of the editor are filled.
+                    wrapper.quill.clipboard.dangerouslyPasteHTML(0, `{{ value|safe }}`);
+                }
+            {% endif %}
+        })();
+    </script>
+    
+</div>
