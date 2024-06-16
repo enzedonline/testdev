@@ -181,7 +181,7 @@ class BlogPage(Page):
     )
     categories = ParentalManyToManyField(
         BlogCategory,
-        verbose_name=_("Blog Categories"),
+        verbose_name=_("Categories"),
         related_name="categories",
     )
 
