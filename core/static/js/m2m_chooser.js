@@ -58,6 +58,9 @@ class M2MChooser {
         // open modal form method =================================================================
         this.chooser.openModalBtn.addEventListener('click', () => {
             this.showSelectedModalItems();
+            if (this.chooser.searchInput.value) { // clear search form
+                this.clearFilter();
+            }
             this.chooser.modal.style.display = 'block';
         });
 
