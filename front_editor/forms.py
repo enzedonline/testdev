@@ -2,7 +2,6 @@ import json
 
 from django import forms
 from django.core.exceptions import ValidationError
-from django_tiptap.widgets import TipTapWidget
 
 from quill.widgets import QuillWidget
 
@@ -15,12 +14,10 @@ class PostForm(forms.ModelForm):
         fields = (
             'title',
             'content',
-            'tiptap',
         )
         widgets = {
-            'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Post title'}),
-            'content': QuillWidget(attrs={'class': 'form-control'}),
-            'tiptap': TipTapWidget(attrs={'class': 'form-control'}),
+            'title': forms.TextInput(attrs={'class': 'form-control-lg', 'placeholder': 'Post title'}),
+            'content': QuillWidget(),
         }
         pass
 
