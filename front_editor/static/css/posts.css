@@ -28,6 +28,10 @@ form.post-form label {
     white-space: nowrap !important;
     border: 0 !important;
 }
+form.post-form input.form-control-lg {
+    font-weight: bold;
+    font-size: x-large;
+}
 .btn>svg {
     height: 1em;
     width: 1em;
@@ -62,20 +66,16 @@ div.quill-widget-container>div.quill-widget>div.ql-editor img {
 /* other front page styles */
 
 span.author-avatar {
-    border-radius: 100%;
     display: inline-block;
-    overflow: hidden;
-    position: relative;
-    text-align: center;
-    vertical-align: middle;
-    height: 2em;
-    width: 2em;
+    height: 2.5em;
+    width: 2.5em;
 }
 span.author-avatar>img,
 span.author-avatar>svg {
-    max-width: 100%;
-    height: 2em;
-    width: auto;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 100%;
 }
 span.post-action-icon {
     display: inline-block;
