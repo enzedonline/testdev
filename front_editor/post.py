@@ -2,8 +2,6 @@ from bs4 import BeautifulSoup
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from django_tiptap.fields import TipTapTextField
-from django_tiptap.widgets import TipTapWidget
 from wagtail.admin.panels import FieldPanel
 from wagtail.admin.ui.tables import UpdatedAtColumn, UserColumn
 from wagtail.models import DraftStateMixin, PreviewableMixin, RevisionMixin
@@ -11,17 +9,13 @@ from wagtail.search import index
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.snippets import SnippetViewSet
 from quill.fields import QuillField
-from quill.widgets import QuillWidget
 
 
 class Post(PreviewableMixin, DraftStateMixin, RevisionMixin, index.Indexed, models.Model):
-    icon = "cogs"
-
     title = models.CharField(
         max_length=100
     )
     content = QuillField()
-    tiptap = TipTapTextField(null=True, blank=True)
     author = models.ForeignKey(
         get_user_model(),
         null=True,
@@ -55,8 +49,7 @@ class Post(PreviewableMixin, DraftStateMixin, RevisionMixin, index.Indexed, mode
             
     panels = [
         FieldPanel("title"),
-        FieldPanel("content", widget=QuillWidget),
-        # FieldPanel("tiptap", widget=TipTapWidget),
+        FieldPanel("content"),
         FieldPanel("author"),
         FieldPanel("page"),
     ]
