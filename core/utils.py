@@ -301,21 +301,12 @@ def sf(number, significant_figures):
     else:
         return round(number, significant_figures - int(math.floor(math.log10(abs(number)))) - 1)
 
-def get_custom_icons():
-    # Specify the root folder
-    root_folder = 'core/templates'
-    icons_folder = 'icons'
-
-    # Specify the file extension you're looking for
-    file_extension = '*.svg'
-
-    # Initialize an empty list to store relative file paths
+def get_custom_icons(root_folder = 'core/templates', icons_folder = 'icons', file_extension = '*.svg'):
+    """ Return a list of icons found in a certain path """
     icons = []
-
-    # Construct the path to the '/templates/icons' folder
     icons_path = os.path.join(root_folder, icons_folder)
 
-    # Walk through the directory and find .svg files in the '/templates/icons' folder
+    # Walk through the directory and find matching files in the icons folder
     for foldername, subfolders, filenames in os.walk(icons_path):
         for filename in fnmatch.filter(filenames, file_extension):
             file_path = os.path.join(foldername, filename)
