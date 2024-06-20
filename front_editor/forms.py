@@ -19,7 +19,6 @@ class PostForm(forms.ModelForm):
             'title': forms.TextInput(attrs={'class': 'form-control-lg', 'placeholder': 'Post title'}),
             'content': QuillWidget(),
         }
-        pass
 
     def clean_content(self):
         content = self.cleaned_data.get('content')
