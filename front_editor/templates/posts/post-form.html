@@ -7,7 +7,7 @@
     {% endif %}
 {% endblock card-header %}
 {% block card-body %}
-    <form method="post" id="PostForm" class="post-form">
+    <form method="post" id="PostForm" class="post-form" data-max-payload={{ self.post_payload_limit }}>
         {% csrf_token %}
         {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
         {% with field=form.title %}
@@ -18,10 +18,39 @@
             {% include "posts/form-field.html" %}
         {% endwith %}
         <div class="p-2"></div>
+        <div class="modal fade"
+             id="payloadModal"
+             data-bs-backdrop="static"
+             data-bs-keyboard="false"
+             tabindex="-1"
+             aria-labelledby="staticBackdropLabel"
+             aria-hidden="true">
+            <div class="modal-dialog modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-danger">
+                        <h2 class="modal-title fs-5" id="staticBackdropLabel">Maximum Size Exceeded</h2>
+                        <button type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            Post size <span id='payloadSize'></span>MB exceeds the <span id='maxPayloadSize'></span>MB limit.
+                        </p>
+                        <p>Please reduce the size.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </form>
     <div class="pt-4 row">
         <div class="col">
-            <a href="{{ self.url }}{% if post %}with/{{ post.id }}/{% endif %}" class="btn btn-outline-danger">Cancel</a>
+            <a href="{{ self.url }}{% if post %}with/{{ post.id }}/{% endif %}"
+               class="btn btn-outline-danger">Cancel</a>
         </div>
         <div class="col text-end">
             <button type="submit" class="btn btn-primary" form="PostForm">

@@ -1,4 +1,6 @@
 const form = document.getElementById('PostForm');
+const payloadModal = new bootstrap.Modal(document.getElementById('payloadModal'))
+const maxPayloadSize = Number(form.dataset.maxPayload); // 1024 * 1024; // For example, 1 MB
 
 form.addEventListener('submit', (event) => {
     // Prevent the form from submitting immediately
@@ -7,21 +9,18 @@ form.addEventListener('submit', (event) => {
     // Calculate the payload size
     const formData = new FormData(form);
     let payloadSize = 0;
-
     for (const [key, value] of formData.entries()) {
         // Calculate the size of each key-value pair
         payloadSize += key.length + value.length;
     }
-
-    // Optionally, you can also add the size of other form elements, e.g., file inputs
-
-    // Check if the payload size exceeds a certain limit
-    const maxPayloadSize = 1024 * 1024; // For example, 1 MB
+    payloadSize = payloadSize / (1024 * 1024);
+    // Check if the payload size exceeds the limit
     if (payloadSize > maxPayloadSize) {
-        alert('Payload size exceeds the limit. Please reduce the size.');
+        form.querySelector('#payloadSize').textContent = Math.ceil(payloadSize * 10) / 10;
+        form.querySelector('#maxPayloadSize').textContent = maxPayloadSize;
+        payloadModal.show();
         return;
     }
 
-    // If the payload size is within the limit, you can submit the form
     form.submit();
 });

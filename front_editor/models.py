@@ -16,6 +16,7 @@ from .utils import is_in_group, user_has_perms
 
 class PostsPage(RoutablePageMixin, Page):
     page_size = 10 # posts per page
+    post_payload_limit = 0.5 # maximum size (MB) for each post
 
     @path("")
     @path("page/<int:page_num>/")
