@@ -52,8 +52,8 @@ div.quill-widget-container>div.ql-toolbar {
     border-radius: var(--bs-border-radius) var(--bs-border-radius) 0 0;
     background-color: var(--bs-light);
     position: sticky !important;
-    top: calc(0.2rem + 61px) !important;
-    z-index: 2 !important;
+    top: calc(0.2rem + 52px) !important;
+    z-index: 9999 !important;
 }
 div.quill-widget-container>div.quill-widget {
     border-radius: 0 0 var(--bs-border-radius) var(--bs-border-radius);
