@@ -20,7 +20,7 @@ from django.utils.safestring import mark_safe
             
 @hooks.register('insert_global_admin_css')
 def register_admin_css():
-    admin_quill_css = static('css/admin-quill-editor.css')
+    admin_quill_css = static('css/quill/admin-quill-editor.css')
     return mark_safe(
         f'<link rel="stylesheet" href="{admin_quill_css}">' 
     )            

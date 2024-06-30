@@ -53,7 +53,7 @@ div.quill-widget-container>div.ql-toolbar {
     background-color: var(--bs-light);
     position: sticky !important;
     top: calc(0.2rem + 52px) !important;
-    z-index: 9999 !important;
+    z-index: 1 !important;
 }
 div.quill-widget-container>div.quill-widget {
     border-radius: 0 0 var(--bs-border-radius) var(--bs-border-radius);
@@ -118,6 +118,24 @@ div.ql-editor div.ql-code-block-container {
     border-radius: 0.6em;
     white-space: pre;
 }
+div.ql-editor .ql-image-align-left,
+div.ql-editor .ql-iframe-align-left {
+    float: left;
+    padding: 0.5em 1em 0.5em 0;
+}
+div.ql-editor .ql-image-align-center,
+div.ql-editor .ql-iframe-align-center  {
+    text-align: center;
+    margin: 0 auto;
+    display: block;
+    padding: 0.5em 0;
+}
+div.ql-editor .ql-image-align-right,
+div.ql-editor .ql-iframe-align-right  {
+    float: right;
+    padding: 0.5em 0 0.5em 1em;
+}
+
 /* search form */
 div.post-search-form button.accordion-button {
     padding: 0;
