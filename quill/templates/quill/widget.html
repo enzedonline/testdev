@@ -13,22 +13,9 @@
                 JSON.parse(`{{ config|safe|escapejs }}`),
                 {{ labels|safe }}
             );
-    
             {% if quill and quill.delta %}
-                // try quill/quill.py/Quill instance
                 const contents = JSON.parse(`{{ quill.delta|safe|escapejs }}`);
                 wrapper.quill.setContents(contents);
-            {% elif quill and quill.html %}
-                wrapper.quill.clipboard.dangerouslyPasteHTML(0, `{{ quill.html|safe }}`);
-            {% elif value %}
-                // try Parsing value as JSON
-                try {
-                    const value = JSON.parse(`{{ value|safe|escapejs }}`);
-                    wrapper.quill.setContents(JSON.parse(value.delta));
-                } catch (e) {
-                    // When a parsing error occurs, the contents are regarded as HTML and the contents of the editor are filled.
-                    wrapper.quill.clipboard.dangerouslyPasteHTML(0, `{{ value|safe }}`);
-                }
             {% endif %}
         })();
     </script>

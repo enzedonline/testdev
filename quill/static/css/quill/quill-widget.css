@@ -69,7 +69,7 @@ div.quill-widget-container>div.quill-widget>div.ql-editor div.ql-code-block-cont
 div.quill-widget-container>div.ql-toolbar {
     position: sticky !important;
     top: calc(0.2rem + 50px) !important;
-    z-index: 2 !important;
+    z-index: 1 !important;
 }
 
 @media screen and (max-width: 800px) {
@@ -97,56 +97,9 @@ div.quill-widget-container>div.ql-toolbar>span.ql-formats>span.ql-picker.ql-expa
     stroke: #676767;
 }
 
-/* table button always active - override default style */
-div.quill-widget-container>div.ql-toolbar span.ql-better-table-plus>span.ql-picker-label.ql-active .ql-fill {
-    fill: #444;
-}
-
-div.quill-widget-container>div.ql-toolbar span.ql-better-table-plus>span.ql-picker-label.ql-active:hover .ql-fill {
-    fill: #06c;
-}
-
-div.quill-widget-container>div.ql-toolbar span.ql-better-table-plus>span.ql-picker-label.ql-active .ql-stroke {
-    stroke: #444;
-}
-
-div.quill-widget-container>div.ql-toolbar span.ql-better-table-plus>span.ql-picker-label.ql-active:hover .ql-stroke {
-    stroke: #06c;
-}
-
-div.quill-widget-container>div.ql-toolbar span.ql-better-table-plus .ql-picker-options {
-    padding: 3px 5px;
-    width: 152px;
-}
-
-div.quill-widget-container>div.ql-toolbar span.ql-better-table-plus .ql-picker-item {
-    border: 1px solid transparent;
-    float: left;
-    height: 16px;
-    margin: 2px;
-    padding: 0px;
-    width: 16px;
-    background: lightsteelblue;
-}
-
-div.quill-widget-container>div.ql-toolbar span.ql-better-table-plus .ql-picker-item:hover,
-div.quill-widget-container>div.ql-toolbar span.ql-better-table-plus .ql-picker-item.ql-picker-item-highlight {
-    border-color: #000;
-    background: steelblue;
-}
-
-div.quill-widget-container>div.ql-toolbar span.ql-better-table-plus.ql-picker {
-    width: 28px;
-}
-
-div.quill-widget-container>div.ql-toolbar span.ql-better-table-plus.ql-picker .ql-picker-label {
-    padding: 2px 4px;
-}
-
 div.qlbt-operation-menu {
     padding: 5px 0;
 }
-
 div.qlbt-operation-menu>div.qlbt-operation-menu-item {
     padding: 4px 16px;
     background-color: #fff;
