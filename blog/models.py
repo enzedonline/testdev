@@ -15,6 +15,7 @@ from wagtail.contrib.typed_table_block.blocks import TypedTableBlock
 from wagtail.fields import RichTextField, StreamField
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.models import Orderable, Page
+from wagtail.search import index
 
 from blocks.models import *
 from blocks.models import (CollapsibleCardBlock, CSVTableBlock,
@@ -31,7 +32,8 @@ from core.widgets.input_char_limit import CharLimitTextArea, CharLimitTextInput
 from product.blocks import ProductChooserBlock
 
 from .categories import BlogCategory
-
+from .partners import Partnership
+from .spacecraft import Spacecraft, ImageDetailPageSpacecraftOrderable
 
 class AuthorPanel(FieldPanel):
     class BoundPanel(FieldPanel.BoundPanel):
@@ -67,7 +69,7 @@ class CarouselImages(Orderable):
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        related_name="+",
+        related_name="carousel_image",
         verbose_name="Image",
     )
     caption = RichTextField(null=True, blank=True)
@@ -198,6 +200,10 @@ class BlogPage(Page):
         #     [RestrictedInlinePanel("carousel_images", max_num=5, min_num=1)],
         #     heading="Carousel Images",
         # ),
+        MultiFieldPanel(
+            [InlinePanel("spacecraft_page", max_num=5, min_num=1)],
+            heading="Spacecraft",
+        ),
         # RestrictedFieldPanel('some_date'),
         # FieldPanel('some_text', widget=CharLimitTextInput(min=10, max=20, enforced=True)),
         # FieldPanel('some_text_area', widget=CharLimitTextArea(min=10, max=20)),
@@ -289,6 +295,20 @@ class BlogPage(Page):
     ]
 
     base_form_class = RestrictedPanelsAdminPageForm
+
+    search_fields = Page.search_fields + [
+        index.RelatedFields(
+            "spacecraft_page", 
+            [
+                index.RelatedFields(
+                    "spacecraft_name", 
+                    [
+                        index.AutocompleteField("spacecraft")
+                    ]
+                ),
+            ]
+        ),
+    ]
 
     class Meta:
         verbose_name = "Blog Page"
