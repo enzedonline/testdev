@@ -201,7 +201,7 @@ class BlogPage(Page):
         #     heading="Carousel Images",
         # ),
         MultiFieldPanel(
-            [InlinePanel("spacecraft_page", max_num=5, min_num=1)],
+            [InlinePanel("spacecrafts", max_num=5, min_num=1)],
             heading="Spacecraft",
         ),
         # RestrictedFieldPanel('some_date'),
@@ -298,12 +298,12 @@ class BlogPage(Page):
 
     search_fields = Page.search_fields + [
         index.RelatedFields(
-            "spacecraft_page", 
+            "spacecrafts", 
             [
                 index.RelatedFields(
-                    "spacecraft_name", 
+                    "spacecraft", 
                     [
-                        index.AutocompleteField("spacecraft")
+                        index.AutocompleteField("title"),
                     ]
                 ),
             ]
