@@ -107,6 +107,8 @@ MEDIA_JS = [
     "https://cdn.jsdelivr.net/npm/quill-image-compress@1.2.21/dist/quill.imageCompressor.min.js",
     # quill-blot-formatter
     static("js/quill/quill-blot-formatter-2.min.js"),
+    # katex - required for formula
+    "https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js",
     # quill-magic-url
     "https://unpkg.com/quill-magic-url@3.0.0/dist/index.js",
     # quill-paste-smart - not yet compatible with quill 2 https://github.com/Artem-Schander/quill-paste-smart/issues/33
@@ -124,6 +126,8 @@ MEDIA_CSS = [
     "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css",
     # quill-better-table
     "https://unpkg.com/quill-better-table-plus@0.1.6/dist/quill-better-table-plus.css",
+    # katex - required for formula
+    "https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css",
     # quill-insert-better-table-plus
     static("css/quill/quill-insert-better-table-plus.css"),
     # quill-blot-formatter
