@@ -154,16 +154,9 @@ class QuillField(models.TextField):
 
     def clean(self, value, model_instance):
         # tidy up quill editor artifacts in the html
+        # required until quill.getSemanticHTML() compatible with embeds
+        # see note in static/js/quill-widget.js
         soup = BeautifulSoup(value.html, 'html.parser')
-        # remove quill blot formatter cursor styles not cleaned up
-        for img in soup.find_all('img'):
-            if img.has_attr('style') and 'cursor' in img['style']:
-                # Remove 'cursor' style if present
-                styles = img['style'].split(';')
-                styles = [s for s in styles if not s.strip().startswith('cursor')]
-                img['style'] = ';'.join(styles).strip()
-                if not img['style']:  # Remove the style attribute if it's empty
-                    del img['style']
         # Remove language selector from code blocks
         for select in soup.select('div.ql-code-block-container > select'):
             select.decompose()
