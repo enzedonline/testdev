@@ -28,8 +28,14 @@ div.quill-widget-container>div.quill-widget h4,
 div.quill-widget-container>div.quill-widget h5,
 div.quill-widget-container>div.quill-widget h6,
 div.quill-widget-container>div.quill-widget p {
-    padding: inherit;
-    margin: inherit;
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: inherit;
+    padding-bottom: inherit;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: inherit;
+    margin-bottom: inherit;
     font-size: inherit;
     color: inherit;
 }
