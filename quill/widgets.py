@@ -13,7 +13,7 @@ from django.utils.encoding import force_str
 from django.utils.functional import Promise
 from django.utils.safestring import mark_safe
 
-from .config import DEFAULT_CONFIG, MEDIA_CSS, MEDIA_JS, TOOLBAR_LABELS
+from .config import DEFAULT_CONFIG, MEDIA_CSS, MEDIA_JS, BUTTON_TOOLTIPS, TOOLBAR_LABELS
 
 __all__ = (
     "LazyEncoder",
@@ -83,6 +83,15 @@ class QuillWidget(forms.Textarea):
                 raise ImproperlyConfigured(
                     "QUILL_CONFIGS settings must be a Mapping object"
                 )
+        # toolbar button tooltips
+        self.button_tooltips = BUTTON_TOOLTIPS.copy()
+        button_tooltips = getattr(settings, "QUILL_BUTTON_TOOLTIPS", None)
+        if button_tooltips and isinstance(button_tooltips, list) and all(isinstance(item, tuple) for item in button_tooltips):
+            dict_button_tooltips = dict(self.button_tooltips)
+            for key, value in button_tooltips:
+                dict_button_tooltips[key] = value
+            self.button_tooltips = list(dict_button_tooltips)
+        # toolbar button text labels
         self.toolbar_labels = TOOLBAR_LABELS.copy()
         toolbar_labels = getattr(settings, "QUILL_TOOLBAR_LABELS", None)
         if toolbar_labels and isinstance(toolbar_labels, list) and all(isinstance(item, tuple) for item in toolbar_labels):
@@ -104,6 +113,8 @@ class QuillWidget(forms.Textarea):
         else:
             attrs["value"] = value
         final_attrs = self.build_attrs(self.attrs, attrs)
+        tooltips = [(convert_lazy_to_str(k), convert_lazy_to_str(v))
+                  for k, v in self.button_tooltips]
         labels = [(convert_lazy_to_str(k), convert_lazy_to_str(v))
                   for k, v in self.toolbar_labels]
         return mark_safe(
@@ -116,6 +127,7 @@ class QuillWidget(forms.Textarea):
                     "config": json_encode(self.config),
                     "quill": final_attrs.get("quill", None),
                     "value": final_attrs.get("value", None),
+                    "tooltips": json.dumps(tooltips),
                     "labels": json.dumps(labels),
                 },
             )

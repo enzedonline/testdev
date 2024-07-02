@@ -89,7 +89,9 @@ DEFAULT_CONFIG = {
                 'insert-better-table-plus': '_toolbarResponse'
             }
         },
-        # 'keyboard': { https://github.com/seehar/quill-better-table-plus/issues/6
+        # quillBetterTablePlus.keyboardBindings not currently compatible with quill 2
+        # https://github.com/seehar/quill-better-table-plus/issues/6
+        # 'keyboard': { 
         #     'bindings': 'quillBetterTablePlus.keyboardBindings'
         # }
     },
@@ -135,7 +137,9 @@ MEDIA_CSS = [
     # quill widget
     static("css/quill/quill-widget.css"),
 ]
-TOOLBAR_LABELS = [
+BUTTON_TOOLTIPS = [
+    # support for multi-lingual tooltips
+    # (query selector, tooltip text)
     ('span.ql-header', _("Heading Size")),
     ('button.ql-bold', _("Bold")),
     ('button.ql-italic', _("Italic")),
@@ -146,14 +150,10 @@ TOOLBAR_LABELS = [
     ('button.ql-indent[value="-1"]', _("Decrease Indent")),
     ('button.ql-indent[value="+1"]', _("Increase Indent")),
     ('span.ql-align', _("Text Align")),
-    ('span.ql-align>span.ql-picker-options>span:not([data-value])', _(
-        "Align Left")),
-    ('span.ql-align>span.ql-picker-options>span[data-value="center"]', _(
-        "Align Centre")),
-    ('span.ql-align>span.ql-picker-options>span[data-value="right"]', _(
-        "Align Right")),
-    ('span.ql-align>span.ql-picker-options>span[data-value="justify"]', _(
-        "Justfied")),
+    ('span.ql-align>span.ql-picker-options>span:not([data-value])', _("Align Left")),
+    ('span.ql-align>span.ql-picker-options>span[data-value="center"]', _("Align Centre")),
+    ('span.ql-align>span.ql-picker-options>span[data-value="right"]', _("Align Right")),
+    ('span.ql-align>span.ql-picker-options>span[data-value="justify"]', _("Justfied")),
     ('span.ql-insert-better-table-plus', _("Insert Table")),
     ('button.ql-list[value="ordered"]', _("Ordered List")),
     ('button.ql-list[value="bullet"]', _("Bullet list")),
@@ -168,4 +168,16 @@ TOOLBAR_LABELS = [
     ('span-ql-color', _("Font Colour")),
     ('span.ql-background', _("Background Colour")),
     ('button.ql-clean', _("Clear Formatting"))
+]
+TOOLBAR_LABELS = [
+    # support for multi-lingual dropdown labels
+    # (query selector, laabel text)
+    # font size labels
+    ('.ql-snow .ql-picker.ql-header .ql-picker-label[data-value="1"]::before, .ql-picker.ql-header .ql-picker-item[data-value="1"]::before', _("Heading 1")),
+    ('.ql-snow .ql-picker.ql-header .ql-picker-label[data-value="2"]::before, .ql-picker.ql-header .ql-picker-item[data-value="2"]::before', _("Heading 2")),
+    ('.ql-snow .ql-picker.ql-header .ql-picker-label[data-value="3"]::before, .ql-picker.ql-header .ql-picker-item[data-value="3"]::before', _("Heading 3")),
+    ('.ql-snow .ql-picker.ql-header .ql-picker-label[data-value="4"]::before, .ql-picker.ql-header .ql-picker-item[data-value="4"]::before', _("Heading 4")),
+    ('.ql-snow .ql-picker.ql-header .ql-picker-label[data-value="5"]::before, .ql-picker.ql-header .ql-picker-item[data-value="5"]::before', _("Heading 5")),
+    ('.ql-snow .ql-picker.ql-header .ql-picker-label[data-value="6"]::before, .ql-picker.ql-header .ql-picker-item[data-value="6"]::before', _("Heading 6")),
+    ('.ql-snow .ql-picker.ql-header .ql-picker-label:not([data-value])::before, .ql-picker.ql-header .ql-picker-item:not([data-value])::before', _("Normal")),
 ]

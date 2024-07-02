@@ -1,5 +1,5 @@
 class QuillWrapper {
-    constructor(targetDivId, targetInputId, quillOptions, toolbarLabels) {
+    constructor(targetDivId, targetInputId, quillOptions, tooltips, labels) {
         this.targetDiv = document.getElementById(targetDivId);
         if (!this.targetDiv) throw 'Target div(' + targetDivId + ') id was invalid';
         this.targetInput = document.getElementById(targetInputId);
@@ -9,7 +9,8 @@ class QuillWrapper {
         this.qlEditor = this.targetDiv.querySelector('div.ql-editor');
         this.toolbar = this.targetDiv.parentElement.querySelector('div[role="toolbar"]')
         this.setClearFormattingIcon();
-        this.addTitles(toolbarLabels);
+        this.addTooltips(tooltips);
+        this.replaceLabels(labels);
         this.quill.on('text-change', () => {
             const delta = JSON.stringify(this.quill.getContents());
             const htmlClone = this.qlEditor.cloneNode(true);
@@ -20,17 +21,32 @@ class QuillWrapper {
     }
 
     // add title attributes to toolbar buttons
-    addTitles(toolbarLabels) {
+    addTooltips(tooltips) {
         if (this.toolbar) {
-            toolbarLabels.forEach(([selector, title]) => {
+            tooltips.forEach(([selector, tooltip]) => {
                 try {
                     this.toolbar.querySelectorAll(selector).forEach(element => {
-                        element.setAttribute('title', title);
+                        element.setAttribute('title', tooltip);
                     });
                 } catch (error) {
-                    console.warn(`Quill Toolbar Labels - Invalid selector: ${selector}. Error: ${error.message}`);
+                    console.warn(`Quill Tooltips - Invalid selector: ${selector}. Error: ${error.message}`);
                 }
             });
+        }
+    }
+
+    // set labels on toolbar items - multilang support for dropdown items such as font/heading size
+    replaceLabels(labels) {
+        if (this.toolbar) {
+            try {
+                const style = document.createElement('style');
+                style.innerHTML = labels.map(([selector, label]) => {
+                    return `${selector} { content: '${label}' !important; }`;
+                }).join(' ');
+                document.head.appendChild(style);
+            } catch (error) {
+                console.warn(`Quill Toolbar Labels - Error: ${error.message}`);
+            }
         }
     }
 
