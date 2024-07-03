@@ -5,9 +5,11 @@ from django.views import defaults as default_views
 from wagtail import urls as wagtail_urls
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.documents import urls as wagtaildocs_urls
-from core.views import SitemapView
 
+from core.views import SitemapView
 from search import views as search_views
+
+from .api import api_router
 
 urlpatterns = [
     path("django-admin/", admin.site.urls),
@@ -38,6 +40,7 @@ urlpatterns = urlpatterns + [
     # Wagtail's page serving mechanism. This should be the last pattern in
     # the list:
     path('', include('chatbot.urls')),
+    re_path(r'^api/v2/', api_router.urls),
     path("", include(wagtail_urls)),
     # Alternatively, if you want Wagtail pages to be served from a subpath
     # of your site, rather than the site root:

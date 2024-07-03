@@ -65,6 +65,8 @@ INSTALLED_APPS = [
     'generic_chooser',
     "crequest",
     'widget_tweaks',
+    'wagtail.api.v2',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
