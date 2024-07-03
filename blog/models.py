@@ -98,6 +98,8 @@ class CarouselImages(Orderable):
 
 
 class BlogPage(Page):
+    base_form_class = RestrictedPanelsAdminPageForm
+
     parent_page_types = ['blog.BlogIndex']
     subpage_types = []
     wordcount = models.IntegerField(
@@ -294,7 +296,9 @@ class BlogPage(Page):
         ], _('For search engines')),
     ]
 
-    base_form_class = RestrictedPanelsAdminPageForm
+    api_fields = [
+        'spacecrafts',
+    ]
 
     search_fields = Page.search_fields + [
         index.RelatedFields(
