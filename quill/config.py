@@ -125,7 +125,7 @@ MEDIA_CSS = [
     # quill
     "https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css",
     # syntax-highlight
-    "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css",
+    "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css",
     # quill-better-table
     "https://unpkg.com/quill-better-table-plus@0.1.6/dist/quill-better-table-plus.css",
     # katex - required for formula
