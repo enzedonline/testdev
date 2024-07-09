@@ -1,0 +1,20 @@
+{% load static %}
+<div class="vLargeTextField quill-widget-container">
+    <div id="quill-{{ id }}" class="quill-widget" data-config="{{ config }}" data-type="quill"></div>
+    <input id="quill-input-{{ id }}" name="{{ name }}" type="hidden">
+    <script>
+        (() => {
+            const wrapper = new QuillWrapper(
+                `quill-{{ id }}`,
+                `quill-input-{{ id }}`,
+                JSON.parse(`{{ config|safe|escapejs }}`),
+                JSON.parse(`{{ tooltips|safe|escapejs }}`),
+                JSON.parse(`{{ labels|safe|escapejs }}`),
+            );
+            {% if quill and quill.delta %}
+                const contents = JSON.parse(`{{ quill.delta|safe|escapejs }}`);
+                wrapper.quill.setContents(contents);
+            {% endif %}
+        })();
+    </script>
+</div>

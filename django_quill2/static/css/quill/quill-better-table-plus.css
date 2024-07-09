@@ -1,0 +1,162 @@
+div.quill-better-table-wrapper {
+    overflow-x: auto;
+}
+
+table.quill-better-table {
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+/* editor table border style */
+table.quill-better-table td {
+    padding: 2px 5px;
+    border: 1px dashed #ccc;
+}
+
+/* ===== quill-better-tables-plus context menu ===== */
+div.qlbt-operation-menu {
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    font-size: 14px;
+    z-index: 100;
+    overflow: hidden;
+    padding: 5px 0;
+}
+
+div.qlbt-operation-menu>div.qlbt-operation-menu-item {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    cursor: pointer;
+    color: #595959;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 4px 16px;
+}
+
+div.qlbt-operation-menu>div.qlbt-operation-menu-item:hover {
+    background-color: #efefef;
+}
+
+div.qlbt-operation-menu>div.qlbt-operation-menu-item>span.qlbt-operation-menu-text {
+    line-height: 1.2;
+}
+
+div.qlbt-operation-menu>div.qlbt-operation-menu-dividing {
+    height: 1px;
+    background-color: #efefef;
+    margin: 3px 0;
+}
+
+div.qlbt-operation-menu>div.qlbt-operation-menu-subtitle {
+    color: #999;
+    font-size: 14px;
+    padding: 5px 16px;
+}
+
+div.qlbt-operation-menu>div.qlbt-operation-color-picker {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 0 16px 10px;
+    background-color: #fff;
+    overflow: hidden;
+}
+
+div.qlbt-operation-menu>div.qlbt-operation-color-picker>div.qlbt-operation-color-picker-item {
+    width: 20px;
+    height: 20px;
+    border: 1px solid #595959;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    cursor: pointer;
+}
+
+div.qlbt-operation-menu>div.qlbt-operation-menu-item>span.qlbt-operation-menu-icon {
+    margin-right: 8px;
+    height: 20px;
+    width: 20px;
+    font-size: 0;
+}
+
+/* active cell highlight styles */
+
+div.ql-container div.qlbt-selection-line.qlbt-selection-line-left::before {
+    position: absolute;
+    left: -2px;
+    top: -2px;
+    content: '';
+    width: 5px;
+    height: 5px;
+    background-color: #0589f3;
+    border-radius: 5px;
+}
+
+div.ql-container div.qlbt-selection-line.qlbt-selection-line-right::before {
+    position: absolute;
+    right: -2px;
+    bottom: -3px;
+    content: '';
+    width: 5px;
+    height: 5px;
+    background-color: #0589f3;
+    border-radius: 5px;
+}
+
+/* column resize tool styles */
+
+div.qlbt-col-tool {
+    position: absolute;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+    z-index: 99;
+    height: 16px;
+}
+
+div.qlbt-col-tool div.qlbt-col-tool-cell {
+    position: relative;
+    background-color: #fff;
+    border-top: 1px solid #000;
+    border-right: 1px solid #000;
+    border-bottom: 1px solid #000;
+}
+
+div.qlbt-col-tool div.qlbt-col-tool-cell:first-child {
+    border-left: 1px solid #000;
+}
+
+div.qlbt-col-tool div.qlbt-col-tool-cell-holder {
+    position: absolute;
+    right: -1px;
+    top: 0;
+    bottom: 0;
+    z-index: 3;
+    width: 1px;
+    background-color: transparent;
+    cursor: ew-resize;
+}
+
+div.qlbt-col-tool div.qlbt-col-tool-cell-holder:hover {
+    background-color: #0589f3;
+}
+
+div.qlbt-col-tool div.qlbt-col-tool-cell-holder::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -6px;
+    display: block;
+    width: 8px;
+    height: 100%;
+}
+
+div.qlbt-col-tool div.qlbt-col-tool-cell-holder::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: -6px;
+    display: block;
+    width: 8px;
+    height: 100%;
+}

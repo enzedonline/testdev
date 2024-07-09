@@ -1,0 +1,182 @@
+div.form-row div.quill-widget-container {
+    display: inline-block;
+}
+
+.quill-editor iframe,
+.quill-editor video,
+button.ytp-large-play-button,
+button.ytp-button {
+    pointer-events: none;
+}
+
+/* Override default quill snow theme */
+div.quill-widget-container>div.quill-widget {
+    font-family: inherit;
+    font-size: inherit;
+}
+
+div.quill-widget-container>div.quill-widget>div.ql-editor {
+    min-height: 12em;
+}
+
+div.quill-widget-container>div.quill-widget ol {
+    padding-left: 0.5em;
+}
+
+div.quill-widget-container>div.quill-widget h2,
+div.quill-widget-container>div.quill-widget h3,
+div.quill-widget-container>div.quill-widget h4,
+div.quill-widget-container>div.quill-widget h5,
+div.quill-widget-container>div.quill-widget h6,
+div.quill-widget-container>div.quill-widget p {
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: inherit;
+    padding-bottom: inherit;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: inherit;
+    margin-bottom: inherit;
+    font-size: inherit;
+    color: inherit;
+}
+
+div.quill-widget-container>div.quill-widget h2 {
+    font-size: var(--font-size-2);
+    padding: 0.35rem 0;
+}
+
+div.quill-widget-container>div.quill-widget h3 {
+    font-size: var(--font-size-3);
+    padding: 0.25rem 0;
+}
+
+div.quill-widget-container>div.quill-widget h4 {
+    font-size: var(--font-size-4);
+    padding: 0.15rem 0;
+}
+
+div.quill-widget-container>div.quill-widget h5 {
+    font-size: var(--font-size-5);
+    padding: 0.125rem 0;
+}
+
+div.quill-widget-container>div.quill-widget h6 {
+    font-size: var(--font-size-6);
+    padding: 0.1rem 0;
+}
+
+div.quill-widget-container>div.quill-widget>div.ql-editor div.ql-code-block-container {
+    background-color: #0D1117;
+    padding: 1.5em;
+    border-radius: 0.6em;
+}
+
+div.quill-widget-container>div.quill-widget table,
+div.quill-widget-container>div.quill-widget blockquote {
+    margin-bottom: 1em;
+}
+
+div.quill-widget-container>div.ql-toolbar>span.ql-formats {
+    margin: 0 5px 3px 0;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #44444444;
+    border-radius: 5px;
+    background: linear-gradient(to bottom, #ffffff, #e0e0e0);
+}
+
+div.quill-widget-container>div.ql-toolbar>span.ql-formats>span.ql-picker:hover,
+div.quill-widget-container>div.ql-toolbar>span.ql-formats>button:hover {
+    background: linear-gradient(to bottom, #e5e5e5ee, #b3b3b3d7);
+}
+
+div.quill-widget-container>div.ql-toolbar>span.ql-formats>span.ql-picker.ql-expanded span.ql-picker-label .ql-stroke,
+div.quill-widget-container>div.ql-toolbar>span.ql-formats>span.ql-picker.ql-expanded span.ql-picker-label {
+    color: #676767;
+    stroke: #676767;
+}
+
+/* ==================== wagtail & django admin page styles ==================== */
+
+div.w-field__input>div.quill-widget-container,
+fieldset.module div.quill-widget-container {
+    --quill-border-radius: 0.3125rem;
+    --quill-toolbar-top-small-screen: calc(0.2rem + 100px);
+    --quill-toolbar-top-regular-screen: calc(0.2rem + 51px);
+    --quill-toolbar-background: ivory;
+    --quill-editor-background: white;
+    --quill-editor-min-height: 12rem;
+    --font-size-1: clamp(2rem, 1.7993rem + 0.8451vw, 2.75rem);
+    --font-size-2: clamp(1.8rem, 1.6261rem + 0.7324vw, 2.45rem);
+    --font-size-3: clamp(1.6rem, 1.4662rem + 0.5634vw, 2.1rem);
+    --font-size-4: clamp(1.4rem, 1.293rem + 0.4507vw, 1.8rem);
+    --font-size-5: clamp(1.2rem, 1.1331rem + 0.2817vw, 1.45rem);
+    --font-size-6: clamp(0.9rem, 0.8732rem + 0.1127vw, 1rem);
+    --font-size-body: clamp(1rem, 0.9599rem + 0.169vw, 1.15rem);
+    border-radius: var(--quill-border-radius);
+}
+
+div.w-field__input>div.quill-widget-container>div.quill-widget,
+fieldset.module div.quill-widget-container>div.quill-widget {
+    border-radius: 0 0 var(--quill-border-radius) var(--quill-border-radius);
+}
+
+div.w-field__input>div.quill-widget-container>div.quill-widget>div.ql-editor,
+fieldset.module div.quill-widget-container>div.quill-widget>div.ql-editor {
+    border-radius: 0 0 var(--quill-border-radius) var(--quill-border-radius);
+    min-height: var(--quill-editor-min-height);
+    background-color: white;
+    color: black;
+}
+
+div.w-field__input>div.quill-widget-container>div.ql-toolbar,
+fieldset.module div.quill-widget-container>div.ql-toolbar {
+    border-radius: var(--quill-border-radius) var(--quill-border-radius) 0 0;
+    background-color: #F0F0F0;
+}
+
+/* ===== django admin overrides ===== */
+
+/* default snow height: 100% causes overflow */
+fieldset.module div.ql-container {
+    height: unset;
+}
+
+/* force heading styles */
+fieldset.module div.quill-widget-container>div.quill-widget h2,
+fieldset.module div.quill-widget-container>div.quill-widget h3,
+fieldset.module div.quill-widget-container>div.quill-widget h4,
+fieldset.module div.quill-widget-container>div.quill-widget h5,
+fieldset.module div.quill-widget-container>div.quill-widget h6 {
+    background-color: var(--quill-editor-background);
+    color: inherit;
+    font-weight: inherit;
+    text-transform: inherit;
+    letter-spacing: inherit;
+}
+
+/* ===== wagtail admin overrides ===== */
+
+/* add Wagtail focus border to entire widget */
+div.w-field__input>div.quill-widget-container:has(div.ql-editor:focus-visible) {
+    outline: 3px solid var(--w-color-focus) !important;
+}
+
+div.w-field__input>div.quill-widget-container>div.quill-widget>div.ql-editor:focus-visible {
+    outline: 0 !important;
+}
+
+/* float toolbar when scrolls off top */
+div.w-field__input>div.quill-widget-container>div.ql-toolbar {
+    position: sticky !important;
+    top: 50px !important;
+    z-index: 1 !important;
+}
+
+@media screen and (max-width: 800px) {
+    div.w-field__input>div.quill-widget-container>div.ql-toolbar {
+        /* double top height when top menu wraps at 800px */
+        top: 100px !important;
+    }
+}
