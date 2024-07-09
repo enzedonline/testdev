@@ -33,7 +33,7 @@ INSTALLED_APPS = [
     "home",
     "menu",
     "product",
-    "quill",
+    "django_quill2",
     "search",
     "site_settings",
     'svg',
