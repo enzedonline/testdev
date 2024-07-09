@@ -1,19 +1,21 @@
 {% extends "base.html" %}
-{% load wagtailcore_tags wagtailimages_tags %} 
+{% load static %} 
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'css/posts.css' %}">
+    <script src="{% static 'js/post-list.js' %}"></script>
+    <link href="{% static 'css/quill-rich-text.css' %}" rel="stylesheet">
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+{% endblock extra_head %}
 {% block content %}
-<style>
-    .quill-post {
-        width: 80%;
-        margin: 0 auto 0 auto;
-    }
-    .quill-post img {
-        max-width: 100%;
-    }
-</style>
-<div class="quill-post">
-<h4>{{ object.title }}</h4>
-{{ object.content.html|safe }}
-<hr>
-<p>{{ object.author }}</p>
+{% with post=object %}
+<div class="px-2">
+    {% include "posts/post-item.html" %}
 </div>
+{% endwith %}
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        hljs.highlightAll();
+    });
+</script>
 {% endblock content %}
