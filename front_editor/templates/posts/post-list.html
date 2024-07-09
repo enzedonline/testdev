@@ -3,10 +3,9 @@
 {% block extra_head %}
     <link rel="stylesheet" href="{% static 'css/posts.css' %}">
     <script src="{% static 'js/post-list.js' %}"></script>
-    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
-    {# katex - required for formula #}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
-    {# code styling for highlightjs #}
+    <link href="{% static 'css/quill-rich-text.css' %}" rel="stylesheet">
+    {# highlightjs #}
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
 {% endblock extra_head %}
 {% block content %}
@@ -41,7 +40,10 @@
     {% include "posts/copy-toast.html" %}
     {% if with_id %}
         <script>
-            document.addEventListener("DOMContentLoaded", () => {scrollToId("post-{{ with_id }}");});
+            document.addEventListener("DOMContentLoaded", () => {
+                scrollToId("post-{{ with_id }}");
+                hljs.highlightAll();
+            });
         </script>
     {% endif %}
 {% endblock content %}
