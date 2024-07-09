@@ -37,7 +37,9 @@
             </div>
         </div>
         <hr class="mt-2 mb-4">
-        <div class="ql-editor">{{ post.content.html|safe }}</div>
+        <div class="px-3">
+            {{ post.content.html|safe }}
+        </div>
         <hr class="mt-4">
         <p class="h6 text-muted text-end mb-0">
             Published <span class="localise-date">{{ post.first_published_at|date:'Y-m-d H:i:s' }}</span>
