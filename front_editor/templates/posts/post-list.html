@@ -42,8 +42,13 @@
         <script>
             document.addEventListener("DOMContentLoaded", () => {
                 scrollToId("post-{{ with_id }}");
-                hljs.highlightAll();
             });
         </script>
     {% endif %}
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            hljs.highlightAll();
+        });
+    </script>
+
 {% endblock content %}
