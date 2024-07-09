@@ -8,7 +8,7 @@ from wagtail.models import DraftStateMixin, PreviewableMixin, RevisionMixin
 from wagtail.search import index
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.snippets import SnippetViewSet
-from quill.fields import QuillField
+from django_quill2.fields import QuillField
 
 
 class Post(PreviewableMixin, DraftStateMixin, RevisionMixin, index.Indexed, models.Model):

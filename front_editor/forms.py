@@ -3,7 +3,7 @@ import json
 from django import forms
 from django.core.exceptions import ValidationError
 
-from quill.widgets import QuillWidget
+from django_quill2.widgets import QuillWidget
 
 from .post import Post
 
