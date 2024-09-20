@@ -55,8 +55,8 @@ class ExternalLinkEmbedBlockDefinition extends window.wagtailStreamField.blocks
                     // Add title as h3 heading and description to RichTextBlock
                     const rtbState = block.childBlocks.description.getState();
                     const blocksFromHTML = DraftJS.convertFromHTML(
-                        (metadata.title ? `<h3>${metadata.title}</h3>` : '') + 
-                        (metadata.description || '')
+                        (!!metadata.title ? `<h3>${metadata.title}</h3>` : '') + 
+                        (!!metadata.description ? `<p>${metadata.description}</p>` : '')
                     );
                     block.childBlocks.description.setState(new rtbState.constructor.createWithContent(
                         new rtbState._immutable.currentContent.constructor.createFromBlockArray(
