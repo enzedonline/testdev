@@ -1,21 +1,34 @@
+import random
+import string
+
 from django.db import models
 from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import FieldPanel
-from wagtail.models import Orderable, Page
+from wagtail.api import APIField
+from wagtail.models import Orderable
 from wagtail.search import index
 from wagtail.snippets.models import register_snippet
-from wagtail.api import APIField
+
+from core.panels.utility_panel import UtilityPanel
+
+
+def generate_uuid():
+    return ''.join((random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for i in range(12)))
 
 @register_snippet
 class Spacecraft(index.Indexed, models.Model):
     title = models.CharField(max_length=255, unique=True)
+    uuid = models.CharField(max_length=12, default=generate_uuid, unique=True, null=False, blank=False, )
 
     panels = [
+        UtilityPanel("UUID: {{uuid}}", {'uuid': 'uuid'}),
         FieldPanel("title"),
     ]
 
     def __str__(self):
         return self.title
+    
+
 
 
 class ImageDetailPageSpacecraftOrderable(Orderable):
