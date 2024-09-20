@@ -13,9 +13,6 @@
             "jinja": true,
             "justMyCode": false,
             "console": "internalConsole",
-            // "autoReload": {
-            //     "enable": true
-            // },
         },
     ]
 }
