@@ -79,6 +79,7 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
     "crequest.middleware.CrequestMiddleware",
+    "core.middleware.MaxRequestSizeMiddleware"
 ]
 
 ROOT_URLCONF = "testdev.urls"
