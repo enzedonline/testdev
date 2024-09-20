@@ -89,18 +89,6 @@ def register_code_block_feature(features):
         icon=DRAFTAIL_ICONS.code_block
     )
     
-@hooks.register('register_rich_text_features')
-def register_code_block_feature(features):
-    register_block_feature(
-        features=features,
-        feature_name='code-block',
-        type_='CODE-BLOCK',
-        description='Code Block',
-        css_class='code-block',
-        element='div',
-        icon=DRAFTAIL_ICONS.code_block
-    )
-    
 @hooks.register("register_rich_text_features")
 def register_fa_styling(features):
     """Add <fa> to the richtext editor and page."""
