@@ -202,10 +202,10 @@ class BlogPage(Page):
         #     [RestrictedInlinePanel("carousel_images", max_num=5, min_num=1)],
         #     heading="Carousel Images",
         # ),
-        MultiFieldPanel(
-            [InlinePanel("spacecrafts", max_num=5, min_num=1)],
-            heading="Spacecraft",
-        ),
+        # MultiFieldPanel(
+        #     [InlinePanel("spacecrafts", max_num=5, min_num=1)],
+        #     heading="Spacecraft",
+        # ),
         # RestrictedFieldPanel('some_date'),
         # FieldPanel('some_text', widget=CharLimitTextInput(min=10, max=20, enforced=True)),
         # FieldPanel('some_text_area', widget=CharLimitTextArea(min=10, max=20)),
