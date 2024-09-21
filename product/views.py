@@ -22,7 +22,7 @@ class ProductViewSet(SnippetViewSet):
     list_filter = {"title": ["icontains"], "sku": ["icontains"], "dept_subcategory": ["exact"]}
     list_per_page = 50
     ordering = ["dept_subcategory", "title"]
-
+    
 setattr(Product.get_department_subcategory, 'admin_order_field', "dept_subcategory")
 setattr(Product.get_department_subcategory, 'short_description', Product.dept_subcategory.field.verbose_name)
 register_snippet(ProductViewSet)
