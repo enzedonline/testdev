@@ -217,10 +217,10 @@ div.modal-body>div.w-tabs>div.tab-content>section#tab-search>div.listing>ul.list
 div.modal-body>div.w-tabs>div.tab-content>section#tab-search>div.listing>ul.listing.images.chooser>li {
     align-self: start;
     padding: 0;
-    width: min(110px, 150px);
+    width: 110px;
     border-bottom: 0;
 }
 div.modal-body>div.w-tabs>div.tab-content>section#tab-search>div.listing>ul.listing.images.chooser>li>a.image-choice>div.image {
-    height: min(110px, 150px);
+    height: 110px;
 }
 
