@@ -1,0 +1,8 @@
+<div class="block-container">
+    <div class="{{ self.background }} p-1">
+        {{ block.value.video }}
+        {% if block.value.caption %}
+            <div class="text-end pe-1">{{ block.value.caption }}</div>
+        {% endif %}
+    </div>
+</div>
