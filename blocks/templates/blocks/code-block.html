@@ -9,9 +9,9 @@
 <script>
   highlightCodeBlock(
     blockID="code-block-{{ block.id }}", 
-    codeBlockCSS="{% static 'css/code-block.css' %}", 
+    codeBlockCSS="{% static 'css/code-highlight/code-block.css' %}", 
     theme="{{ self.theme }}", 
-    themeCSS="{% static 'css/'|add:self.theme|add:'.min.css' %}", 
+    themeCSS="{% static 'css/code-highlight/'|add:self.theme|add:'.min.css' %}", 
     highlightScript="{% static 'js/code-highlight/highlight.min.js' %}", 
     language="{{ self.language }}", 
     languageScript="{% static 'js/code-highlight/languages/'|add:self.language|add:'.min.js' %}"

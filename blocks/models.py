@@ -13,3 +13,4 @@ from .product import ProductBlock
 from .rich_text import (BasicRichTextBlock, MinimalRichTextBlock,
                         RichTextStructBlock, SimpleRichTextBlock)
 from .seo_image_chooser import SEOImageChooserBlock
+from .video import InlineVideoBlock

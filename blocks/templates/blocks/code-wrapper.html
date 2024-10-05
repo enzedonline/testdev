@@ -1,12 +1,12 @@
 <div class="block-container">
-{% if self.type == "simple" %}
+{% if self.format == "simple" %}
     {% include "blocks/code-block.html" %}
 {% else %}
     <div class="highlight-code-wrapper">
         <div class="accordion" id="code-wrapper-{{ block.id }}">
             <div class="accordion-item">
                 <div class="accordion-header">
-                    <button class="accordion-button{% if self.type == "collapsed" %} collapsed{% endif %}"
+                    <button class="accordion-button{% if self.format == "collapsed" %} collapsed{% endif %}"
                             type="button"
                             data-bs-toggle="collapse"
                             data-bs-target="#code-item-{{ block.id }}"

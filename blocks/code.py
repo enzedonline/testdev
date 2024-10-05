@@ -1,13 +1,20 @@
+from django import forms
+from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
-from wagtail.blocks import ChoiceBlock, StructBlock, TextBlock, StructValue, CharBlock
+from wagtail.blocks import (CharBlock, ChoiceBlock, StructBlock, StructValue,
+                            TextBlock)
+from wagtail.blocks.struct_block import StructBlockAdapter
+from wagtail.telepath import register
 
 
 class CodeChoiceBlock(ChoiceBlock):
     choices=[
+        ('plaintext', _('Plain Text')),
         ('python', 'Python'),
         ('css', 'CSS'),
-        ('django', 'Django Template'),
+        ('django', _('Django Template')),
         ('javascript', 'Javascript'),
+        ('typescript', 'Typescript'),
         ('xml', 'HTML / XML'),
         ('shell', 'Bash/Shell'),
         ('json', 'JSON'),
@@ -30,10 +37,10 @@ class CodeBlockValue(StructValue):
         return "stackoverflow-dark"
 
 class BaseCodeBlock(StructBlock):
-    title = CharBlock(required=False)
-    type = CollapsibleChoiceBlock(required=True, default='simple')
-    language = CodeChoiceBlock(default='python')
-    code = TextBlock()
+    title = CharBlock(label=_("Title"), required=False)
+    format = CollapsibleChoiceBlock(label=_("Format"), default='simple')
+    language = CodeChoiceBlock(label=_("Language"), default='python')
+    code = TextBlock(label=_("Code"), )
 
     class Meta:
         template = "blocks/code-wrapper.html"
@@ -41,3 +48,15 @@ class BaseCodeBlock(StructBlock):
         label = _("Code Block")
         label_format = _("Code") + ": {language}"    
         value_class = CodeBlockValue
+        form_classname = "struct-block code-block"
+
+        
+class CodeBlockAdapter(StructBlockAdapter):
+    @cached_property
+    def media(self):
+        return forms.Media(
+            css={"all": ("css/admin/code-block.css",)},
+        )
+
+
+register(CodeBlockAdapter(), BaseCodeBlock)
