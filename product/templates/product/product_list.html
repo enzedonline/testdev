@@ -1,85 +1,49 @@
 {% extends "base.html" %}
 {% load wagtailcore_tags %}
+{% block extra_head %}
+    <link href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" rel="stylesheet" />
+    <style>
+        td.gridjs-td[data-column-id="image"] {
+            padding: 0.3rem;
+            text-align: center;
+        }
+        div#product-table {
+            padding: 2rem;
+        }
+        td.gridjs-td p {
+            margin: 0;
+        }
+        td.gridjs-td p+p {
+            margin-top: 0.5em;
+        }
+    </style>
+{% endblock extra_head %}
 {% block content %}
     <div class="article-body">
         <h1>{{ page.title }}</h1>
         <p>{{ page.intro|richtext }}</p>
-        <form method="POST"
-              id="deleteForm"
-              action="{% slugurl 'products' %}delete/">
-            {% csrf_token %}
-            {% for product in products %}
-                <input type="checkbox"
-                       value="{{ product.id }}"
-                       data-product-name="{{ product.title }}"
-                       name="productIDs[]" />
-                <h4 class="d-inline">
-                    <a href="{{ page.url }}{{ product.sku }}">{{ product }}</a>
-                </h4>
-                <br>
-            {% endfor %}
-            <button class="btn btn-danger mt-2 d-flex ms-auto"
-                    id="deleteButton"
-                    type="submit"
-                    onclick="openModal(event)"
-                    data-bs-toggle="modal"
-                    data-bs-target="#confirmModal"
-                    disabled>Delete</button>
-        </form>
-    </div>
-    <!-- Modal -->
-    <div class="modal fade"
-         id="confirmModal"
-         data-bs-backdrop="static"
-         data-bs-keyboard="false"
-         tabindex="-1"
-         aria-labelledby="confirmModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-4" id="confirmModalLabel">Confirm Delete</h1>
-                    <button type="button"
-                            class="btn-close"
-                            data-bs-dismiss="modal"
-                            aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <h2 class="modal-title fs-5">The following products will be deleted:</h2>
-                    <ul id="confirmModalList">
-                    </ul>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button"
-                            class="btn btn-danger"
-                            id="modalContinue"
-                            onclick="deleteForm.submit();">Continue</button>
-                </div>
-            </div>
-        </div>
+        <div id="product-table"></div>
     </div>
     <script>
-        const checkboxes = document.querySelectorAll('input[name="productIDs[]"]');
-        const deleteButton = document.getElementById('deleteButton');
-        const deleteForm = document.getElementById('deleteForm');
-
-        const openModal = (e) => {
-            e.preventDefault();
-            const modalList = document.getElementById('confirmModalList');
-            modalList.innerHTML = '';
-            deleteForm.querySelectorAll('input[name="productIDs[]"]:checked').forEach((checkbox) => {
-                const listItem = document.createElement('li');
-                listItem.textContent = checkbox.dataset.productName;
-                modalList.appendChild(listItem);
+        const loadTable = () => {
+            const tableDiv = document.getElementById("product-table");
+            const grid = new gridjs.Grid({
+                columns: [
+                    {id: 'image', name: '', formatter: (cell) => gridjs.html(cell), sort: false}, 
+                    {id: 'title', name: 'Title', formatter: (_, row) => gridjs.html(`<a href='{{self.url}}${row.cells[2].data}/'>${row.cells[1].data}</a>`)}, 
+                    'SKU', 
+                    {id: 'description', name: 'Description', formatter: (cell) => gridjs.html(cell)}, 
+                ],
+                sort: true,
+                data: {% autoescape off %}{{ rows }}{% endautoescape %}
+                // server: {
+                // url: 'http://localhost:8000/products/api/list/',
+                // then: data => data.rows.map(item => [item.image, item.title, item.sku, item.description])
+                // } 
             });
-        };
-        
-        const enableDeleteButton = (e) => {
-            if (e.target.type === 'checkbox' && e.target.name === 'productIDs[]') {
-                deleteButton.disabled = ![...checkboxes].some(checkbox => checkbox.checked);
-            }
-        };
-        deleteForm.addEventListener('change', enableDeleteButton);
+            grid.render(tableDiv);
+        }
     </script>
+    <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js" onload="loadTable()"></script>
+
 {% endblock content %}
