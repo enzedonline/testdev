@@ -33,7 +33,7 @@ def check_min_pixels(value):
 @register_snippet
 class Spacecraft(index.Indexed, models.Model):
     title = models.CharField(max_length=255, unique=True)
-    uuid = models.CharField(max_length=12, default=generate_uuid, unique=True, null=False, blank=False, )
+    uuid = models.CharField(max_length=12, default=generate_uuid, unique=True, null=False, blank=False)
     image = models.ForeignKey(
         "wagtailimages.Image",
         null=True,
