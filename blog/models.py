@@ -20,7 +20,7 @@ from wagtail.search import index
 from blocks.models import *
 from blocks.models import (CollapsibleCardBlock, CSVTableBlock,
                            ExternalLinkEmbedBlock, FlexCardBlock, HeadingBlock,
-                           ImportTextBlock, LinkBlock, SEOImageChooserBlock)
+                           ImportTextBlock, LinkBlock, SEOImageChooserBlock, InlineVideoBlock)
 from core.forms.restricted_panels_admin_forms import \
     RestrictedPanelsAdminPageForm
 from core.panels.models import (ImportTextAreaPanel, M2MChooserPanel,
@@ -177,6 +177,7 @@ class BlogPage(Page):
             ("seo_image", SEOImageChooserBlock()),
             ("heading", HeadingBlock()),
             ("django_template_fragment", DjangoTemplateFragmentBlock()),
+            ("external_video", InlineVideoBlock()),
         ],
         verbose_name="Page Content",
         blank=True,
