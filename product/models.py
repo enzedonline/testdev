@@ -141,6 +141,9 @@ class Product(
 
     def get_department_subcategory(self):
         return f'{self.dept_subcategory.department} - {self.dept_subcategory}'
+    
+    def department(self):
+        return f'{self.department}'
 
 
 class ProductPage(RoutablePageMixin, Page):
@@ -216,18 +219,15 @@ class ProductPage(RoutablePageMixin, Page):
             return self.image
 
     @property
-    def table_data(self, sort='title'):
-        fields = ['image', 'title', 'sku', 'description']
-        products = Product.objects.filter(live=True).select_related('image').only(*fields)
-        if sort:
-            try:
-                products = products.order_by(sort)
-            except Exception as e:
-                pass
+    def table_data(self):
+        products = Product.objects.filter(live=True).select_related('image')
+        products = products.order_by('-id')
         rows = []
+        rank = 0
         for product in products:
+            rank +=1
             rows.append({
-                # 'title': f"<a href='/{self.url}{product.sku}/'>{product.title}</a>",
+                'rank': rank,
                 'title': product.title,
                 'sku': product.sku,
                 'description': product.description,

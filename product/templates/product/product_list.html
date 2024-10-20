@@ -3,6 +3,11 @@
 {% block extra_head %}
     <link href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" rel="stylesheet" />
     <style>
+        th.gridjs-th[data-column-id="rank"] {
+            width: 7em;
+            min-width: 7em;
+            max-width: 7em;
+        }
         td.gridjs-td[data-column-id="image"] {
             padding: 0.3rem;
             text-align: center;
@@ -29,17 +34,14 @@
             const tableDiv = document.getElementById("product-table");
             const grid = new gridjs.Grid({
                 columns: [
+                    'Rank',
                     {id: 'image', name: '', formatter: (cell) => gridjs.html(cell), sort: false}, 
-                    {id: 'title', name: 'Title', formatter: (_, row) => gridjs.html(`<a href='{{self.url}}${row.cells[2].data}/'>${row.cells[1].data}</a>`)}, 
+                    {id: 'title', name: 'Title', formatter: (_, row) => gridjs.html(`<a href='{{self.url}}${row.cells[3].data}/'>${row.cells[2].data}</a>`)}, 
                     'SKU', 
-                    {id: 'description', name: 'Description', formatter: (cell) => gridjs.html(cell)}, 
+                    {id: 'description', name: 'Description', formatter: (cell) => gridjs.html(cell), sort: false}, 
                 ],
                 sort: true,
                 data: {% autoescape off %}{{ rows }}{% endautoescape %}
-                // server: {
-                // url: 'http://localhost:8000/products/api/list/',
-                // then: data => data.rows.map(item => [item.image, item.title, item.sku, item.description])
-                // } 
             });
             grid.render(tableDiv);
         }
