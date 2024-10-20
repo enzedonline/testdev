@@ -1,4 +1,4 @@
-from .code import BaseCodeBlock
+from .code import CodeBlock
 from .collapsible_card import CollapsibleCardBlock
 from .csv_table import CSVTableBlock
 from .django_html import DjangoTemplateFragmentBlock

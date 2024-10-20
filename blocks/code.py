@@ -1,17 +1,18 @@
 from django import forms
+from django.templatetags.static import static
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
-from wagtail.blocks import (CharBlock, ChoiceBlock, StructBlock, StructValue,
-                            TextBlock)
+from wagtail.blocks import (BooleanBlock, CharBlock, ChoiceBlock, RawHTMLBlock,
+                            StructBlock)
 from wagtail.blocks.struct_block import StructBlockAdapter
 from wagtail.telepath import register
 
-
 class CodeChoiceBlock(ChoiceBlock):
-    choices=[
+    choices = [
         ('plaintext', _('Plain Text')),
         ('python', 'Python'),
         ('css', 'CSS'),
+        ('scss', 'SCSS'),
         ('django', _('Django Template')),
         ('javascript', 'Javascript'),
         ('typescript', 'Typescript'),
@@ -26,37 +27,78 @@ class CodeChoiceBlock(ChoiceBlock):
     ]
 
 class CollapsibleChoiceBlock(ChoiceBlock):
-    choices=[
-        ('simple', 'Not Collapsible'),
-        ('collapsible', 'Collapsible'),
-        ('collapsed', 'Collapsed'),
-    ]    
+    choices = [
+        ('', _('Not Collapsible')),
+        ('collapsible', _('Collapsible')),
+        ('collapsed', _('Collapsed')),
+    ]
 
-class CodeBlockValue(StructValue):   
-    def theme(self) -> str:
-        return "stackoverflow-dark"
+class CodeBlock(StructBlock):
+    base_library_path = "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/"
+    theme_path = base_library_path + "styles/github-dark-dimmed.min.css"
 
-class BaseCodeBlock(StructBlock):
     title = CharBlock(label=_("Title"), required=False)
-    format = CollapsibleChoiceBlock(label=_("Format"), default='simple')
-    language = CodeChoiceBlock(label=_("Language"), default='python')
-    code = TextBlock(label=_("Code"), )
+    collapsible = CollapsibleChoiceBlock(label=_("Format"), required=False)
+    language = CodeChoiceBlock(label=_("Language"))
+    code = RawHTMLBlock(label=_("Code"))
+    bottom_padding = BooleanBlock(
+        label=_("Include extra space beneath code block?"),
+        required=False,
+        default=True
+    )
+
+    def get_context(self, value, parent_context=None):
+        context = super().get_context(value, parent_context)
+        context['expand_prompt'] = _("Click to expand")
+        context['copy_button_text'] = {
+            'copy': _("Copy"),
+            'copied': _("Copied"),
+            'error': _("Error"),
+        }
+        context['paths'] = {
+            'themeCSS': self.theme_path,
+            'codeBlockCSS': static('css/code-highlight/code-block.css'),
+            'codeBlockJS': static('js/code-highlight/code-block.js'),
+        }
+        return context
 
     class Meta:
-        template = "blocks/code-wrapper.html"
+        template = "blocks/code-block-wrapper.html"
         icon = "code"
         label = _("Code Block")
-        label_format = _("Code") + ": {language}"    
-        value_class = CodeBlockValue
+        label_format = _("Code") + ": {language}"
         form_classname = "struct-block code-block"
 
-        
+
 class CodeBlockAdapter(StructBlockAdapter):
+    js_constructor = "blocks.code.CodeBlock"
+
+    base_library_path = "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/"
+    language_base_path = base_library_path + "languages/"
+    admin_theme_path = base_library_path + "styles/github-dark.min.css"
+
+    def js_args(self, block):
+        args = super().js_args(block)
+        # keys added to args[2] found in this.meta in StructBlockDefinition
+        args[2]['language_base_path'] = self.language_base_path
+        args[2]['text'] = {
+            'languageScriptErrorLabel': _("Failed to load language"),
+            'highlighterErrorLabel': _("Error highlighting code")
+        }
+        return args
+        
     @cached_property
     def media(self):
+        structblock_media = super().media
         return forms.Media(
-            css={"all": ("css/admin/code-block.css",)},
+            js=structblock_media._js + [
+                "js/admin/code-block-adapter.js",
+                f"{self.base_library_path}highlight.min.js"
+            ],
+            css={"all": (
+                "css/admin/code-block-form.css",
+                self.admin_theme_path
+            )},
         )
 
-
-register(CodeBlockAdapter(), BaseCodeBlock)
+register(CodeBlockAdapter(), CodeBlock)
