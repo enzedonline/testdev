@@ -44,9 +44,7 @@ const localiseDates = (
     const localDateString = convertUTCDateToLocalDate(utcDateString, date_options, time_options);
     element.innerText = localDateString;
   });
-
 }
-
 
 // set all external links to open in new tab
 document.addEventListener('DOMContentLoaded', () => {
@@ -55,7 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
     link.setAttribute('rel', 'nofollow noopener');
   });
 });
-
 
 // change rich text <fa> font awesome tags: 
 // <fa style="display:none;">something</fa> -> <fa class="something">&nbsp;&nbsp;&nbsp;&nbsp;</fa>
@@ -72,61 +69,58 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // include js script only if not already included
-const include_js = (js, id) => {
+const include_js = (js, options={}) => {
   return new Promise((resolve, reject) => {
-    let script_tag = document.getElementById(id);
+    let script_tag = document.querySelector(`script[src="${js}"]`);
     if (!script_tag) {
       const head = document.head || document.getElementsByTagName('head')[0];
       script_tag = document.createElement('script');
-      script_tag.type = 'text/javascript';
       script_tag.src = js;
-      script_tag.id = id;
-      script_tag.onload = resolve; // Resolve the promise when script is loaded
-      script_tag.onerror = reject; // Reject the promise on error
+      script_tag.type = options.type || 'text/javascript';
+      if (options.integrity) script_tag.integrity = options.integrity;
+      if (options.crossorigin) script_tag.crossOrigin = options.crossorigin;
+      if (options.defer) script_tag.defer = true;
+      if (options.async) script_tag.async = true;
+      script_tag.onload = () => {
+        script_tag.dataset.scriptLoaded = true; // Set attribute once loaded
+        resolve();
+      };
+      script_tag.onerror = () => {
+        console.error(`Failed to load script: ${js}`);
+        reject(new Error(`Script load error: ${js}`));
+      };
       head.appendChild(script_tag);
     } else {
-      resolve(); // Resolve the promise if script is already loaded
+      // Script tag exists, check if it's fully loaded
+      if (script_tag.dataset.scriptLoaded === "true") {
+        resolve();  // Script is already fully loaded, resolve immediately
+      } else {
+        // Script is still loading, add event listeners
+        script_tag.addEventListener('load', resolve);
+        script_tag.addEventListener('error', reject);
+      }
     }
   });
 };
 
 // include css only if not already included
-const include_css = (css, id) => {
-  let link_tag = document.getElementById(id);
+const include_css = (css, options = {}) => {
+  let link_tag = document.querySelector(`link[href="${css}"]`);
   if (!link_tag) {
-    const head = document.head || document.getElementsByTagName('head')[0];
-    link_tag = document.createElement('link');
-    link_tag.rel = 'stylesheet';
-    link_tag.href = css;
-    link_tag.id = id;
-    head.appendChild(link_tag);
+    try {
+      const head = document.head || document.getElementsByTagName('head')[0];
+      link_tag = document.createElement('link');
+      link_tag.rel = 'stylesheet';
+      link_tag.href = css;
+      link_tag.type = options.type || "text/css";
+      if (options.media) link_tag.media = options.media;
+      if (options.integrity) link_tag.integrity = options.integrity;
+      if (options.crossorigin) link_tag.crossOrigin = options.crossorigin; 
+      head.appendChild(link_tag);
+    } catch (error) {
+      console.error(`Failed to load ${css}:`, error);
+    }
   }
 };
 
-const highlightCodeBlock = (blockID, codeBlockCSS, theme, themeCSS, highlightScript, language, languageScript) => {
-  include_css(codeBlockCSS, "code-block-style");
-  include_css(themeCSS, `code-block-highlight-${theme}`);
-  if (!!language) {
-    Promise.all([
-      include_js(highlightScript, "code-block-highlight-script"),
-      include_js(languageScript, `code-highlight-${language}`)
-    ]).then(() => {
-      hljs.highlightElement(document.getElementById(blockID));
-    }).catch(error => {
-      console.error('Error loading scripts:', error);
-    });
-  }
-}
-
-const copyToClipboard = (event, id) => {
-  const buttonText = event.target.innerText
-  const copyText = document.getElementById(id);
-  navigator.clipboard.writeText(copyText.innerText);
-  event.target.innerText = 'Copied ✓';
-  event.target.classList.add('copied-to-clipboard');
-  setTimeout(() => {
-    event.target.innerText = buttonText;
-    event.target.classList.remove('copied-to-clipboard');
-  }, 1000);
-}
 
