@@ -55,11 +55,11 @@ class NumericRangeSlider(forms.Widget):
         return f"""
         <script>
             Promise.all([
-                include_css("{static('css/widgets/nouislider.min.css')}", "nouislider-css"),
-                include_css("{static('css/widgets/numeric-range-slider.css')}", "numeric-range-slider-css"),
-                include_js("{static('js/widgets/nouislider.js')}", "nouislider-js"),
-                include_js("{static('js/widgets/numeric-range-slider.js')}", "numeric-range-slider-js"),
-                include_js("{static('js/wNumb.js')}", "wnumb-js"),
+                include_css("{static('css/widgets/nouislider.min.css')}"),
+                include_css("{static('css/widgets/numeric-range-slider.css')}"),
+                include_js("{static('js/widgets/nouislider.js')}"),
+                include_js("{static('js/widgets/numeric-range-slider.js')}"),
+                include_js("{static('js/wNumb.js')}"),
             ]).then(() => {{
                 new NumericRangeSlider("{id}");
             }})
