@@ -166,7 +166,7 @@ class BlogPage(Page):
             #     ('image', ImageChooserBlock())
             # ])),
             # ("table", TableBlock()),
-            ("code", BaseCodeBlock()),
+            ("code", CodeBlock()),
             ("import_text_block", ImportTextBlock()),
             ("csv_table", CSVTableBlock()),
             ("collapsible_card_block", CollapsibleCardBlock()),
