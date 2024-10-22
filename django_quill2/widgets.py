@@ -1,4 +1,3 @@
-import json
 from collections.abc import Mapping
 from urllib.parse import urlparse
 
@@ -7,13 +6,12 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.core.serializers.json import DjangoJSONEncoder
 from django.forms.renderers import get_default_renderer
-from django.forms.utils import flatatt
 from django.templatetags.static import static
 from django.utils.encoding import force_str
 from django.utils.functional import Promise
 from django.utils.safestring import mark_safe
 
-from .config import DEFAULT_CONFIG, MEDIA_CSS, MEDIA_JS, BUTTON_TOOLTIPS, TOOLBAR_LABELS
+from .config import DEFAULT_CONFIG, MEDIA_CSS, MEDIA_JS, BUTTON_TOOLTIPS, TOOLBAR_LABELS, BUTTON_ICONS
 
 __all__ = (
     "LazyEncoder",
@@ -43,26 +41,14 @@ def convert_lazy_to_str(obj):
 
 
 class QuillWidget(forms.Textarea):
-    class Media:
-        def widget_js():
-            custom_js = getattr(settings, "QUILL_MEDIA_JS", None)
-            if custom_js:
-                return [url if is_absolute_url(url) else static(url) for url in custom_js]
-            else:
-                return MEDIA_JS
-
-        def widget_css():
-            custom_css = getattr(settings, "QUILL_MEDIA_CSS", None)
-            if custom_css:
-                return [url if is_absolute_url(url) else static(url) for url in custom_css]
-            else:
-                return MEDIA_CSS
-        js = widget_js()
-        css = {"all": widget_css()}
+    @property
+    def media(self):
+        return forms.Media(
+            css={"all": MEDIA_CSS}, js=MEDIA_JS
+        )
 
     def __init__(self, config_name="default", *args, **kwargs):
         super().__init__(*args, **kwargs)
-
         self.config_name = config_name
         self.config = DEFAULT_CONFIG.copy()
         configs = getattr(settings, "QUILL_CONFIGS", None)
@@ -102,6 +88,15 @@ class QuillWidget(forms.Textarea):
                 dict_toolbar_labels[key] = value
             self.toolbar_labels = list(dict_toolbar_labels)
 
+        # toolbar button custom icons
+        self.button_icons = BUTTON_ICONS.copy()
+        button_icons = getattr(settings, "QUILL_BUTTON_ICONS", None)
+        if button_icons and isinstance(button_icons, list) and all(isinstance(item, tuple) for item in button_icons):
+            dict_toolbar_labels = dict(self.button_icons)
+            for key, value in button_icons:
+                dict_toolbar_labels[key] = value
+            self.button_icons = list(button_icons)
+
     def render(self, name, value, attrs=None, renderer=None):
         if renderer is None:
             renderer = get_default_renderer()
@@ -120,7 +115,6 @@ class QuillWidget(forms.Textarea):
             renderer.render(
                 "quill/widget.html",
                 {
-                    "final_attrs": flatatt(final_attrs),
                     "id": final_attrs["id"],
                     "name": final_attrs["name"],
                     "config": json_encode(self.config),
@@ -128,6 +122,7 @@ class QuillWidget(forms.Textarea):
                     "value": final_attrs.get("value", None),
                     "tooltips": json_encode(self.button_tooltips),
                     "labels": json_encode(self.toolbar_labels),
+                    "buttonIcons": json_encode(self.button_icons),
                 },
             )
         )

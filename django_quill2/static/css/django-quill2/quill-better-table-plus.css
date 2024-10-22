@@ -110,7 +110,7 @@ div.qlbt-col-tool {
     display: flex;
     align-items: flex-end;
     overflow: hidden;
-    z-index: 99;
+    z-index: auto;
     height: 16px;
 }
 

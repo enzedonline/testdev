@@ -2,7 +2,10 @@ class ImageReducer {
     constructor(quill, options = {}) {
         this.quill = quill;
         this.jpeg_compression = options['jpeg_compression'] ?? 0.7;
+        this.maxWidth = options['max_width'] ?? null;
         this.toast_label = options['toast_label'] ?? "Reduced";
+        this.silent = options['silent'] ?? false;
+        this.prompt = options['prompt'] ?? this.default_prompt();
         if (
             typeof this.jpeg_compression !== 'number' ||
             this.jpeg_compression <= 0 ||
@@ -71,45 +74,47 @@ class ImageReducer {
 
     async reduceImages() {
         const payloadSizeInitial = new TextEncoder().encode(this.quill.container.outerHTML).length;
-        const imageElements = Array.from(this.quill.container.querySelectorAll('img'));
+        const imageElements = Array.from(this.quill.root.querySelectorAll('img'));
         const resizePromises = imageElements.map(img => new Promise((resolve, reject) => {
-            if (img.src.startsWith('data:image') && img.hasAttribute('width') && img.hasAttribute('height')) {
-                const width = parseFloat(img.getAttribute('width'));
-                const height = parseFloat(img.getAttribute('height'));
-                // Create a new image element
-                const newImg = new Image();
-                newImg.src = img.src;
-                // Once the image has loaded, resize it
-                newImg.onload = () => {
-                    // Create a canvas element
-                    const canvas = document.createElement('canvas');
-                    canvas.width = width;
-                    canvas.height = height;
-                    // Draw the image onto the canvas
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(newImg, 0, 0, width, height);
-                    // Get the resized image data URL in JPEG format with a quality of this.jpeg_compression
-                    const resizedDataUrl = canvas.toDataURL('image/jpeg', this.jpeg_compression);
-                    // Convert data URLs to byte length
-                    const originalSize = new TextEncoder().encode(img.src).length;
-                    const resizedSize = new TextEncoder().encode(resizedDataUrl).length;
-                    // Check if the resized image is smaller than the original
-                    if (resizedSize < originalSize) {
-                        // Set the resized image data URL to the original image
-                        img.src = resizedDataUrl;
-                        // Remove the width and height attributes
-                        img.removeAttribute('width');
-                        img.removeAttribute('height');
-                    }
-                    resolve();
-                };
-
-                newImg.onerror = (error) => {
-                    console.error('Image loading failed:', error);
-                    reject(error);
+            if (img.src.startsWith('data:image') && img.hasAttribute('width')) {
+                const [width, height] = this.parseDimensions(img);
+                if (width != null && (width < img.naturalWidth)) { // only resize if width set & is smaller than image natural width
+                    // Create a new image element
+                    const newImg = new Image();
+                    newImg.src = img.src;
+                    // Once the image has loaded, resize it
+                    newImg.onload = () => {
+                        // Create a canvas element
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width;
+                        canvas.height = height;
+                        // Draw the image onto the canvas
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(newImg, 0, 0, width, height);
+                        // Get the resized image data URL in JPEG format with a quality of this.jpeg_compression
+                        const resizedDataUrl = canvas.toDataURL('image/jpeg', this.jpeg_compression);
+                        // Convert data URLs to byte length
+                        const originalSize = new TextEncoder().encode(img.src).length;
+                        const resizedSize = new TextEncoder().encode(resizedDataUrl).length;
+                        // Check if the resized image is smaller than the original
+                        if (resizedSize < originalSize) {
+                            // Set the resized image data URL to the original image
+                            img.src = resizedDataUrl;
+                            // Remove the width and height attributes
+                            img.removeAttribute('width');
+                            img.removeAttribute('height');
+                        }
+                        resolve();
+                    };
+                    newImg.onerror = (error) => {
+                        console.error('Image loading failed:', error);
+                        reject(error);
+                    };
+                } else {
+                    resolve(); // no resizing needed
                 };
             } else {
-                resolve();
+                resolve(); // image resizing not applicable
             }
         }));
 
@@ -120,6 +125,32 @@ class ImageReducer {
         const payloadSizeResult = new TextEncoder().encode(this.quill.container.outerHTML).length;
         const diffKB = new Intl.NumberFormat().format(Math.trunc((payloadSizeInitial - payloadSizeResult) / 1024));
         this.showToast(`${this.toast_label} ${diffKB}KB`);
+    }
+
+    parseDimensions(img) {
+        let width = img.getAttribute('width');
+        if (typeof width === 'number' 
+            || (typeof width === 'string' && width === String(parseFloat(width))) 
+            || width.toLowerCase().endsWith('px')) {
+            width = parseFloat(width);
+        } else if (width.endsWith('%')) {
+            width = parseFloat(this.maxWidth); // if no max_width set, this is null, resize will be skipped for relative sized images
+        } else if (width.toLowerCase().endsWith('em') || width.toLowerCase().endsWith('rem')) {
+            width = parseFloat(width) * 16; // assume 16px per unit
+        } else {
+            // unknown width attribute, return null to skip resizing
+            return [null, null];
+        };
+        let height = img.getAttribute('height');
+        if (height === parseFloat(height) || height.toLowerCase().endsWith('px')) {
+            height = parseFloat(height);
+        } else if (height.toLowerCase().endsWith('em') || height.toLowerCase().endsWith('rem')) {
+            height = parseFloat(height) * 16; // assume 16px per unit
+        } else {
+            // use aspect ratio
+            height = width / (img.naturalWidth / img.naturalHeight);
+        };
+        return [width, height];
     }
 
     showToast = message => {
@@ -134,4 +165,15 @@ class ImageReducer {
             })
         }, 2000);
     }
+
+    default_prompt = ```
+        This will compress all resized embedded images to their new size.<br>
+        This process cannot be undone.
+    ```;
+    more_info = ```
+        You can reduce the file size and save disk space by compressing pictures. The compression reduces both the file size and picture dimensions based on their width setting.<br>
+        Images with an absolute width will be compressed if that width is smaller than the natural width of the image.<br>
+        Images with a relative width ${this.maxWidth ? `will be reduced to ${this.maxWidth}px if larger.` : 'will not be reduced.'}.<br>
+        This process only affects embedded images and is not applied to linked external images.
+    ```;
 }

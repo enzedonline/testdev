@@ -21,8 +21,8 @@ class InsertBetterTablePlus {
         }
         this.toolbar = this.quill.getModule("toolbar");
         if (this.toolbar) {
-            this.toolbar.addHandler("insert-better-table-plus", this._toolbarResponse.bind(this));
-            this.button = this.toolbar.container.querySelector('span.ql-insert-better-table-plus')
+            this.toolbar.handlers.insertBetterTablePlus = () => {return true};
+            this.button = this.toolbar.container.querySelector('span.ql-insertBetterTablePlus')
             if (this.button) {
                 this._buildDropdownMenu();
             }
@@ -82,10 +82,6 @@ class InsertBetterTablePlus {
             });
         });
 
-    }
-
-    _toolbarResponse() {
-        return true;
     }
 
     _icon() {

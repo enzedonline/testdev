@@ -15,6 +15,10 @@ div.quill-widget-container>div.quill-widget {
     font-size: inherit;
 }
 
+div.quill-widget-container .ql-color-picker .ql-picker-label, .ql-snow .ql-icon-picker .ql-picker-label {
+    padding: 0px 4px;
+}
+
 div.quill-widget-container>div.quill-widget>div.ql-editor {
     min-height: 12em;
 }
@@ -77,6 +81,15 @@ div.quill-widget-container>div.quill-widget blockquote {
     margin-bottom: 1em;
 }
 
+div.quill-widget-container>div.quill-widget code {
+    background-color: #f0f0f0;
+    color: black;
+    font-family: monospace;
+}
+
+div.quill-widget-container>div.ql-toolbar {
+    z-index: 2;
+}
 div.quill-widget-container>div.ql-toolbar>span.ql-formats {
     margin: 0 5px 3px 0;
     border-style: solid;
@@ -96,6 +109,12 @@ div.quill-widget-container>div.ql-toolbar>span.ql-formats>span.ql-picker.ql-expa
     color: #676767;
     stroke: #676767;
 }
+
+/* override default background colour if picker item is an svg */
+div.quill-widget-container>div.ql-toolbar span.ql-picker-options>span.ql-picker-item.ql-primary:has(svg) {
+    background-color: inherit;
+}
+
 
 /* ==================== wagtail & django admin page styles ==================== */
 

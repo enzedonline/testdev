@@ -160,83 +160,9 @@ class QuillField(models.TextField):
         return self.get_prep_value(value)
 
     def clean(self, value, model_instance):
-        # fix issues with value returned from quill.getSemanticHTML()
-        # 1. video embeds returned as hyperlink - recreate iframe
-        # 2. code blocks returned as simple <pre data-language>...</pre>
-        #    wrap inner text in <code class="language-xx"> to enable
-        #    highlighting with hljs.highlightAll()
-        # Finally, wrap returned html in "quill-rich-text" div container
-        quill_html = copy.copy(value.html)
-        quill_html = self.fix_embeds(value.delta, quill_html)
-        quill_html = self.fix_code(quill_html)
-        quill_html = f'<div class="quill-rich-text">{quill_html}</div>'
-        value.json_string = json.dumps({'delta': value.delta, 'html': quill_html})
+        # Wrap returned html in "quill-rich-text" div container
+        value.json_string = json.dumps({
+            'delta': value.delta, 
+            'html': f'<div class="quill-rich-text">{value.html}</div>'
+        })
         return super().clean(value, model_instance)
-
-    def fix_embeds(self, delta, quill_html):
-        # getSemanticHTML returns anchor link in place of iframe
-        # search delta for video insterts, replace corresponding anchor link with iframe + attributes
-        try:
-            videos = []
-            for op in json.loads(delta)['ops']:
-                if 'insert' in op and isinstance(op['insert'], dict) and 'video' in op['insert']:
-                    video_info = {
-                        'url': op['insert']['video'],
-                        'height': op.get('attributes', {}).get('height'),
-                        'width': op.get('attributes', {}).get('width'),
-                        'iframeAlign': op.get('attributes', {}).get('iframeAlign')
-                    }
-                    videos.append(video_info)
-            if videos:
-                for video in videos:
-                    video_url = video['url']
-                    height = video['height']
-                    width = video['width']
-                    iframe_align = video['iframeAlign']
-
-                    # Construct the iframe HTML
-                    iframe_html = f'<iframe src="{video_url}"'
-                    if width:
-                        iframe_html += f' width="{width}px"'
-                    if height:
-                        iframe_html += f' height="{height}px"'
-                    if iframe_align:
-                        iframe_html += f' class="ql-iframe-align-{iframe_align}"'
-                    iframe_html += '></iframe>'
-
-                    # Replace the anchor tag with the iframe in the HTML string
-                    quill_html = re.sub(
-                        rf'<a href="{re.escape(video_url)}">{re.escape(video_url)}</a>',
-                        iframe_html,
-                        quill_html
-                    )
-        except Exception as e:
-            logging.warning(
-                f"\n{type(e).__name__} at line {e.__traceback__.tb_lineno} of {__file__}: {e}"
-            )
-        return quill_html 
-
-
-    def fix_code(self, quill_html):
-        # getSemanticHTML converts code to block to <pre data-language>...</pre>
-        # wrap pre inner html in a code block, set class value from data-language value
-        # strip data-language attribute from pre block
-        try:
-            soup = BeautifulSoup(quill_html, 'html.parser')
-            for pre in soup.find_all('pre', attrs={'data-language': True}):
-                # Create a new <code> tag
-                code_tag = soup.new_tag('code')
-                # Move the contents of <pre> to the new <code> tag, strip leading/trailing \n
-                code_tag.string = pre.get_text(strip=True, separator='\n').strip('\n')
-                # Add the language class to the <code> tag
-                code_tag['class'] = f'language-{pre["data-language"]}'
-                # Clear the contents of <pre> and insert the <code> tag
-                pre.clear()
-                del pre.attrs['data-language']
-                pre.append(code_tag)
-            return str(soup)
-        except Exception as e:
-            logging.warning(
-                f"\n{type(e).__name__} at line {e.__traceback__.tb_lineno} of {__file__}: {e}"
-            )
-            return quill_html
