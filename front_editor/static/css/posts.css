@@ -32,6 +32,10 @@ form.post-form input.form-control-lg {
     font-weight: bold;
     font-size: x-large;
 }
+form.post-form input::placeholder {
+    opacity: .6;
+    font-style: italic;
+}
 .btn>svg {
     height: 1em;
     width: 1em;
@@ -53,7 +57,7 @@ div.quill-widget-container>div.ql-toolbar {
     background-color: var(--bs-light);
     position: sticky !important;
     top: clamp(48px, 48px + 25 * (100vw - 375px) / 1125, 74px) !important;
-    z-index: 1 !important;
+    z-index: 2 !important;
 }
 div.quill-widget-container>div.quill-widget {
     border-radius: 0 0 var(--bs-border-radius) var(--bs-border-radius);

@@ -1,15 +1,13 @@
 {% extends "posts/base-card.html" %}
 {% block card-header %}
-    {% if post %}
-        Edit Post
-    {% else %}
-        Create a New Post
-    {% endif %}
+    <h3 class="p-0 m-0">{% if post %}Edit Post{% else %}Create a New Post{% endif %}</h3>
 {% endblock card-header %}
 {% block card-body %}
     <form method="post" id="PostForm" class="post-form" data-max-payload={{ self.post_payload_limit }}>
         {% csrf_token %}
-        {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+        {% endif %}
         {% with field=form.title %}
             {% include "posts/form-field.html" %}
         {% endwith %}
