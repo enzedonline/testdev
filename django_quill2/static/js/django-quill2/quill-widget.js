@@ -1,5 +1,5 @@
 class QuillWrapper {
-    constructor(targetDivId, targetInputId, options, tooltips, labels, buttonIcons) {
+    constructor(id, options, tooltips, labels, buttonIcons) {
         this.options = options.quillOptions;
         window.qw = this;
         this.registerComponents(options.quillRegister)
@@ -16,11 +16,16 @@ class QuillWrapper {
         this.registerLineBreak();
         this.registerCodeBlockFix();
         // create Quill instance
-        this.targetDiv = document.getElementById(targetDivId);
-        if (!this.targetDiv) throw 'Target div(' + targetDivId + ') id was invalid';
-        this.targetInput = document.getElementById(targetInputId);
+        this.targetDiv = document.getElementById(`quill-${id}`);
+        if (!this.targetDiv) throw 'Target div(' + `quill-${id}` + ') id was invalid';
+        this.targetInput = document.getElementById(`quill-input-${id}`);
         if (!this.targetInput) throw 'Target Input id was invalid';
-        this.quill = new Quill('#' + targetDivId, this.options);
+        this.quill = new Quill(`#quill-${id}`, this.options);
+        if (this.targetInput.value) {
+            const parsedInput = JSON.parse(this.targetInput.value);
+            const delta = JSON.parse(parsedInput.delta);
+            this.quill.setContents(delta);
+        }
         window.quill = this.quill;
 
         // toolbar config
