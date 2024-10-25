@@ -99,7 +99,9 @@ class CodeBlock {
         // check registered languages against those in language choice block, add script for each missing one
         let errors = [];
         const availableLanguages = hljs.listLanguages();
-        const optionValues = Array.from(this.languageSelector.options).map(option => option.value);
+        const optionValues = Array.from(this.languageSelector.options)
+            .map(option => option.value)
+            .filter(value => value);
         const missing_languages = optionValues.filter(optionValue => !availableLanguages.includes(optionValue));
         if (missing_languages) {
             // if scripts fail to load, write simple message to block form and error message with path to console

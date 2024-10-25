@@ -1,7 +1,7 @@
-const copyCodeToClipboard = (event, id, buttonText) => {
+const copyCodeToClipboard = (event, buttonText) => {
     try {
-        const copyText = document.getElementById(id);
-        navigator.clipboard.writeText(copyText.innerText);
+        const codeElement = event.target.closest('div.code-block-container').querySelector('code');
+        navigator.clipboard.writeText(codeElement.innerText);
         event.target.innerText = `${buttonText.copied} ✓`;
         event.target.classList.add('copied-to-clipboard');
         setTimeout(() => {
