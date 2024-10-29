@@ -1,6 +1,5 @@
 class VideoList {
     constructor() {
-        window.test = this
         this.videoListContainer = document.getElementById("video-list-container");
         this.videoList = this.videoListContainer.querySelector("div#video-list");
         this.videoCards = Array.from(this.videoListContainer.querySelectorAll("div.youtube-card"));
@@ -81,11 +80,11 @@ class VideoList {
         // get id's for adjacent cards and load into prev/next buttons data-target
         // use card id's, not video id's - video id's may not be unique
         // the next button attribute used also for autoplaying next video on end
-        // preload additional videos if pagination enabled and near end of playlist
+        // preload additional videos if pagination enabled and near end of loaded playlist
         const videoCard = this.videoList.querySelector(`div#${cardId}`)
         if (videoCard) {
             let index = this.videoCards.indexOf(videoCard);
-            // previous/next are emtpy if first/last card (empty data-target buttons hidden via css)
+            // previous/next are empty if first/last card (empty data-target buttons hidden via css)
             let previous = index > 0 ? this.videoCards[index - 1].id : '';
             let next = index < this.videoCards.length - 1 ? this.videoCards[index + 1].id : '';
             this.previousVideoButton.setAttribute("data-target", previous);
