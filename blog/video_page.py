@@ -1,5 +1,4 @@
 import logging
-import math
 import random
 import string
 from urllib.parse import parse_qs, urlparse
@@ -20,7 +19,7 @@ from wagtail.models import Orderable, Page
 class SimpleVideoOrderable(Orderable):
     page = ParentalKey("blog.VideoPage", related_name="videos")
     url = models.URLField()
-    description = RichTextField(null=True, blank=True)
+    description = RichTextField(verbose_name=_("Description"), null=True, blank=True)
 
     panels = [
         FieldPanel('url'),
@@ -74,16 +73,16 @@ class VideoPage(RoutablePageMixin, Page):
     """
     parent_page_types = ['blog.BlogIndex']
     subpage_types = []
-    page_size = 6
+    page_size = 5
     initial_pages = 2
 
-    intro = RichTextField()
+    intro = RichTextField(verbose_name=_("Introduction"))
 
     content_panels = Page.content_panels + [
         FieldPanel("intro"),
         MultiFieldPanel(
             [InlinePanel("videos", min_num=1)],
-            heading="Videos",
+            heading=_("Videos"),
         ),
     ]
     
@@ -107,34 +106,29 @@ class VideoPage(RoutablePageMixin, Page):
         except (TypeError, ValueError):
             pages_to_load = 1
 
-        # caculate total pages including any final partial page
-        all_videos = self.videos.all()
-        total_pages = math.ceil(all_videos.count() / self.page_size)
+        # calculate slice limits
+        slice_start = self.page_size * pages_to_load * (page -1)
+        slice_end = self.page_size * pages_to_load * page
+        # videos are reverse ordered
+        video_slice = self.videos.all().order_by('-sort_order')[slice_start:slice_end]
 
         # get video card set if requested page is <= total pages
         videos = []
-        if page <= total_pages:
-            # caculate slice start & end
-            start = (page - 1) * self.page_size
-            if page + pages_to_load - 1 >= total_pages:
-                end = None # last page, get everything from slice start 
-            else:
-                end = start + (self.page_size * pages_to_load)
-            # create card set
-            for video in all_videos[start:end]:
-                details = video.embed_attrs
-                # only return card if embed valid
-                if details:
-                    # use random id for card to ensure each is unique on the page
-                    details['card_id'] = ''.join(random.choice(string.ascii_letters) for _ in range(8))
-                    details['description'] = video.description
-                    videos.append(details)
+        for video in video_slice:
+            details = video.embed_attrs
+            # only return card if embed valid
+            if details:
+                # use random id for card to ensure each is unique on the page
+                details['card_id'] = ''.join(random.choice(string.ascii_letters) for _ in range(8))
+                details['description'] = video.description
+                videos.append(details)
                     
         # disable pagination if last page reached (stops JS class auto-requesting new cards)
+        # assume end reached if video_slice count is anything other than page size
         # current page calculated from requested page and pages_to_load
         pagination = {
-            'enabled': page < total_pages,
-            'current_page': min((page - 1) + pages_to_load, total_pages),
+            'enabled': (video_slice.count() == self.page_size * pages_to_load),
+            'current_page': (page - 1) + pages_to_load,
         }
 
         return {'videos': videos, 'pagination': pagination}
