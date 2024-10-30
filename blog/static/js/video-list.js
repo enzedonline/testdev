@@ -2,6 +2,7 @@ class VideoList {
     constructor() {
         this.videoListContainer = document.getElementById("video-list-container");
         this.videoList = this.videoListContainer.querySelector("div#video-list");
+        this.videoListPaginator = document.getElementById("video-list-paginator");
         this.videoCards = Array.from(this.videoListContainer.querySelectorAll("div.youtube-card"));
         this.videoModal = this.videoListContainer.querySelector("div#video-modal");
         this.previousVideoButton = this.videoListContainer.querySelector("div#video-modal-previous");
@@ -10,7 +11,9 @@ class VideoList {
         this.pagination = JSON.parse(this.videoListContainer.querySelector("script#pagination").textContent);
         this.videoListContainer.dataset.cardsLoading = false;
         this.videoLoaded = false;
+
         this.loadYoutubeAPI();
+        this.createCardTemplate();
         this.addEventListeners();
         if (this.pagination.enabled) {
             this.loadCards();
@@ -101,7 +104,56 @@ class VideoList {
         }
     }
 
-    async loadCards(auto=true) {
+    createCardTemplate() {
+        // Create a DocumentFragment to hold the card structure
+        this.cardTemplate = document.createDocumentFragment();
+
+        // Create the card container
+        const card = document.createElement('div');
+        card.classList.add('card', 'youtube-card');
+
+        // Add video div with image and SVG
+        const videoDiv = document.createElement('div');
+        videoDiv.classList.add('card-video');
+        const img = document.createElement('img');
+        img.classList.add('card-video-thumbnail');
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.classList.add('youtube-logo');
+        const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+        use.setAttribute('href', '#icon-youtube-logo');
+        svg.appendChild(use);
+        videoDiv.append(img, svg);
+        card.appendChild(videoDiv);
+
+        // Add card body with title, author, and description
+        const cardBody = document.createElement('div');
+        cardBody.classList.add('card-body');
+        const title = document.createElement('p');
+        title.classList.add('h5', 'card-title');
+        const author = document.createElement('p');
+        author.classList.add('h6', 'card-text', 'card-author');
+        const description = document.createElement('div');
+        description.classList.add('card-description');
+        cardBody.append(title, author, description);
+        card.appendChild(cardBody);
+
+        // Add card footer with date
+        const cardFooter = document.createElement('div');
+        cardFooter.classList.add('card-footer');
+        const updatedText = document.createElement('p');
+        updatedText.classList.add('h6', 'card-updated');
+        updatedText.textContent = 'Updated ';
+        const date = document.createElement('span');
+        date.classList.add('card-date');
+        updatedText.appendChild(date);
+        cardFooter.appendChild(updatedText);
+        card.appendChild(cardFooter);
+
+        // Append the card structure to the DocumentFragment
+        this.cardTemplate.appendChild(card);
+    }
+
+    async loadCards(auto = true) {
         // if auto===true load, next set of videos only if bottom of videlist less than 150px below bottom of screen
         // only run if not all pages have loaded
         if (this.pagination.enabled) {
@@ -120,22 +172,12 @@ class VideoList {
                         throw new Error('Network response was not ok');
                     }
                     const result = await response.json();
-                    this.videoData = result.videos;
+                    const videoData = result.videos;
                     this.pagination = result.pagination;
-                    // create additional cards for loaded videos
-                    let loadedCards = ""
-                    for (let i = 0; i < this.videoData.length; i++) {
-                        loadedCards += this.cardHTMLFragment(
-                            this.videoData[i].card_id,
-                            this.videoData[i].video_id,
-                            this.videoData[i].thumbnail_url,
-                            this.videoData[i].title,
-                            this.videoData[i].author_name,
-                            this.videoData[i].description,
-                            this.localiseDate(this.videoData[i].last_updated)
-                        )
-                    }
-                    this.videoList.insertAdjacentHTML('beforeend', loadedCards);
+                    // create cards for each video
+                    videoData.forEach(video => {
+                        this.addVideoCard(video);
+                    })
                     // load more cards if base of video list still within 150px of screen bottom
                     await this.loadCards();
                     // refresh playlist
@@ -154,28 +196,17 @@ class VideoList {
         }
     }
 
-    cardHTMLFragment(card_id, video_id, thumbnail_url, title, author_name, description, last_updated) {
-        // template for video card
-        return `
-        <div class="card youtube-card" id="${card_id}" data-video-id="${video_id}">
-            <div class="card-video">
-                <img class="card-video-thumbnail" src="${thumbnail_url}">
-                <svg class="youtube-logo">
-                    <use href="#icon-youtube-logo"></use>
-                </svg>
-            </div>
-            <div class="card-body">
-                <p class="h5 card-title">${title}</p>
-                <p class="h6 card-text card-author">${author_name}</p>
-                <div class="card-description">${description}</div>
-            </div>
-            <div class="card-footer">
-                <p class="h6 card-updated">
-                    Updated <span class="card-date">${last_updated}</span>
-                </p>
-            </div>
-        </div>
-        `
+    addVideoCard(video) {
+        const cardClone = this.cardTemplate.cloneNode(true);
+        const card = cardClone.querySelector('.card')
+        card.id = video.card_id;
+        card.dataset.videoId = video.video_id;
+        cardClone.querySelector('.card-video-thumbnail').src = video.thumbnail_url;
+        cardClone.querySelector('.card-title').textContent = video.title;
+        cardClone.querySelector('.card-author').textContent = video.author_name;
+        cardClone.querySelector('.card-description').textContent = video.description;
+        cardClone.querySelector('.card-date').textContent = this.localiseDate(video.last_updated);
+        this.videoList.appendChild(cardClone);
     }
 
     closeModal = () => {
@@ -183,6 +214,23 @@ class VideoList {
         window.player.stopVideo();
         this.videoModal.classList.remove('show');
     }
+
+    paginatorObserver = new IntersectionObserver((entries, observer) => {
+        // watch for video-list-paginator div entering viewport
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                if (this.pagination.enabled) {
+                    this.triggerEndlessScroll();
+                } else {
+                    this.paginatorObserver.unobserve(entry.target);
+                }
+            }
+        });
+    }, {
+        root: null, // Use the viewport as the root
+        rootMargin: '0px 0px 150px 0px', // Trigger when 150px or less from the bottom
+        threshold: 0 // Trigger as soon as it enters the rootMargin area
+    });
 
     addEventListeners() {
         // close modal if click anywhere on modal background
@@ -215,9 +263,9 @@ class VideoList {
                 targetElement = targetElement.parentElement;
             }
         });
-        // watch for scroll events if paginating
+        // watch for video-list-paginator div entering viewport if paginating
         if (this.pagination.enabled) {
-            window.addEventListener('scroll', this.triggerEndlessScroll.bind(this), { passive: true });
+            this.paginatorObserver.observe(this.videoListPaginator);
         }
     }
 
