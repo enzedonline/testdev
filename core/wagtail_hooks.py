@@ -29,7 +29,7 @@ def register_help_text_feature(features):
 
     control = {
         'type': type_,
-        'icon': ["m 334.22246,308.44491 c 0,-76.23832 61.98413,-138.22245 138.22245,-138.22245 h 69.11123 c 76.23832,0 138.22246,61.98413 138.22246,138.22245 v 7.77502 c 0,47.08202 -23.97296,90.92446 -63.49594,116.19325 l -91.14044,58.52857 c -54.42509,34.98756 -87.25292,95.24391 -87.25292,159.81972 v 3.23958 c 0,38.22715 30.88408,69.11123 69.11123,69.11123 38.22715,0 69.11123,-30.88408 69.11123,-69.11123 v -3.02361 c 0,-17.70975 9.07084,-34.12367 23.75698,-43.62646 L 691.00917,548.8224 C 770.05514,497.85287 818.00105,410.38397 818.00105,316.21993 v -7.77502 C 818.00105,155.75229 694.24876,32 541.55614,32 H 472.44491 C 319.75229,32 196,155.75229 196,308.44491 c 0,38.22715 30.88408,69.11123 69.11123,69.11123 38.22715,0 69.11123,-30.88408 69.11123,-69.11123 z M 507.00053,999.5572 a 86.38904,86.38904 0 1 0 0,-172.77808 86.38904,86.38904 0 1 0 0,172.77808 z"],
+        'icon': 'question-mark',
         'description': 'Help text',
         # Optionally, we can tell Draftail what element to use when displaying those blocks in the editor.
         'element': 'div',
@@ -53,7 +53,7 @@ def register_align_left_feature(features):
         description='Left align text',
         css_class='text-start',
         element='p',
-        icon=DRAFTAIL_ICONS.left_align
+        icon='left-align'
     )
     
 @hooks.register('register_rich_text_features')
@@ -65,7 +65,7 @@ def register_align_centre_feature(features):
         description='Centre align text',
         css_class='text-center',
         element='p',
-        icon=DRAFTAIL_ICONS.centre_align
+        icon='centre-align'
     )
     
 @hooks.register('register_rich_text_features')
@@ -77,7 +77,7 @@ def register_align_right_feature(features):
         description='Right align text',
         css_class='text-end',
         element='p',
-        icon=DRAFTAIL_ICONS.right_align
+        icon='right-align'
     )
     
 @hooks.register('register_rich_text_features')
@@ -89,7 +89,7 @@ def register_code_block_feature(features):
         description='Code Block',
         css_class='code-block',
         element='div',
-        icon=DRAFTAIL_ICONS.code_block
+        icon='code'
     )
     
 @hooks.register("register_rich_text_features")
@@ -111,7 +111,7 @@ def register_fa_styling(features):
             'padding': '0 0.4rem',
             'border-radius': '0.6rem'
         },
-        icon=DRAFTAIL_ICONS.font_awesome
+        icon='font-awesome'
     )
     
 @hooks.register("register_rich_text_features")
@@ -122,7 +122,7 @@ def register_small_styling(features):
         type_='SMALL',
         tag='small',
         description='Small',
-        icon=DRAFTAIL_ICONS.decrease_font
+        icon='decrease-font'
     )
 
 @hooks.register("register_rich_text_features")
@@ -133,7 +133,7 @@ def register_underline_styling(features):
         type_='UNDERLINE',
         tag='u',
         description='Underline',
-        icon=DRAFTAIL_ICONS.underline
+        icon='underline'
     )
 
 @hooks.register('register_rich_text_features')
@@ -159,7 +159,7 @@ def register_codeblock_feature(features):
         css_class='code-block',
         element='li',
         wrapper="ul class='code-block-wrapper' role='list'",
-        icon=DRAFTAIL_ICONS.code_block
+        icon='code-block'
     )
 
 @hooks.register("register_rich_text_features")
