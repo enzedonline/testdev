@@ -1,0 +1,11 @@
+{% load document_block_tags %}
+{% button_appearance self.appearance self.outline as btn_style %}
+{% if self.full_width %}<div class="col-12">{% endif %}
+    <a class="btn {{ btn_style }} {{ self.text_size }} text-{{ self.alignment }} px-2 py-3{% if self.full_width %} w-100{% endif %}"
+       href="{{ self.document.url }}"
+       target="_blank"
+       onmouseup="this.blur();">
+       {% if self.icon %}<i class="{{ self.icon }} pe-2"></i>{% endif %}
+       {{ self.link_label }}
+    </a>
+{% if self.full_width %}</div>{% endif %}

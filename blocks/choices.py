@@ -1,6 +1,23 @@
 from django.utils.translation import gettext_lazy as _
 from blocks.base_blocks import ChoiceBlock
 
+class DefaultChoiceBlock(ChoiceBlock):
+
+    def __init__(self, *args, **kwargs):
+
+        default = kwargs.pop("default", getattr(self, "default", None))
+        label = kwargs.pop("label", getattr(self, "label", None))
+        help_text = kwargs.pop("help_text", getattr(self, "help_text", None))
+        required = kwargs.pop("required", getattr(self, "required", True))
+
+        super().__init__(
+            *args,
+            default=default,
+            label=label,
+            help_text=help_text,
+            required=required,
+            **kwargs
+        )
 
 class AlignmentChoiceBlock(ChoiceBlock):
     def __init__(self, default=None, required=True, **kwargs):
@@ -22,6 +39,15 @@ class TextAlignmentChoiceBlock(ChoiceBlock):
     def __init__(self, default=None, required=True, **kwargs):
         super().__init__(self.choices, default, required, **kwargs)
 
+class TextSizeChoiceBlock(DefaultChoiceBlock):
+    choices=[
+        ('h2', 'H2'), 
+        ('h3', 'H3'), 
+        ('h4', 'H4'), 
+        ('h5', 'H5'), 
+        ('h6', 'H6'), 
+        ('p', 'Body')
+    ]
 
 class ColourThemeChoiceBlock(ChoiceBlock):
     choices = [

@@ -2,6 +2,7 @@ from .code import CodeBlock
 from .collapsible_card import CollapsibleCardBlock
 from .csv_table import CSVTableBlock
 from .django_html import DjangoTemplateFragmentBlock
+from .documents import DocumentBlock
 from .external_link import ExternalLinkEmbedBlock
 from .flex_card import FlexCardBlock
 from .heading import HeadingBlock
