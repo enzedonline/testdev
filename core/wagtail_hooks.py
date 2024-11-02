@@ -1,19 +1,22 @@
+import wagtail.admin.rich_text.editors.draftail.features as draftail_features
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.templatetags.static import static
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
-from wagtail import hooks
+from wagtail.admin.rich_text.converters.html_to_contentstate import \
+    BlockElementHandler
 from wagtail.models import Page
 
+from wagtail import hooks
+
+from .documents.views.chooser import viewset as document_chooser_viewset
 from .draftail_extensions import (DRAFTAIL_ICONS, register_block_feature,
                                   register_inline_styling)
-from .sitemap import SiteMap
 from .images.image_operations import ThumbnailOperation
-from .utils import has_role, get_custom_icons
+from .sitemap import SiteMap
+from .utils import get_custom_icons, has_role
 
-import wagtail.admin.rich_text.editors.draftail.features as draftail_features
-from wagtail.admin.rich_text.converters.html_to_contentstate import BlockElementHandler
 
 @hooks.register('register_rich_text_features')
 def register_help_text_feature(features):
@@ -234,3 +237,6 @@ def register_image_operations():
 def register_icons(icons):
     return icons + get_custom_icons()
     
+@hooks.register("register_admin_viewset")
+def register_document_chooser_viewset():
+    return document_chooser_viewset
