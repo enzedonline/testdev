@@ -72,9 +72,9 @@ class BaseMenu(
         MultiFieldPanel([
             TitleFieldPanel("title", icon="info-circle",classname="menu-title"),
             FieldPanel("slug", icon="cogs", classname="menu-slug"),
-            FieldPanel("breakpoint", icon="mobile-alt", classname="menu-breakpoint"),
             FieldPanel("brand_title", icon="title", classname="menu-brand-title"),
             FieldPanel("brand_logo", widget=AdminImageChooser(show_edit_link=False), classname="menu-brand-logo compact-image-chooser"),
+            FieldPanel("breakpoint", icon="mobile-alt", classname="menu-breakpoint"),
         ], _('Menu Settings'), classname="menu-settings"),
         FieldPanel("items"),
     ]
