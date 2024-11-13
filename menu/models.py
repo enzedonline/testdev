@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from wagtail.admin.panels import FieldPanel, MultiFieldPanel
+from wagtail.admin.panels import FieldPanel, MultiFieldPanel, TitleFieldPanel
 from wagtail.admin.ui.tables import LiveStatusTagColumn, UpdatedAtColumn
 from wagtail.admin.widgets.slug import SlugInput
 from wagtail.fields import StreamField
@@ -28,22 +28,9 @@ class BaseMenu(
         verbose_name=_("Menu Title"),
         help_text=_("A descriptive name for this menu (not displayed)")
     )
-    brand_logo = models.ForeignKey(
-        "wagtailimages.Image",
-        null=True,
-        blank=True,
-        related_name="+",
-        on_delete=models.SET_NULL,
-        verbose_name=_("Optional Brand Logo"),
-    )
-    brand_title = models.CharField(
-        max_length=50,
-        null=True,
-        blank=True,
-        verbose_name=_("Optional Brand Display Title")
-    )
-    items = StreamField(
-        MenuStreamBlock(), verbose_name=_("Menu Items"), use_json_field=True
+    slug = models.SlugField(
+        unique=True,
+        verbose_name=_("Slug")
     )
     breakpoint = models.CharField(
         max_length=5,
@@ -61,11 +48,30 @@ class BaseMenu(
         verbose_name=_("Mobile Layout Breakpoint"),
         help_text=_("Select screen widths to display menu in collapsed format.")
     )
+    brand_title = models.CharField(
+        max_length=50,
+        null=True,
+        blank=True,
+        verbose_name=_("Optional Brand Display Title")
+    )
+    brand_logo = models.ForeignKey(
+        "wagtailimages.Image",
+        null=True,
+        blank=True,
+        related_name="+",
+        on_delete=models.SET_NULL,
+        verbose_name=_("Optional Brand Logo"),
+    )
+    items = StreamField(
+        MenuStreamBlock(), 
+        verbose_name=_("Menu Items"), 
+        blank=True
+    )
 
     panels = [
         MultiFieldPanel([
-            FieldPanel("title", icon="info-circle",classname="menu-title"),
-            FieldPanel("slug", icon="cogs", widget=SlugInput, classname="menu-slug"),
+            TitleFieldPanel("title", icon="info-circle",classname="menu-title"),
+            FieldPanel("slug", icon="cogs", classname="menu-slug"),
             FieldPanel("breakpoint", icon="mobile-alt", classname="menu-breakpoint"),
             FieldPanel("brand_title", icon="title", classname="menu-brand-title"),
             FieldPanel("brand_logo", widget=AdminImageChooser(show_edit_link=False), classname="menu-brand-logo compact-image-chooser"),
@@ -86,12 +92,16 @@ class BaseMenu(
 
 if getattr(settings, "WAGTAIL_I18N_ENABLED", False):
     class Menu(TranslatableMixin, BaseMenu):
-        slug = models.SlugField()
+        # unique = True not compatible with TranslatableMixin, use unique_together instead
+        slug = models.SlugField(
+            unique=False,
+            verbose_name=_("Slug")
+        )
         class Meta:
             unique_together = ('translation_key', 'locale'), ('locale', 'slug')            
 else:
     class Menu(BaseMenu):
-        slug = models.SlugField(unique=True)
+        pass
 
 class MenuViewSet(SnippetViewSet):
     model = Menu
