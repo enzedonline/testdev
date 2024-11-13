@@ -148,4 +148,4 @@ class CodeBlockDefinition extends window.wagtailStreamField.blocks
     };
 }
 
-window.telepath.register('blocks.code.CodeBlock', CodeBlockDefinition);
+window.telepath.register('blocks.code.BlogCodeBlock', CodeBlockDefinition);

@@ -33,7 +33,7 @@ class CollapsibleChoiceBlock(ChoiceBlock):
         ('collapsed', _('Collapsed')),
     ]
 
-class CodeBlock(StructBlock):
+class BlogCodeBlock(StructBlock):
     base_library_path = "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/"
     theme_path = base_library_path + "styles/github-dark-dimmed.min.css"
 
@@ -71,7 +71,7 @@ class CodeBlock(StructBlock):
 
 
 class CodeBlockAdapter(StructBlockAdapter):
-    js_constructor = "blocks.code.CodeBlock"
+    js_constructor = "blocks.code.BlogCodeBlock"
 
     base_library_path = "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/"
     language_base_path = base_library_path + "languages/"
@@ -101,4 +101,4 @@ class CodeBlockAdapter(StructBlockAdapter):
             )},
         )
 
-register(CodeBlockAdapter(), CodeBlock)
+register(CodeBlockAdapter(), BlogCodeBlock)
