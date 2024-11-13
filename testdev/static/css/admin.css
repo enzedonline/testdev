@@ -213,21 +213,25 @@ visibility: visible;
 div[data-tippy-root] div.tippy-box {
   max-width: unset !important;
 }
+/* set menu width to 70vw up to max 75rem (5 columns) */
 div.tippy-content div.w-combobox {
   width: 70vw;
+  max-width: 75rem;
 }
-div.w-combobox__field>input {
+/* hide search box */
+div.tippy-content div.w-combobox>div.w-combobox__field>input {
   display: none;
 }
-div.tippy-content div.w-combobox div.w-combobox__menu div.w-combobox__optgroup {
+/* use responsive grid layout for options, reduce spacing */
+div.tippy-content div.w-combobox>div.w-combobox__menu>div.w-combobox__optgroup {
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
   grid-column-gap: 1rem;
   grid-row-gap: 0.5rem;
   grid-auto-flow: row
 }
-div.tippy-content div.w-combobox__option {
+div.tippy-content div.w-combobox>div.w-combobox__menu>div.w-combobox__optgroup>div.w-combobox__option {
   grid-template-columns: unset;
   grid-column: unset;
   display: flex;
@@ -237,14 +241,29 @@ div.tippy-content div.w-combobox__option {
   overflow-wrap: break-word;
   line-height: normal;  
 }
-div.tippy-content div.w-combobox__option div.w-combobox__option-text {
+div.tippy-content div.w-combobox>div.w-combobox__menu>div.w-combobox__optgroup>div.w-combobox__option>div.w-combobox__option-text {
   margin-top: .2em;
 }
-div.tippy-content div.w-combobox__option div.w-combobox__option-icon .icon {
+/* increase icon size 20% */
+div.tippy-content div.w-combobox>div.w-combobox__menu>div.w-combobox__optgroup>div.w-combobox__option>div.w-combobox__option-icon>.icon {
   height: 1.2rem;
   width: 1.2rem;
   margin-right: 0.5em;
 }
+/* make sure labels occupy a full row */
+div.tippy-content div.w-combobox>div.w-combobox__menu>div.w-combobox__optgroup>div.w-combobox__optgroup-label {
+  grid-column: 1 / -1;
+  margin-bottom: 0.5rem;
+}
+/* adjust order of block menu opt groups */
+/* div.tippy-content div.w-combobox__menu {
+  display: flex;
+  flex-wrap: wrap;
+} */
+/* second child goes last */
+/* div.tippy-content div.w-combobox__menu>div.w-combobox__optgroup:nth-child(2) {
+  order: 1;
+} */
 
 /* remove excess space under field */
 .w-panel--nested .w-field__wrapper {
