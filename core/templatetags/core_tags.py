@@ -47,13 +47,16 @@ def get_rendition(image, image_options):
 
 @register.simple_tag()
 def get_picture_rendition(image, width):
-    try:
-        imageOverSized = (width > image.width)
-        if imageOverSized:
-            return image.get_rendition("original|format-webp")
-    except:
-        pass
-    return image.get_rendition(f"width-{width}|format-webp")
+    if not image.is_svg():
+        try:
+            imageOverSized = (width > image.width)
+            if imageOverSized:
+                return image.get_rendition("original|format-webp")
+        except:
+            pass
+        return image.get_rendition(f"width-{width}|format-webp")
+    else:
+        return image.get_rendition(f"width-{width}")
     
 @register.simple_tag()
 def richtext_with_css(rich_text, classlist, target_elements=None):
