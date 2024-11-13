@@ -1,5 +1,5 @@
 # testdev
 
-A wagtail 5.x scratch pad to test code on
+A wagtail 6.x scratch pad to test code on
 
 
