@@ -27,7 +27,7 @@
         {% endif %}
         <div class="col{% if self.layout not in 'right-fixed, left-fixed' %}-{{ self.breakpoint }}{% endif %}">
             <div class="card-body p-0 d-flex flex-column h-100">
-                <div class="card-text text-{{ self.text.alignment }} mt-n2">{{ self.text.content }}</div>
+                <div class="card-text mt-n2">{{ self.text }}</div>
                 {% if self.link.url and self.link.link_text %}
                     <div class="mt-auto {% if self.layout == 'right-fixed' %}text-start {% elif self.layout == 'right-responsive' %}text-end text-{{ self.breakpoint }}-start {% else %}text-end {% endif %}">
                         <a href="{{ self.link.url }}" class="btn btn-primary">{{ self.link.link_text }}</a>

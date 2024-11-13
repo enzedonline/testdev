@@ -1,4 +1,4 @@
-from .code import CodeBlock
+from .code import BlogCodeBlock
 from .collapsible_card import CollapsibleCardBlock
 from .csv_table import CSVTableBlock
 from .django_html import DjangoTemplateFragmentBlock
@@ -11,7 +11,6 @@ from .import_text import ImportTextBlock
 from .links import LinkBlock
 from .parsed_richtext import ParsedRichTextBlock
 from .product import ProductBlock
-from .rich_text import (BasicRichTextBlock, MinimalRichTextBlock,
-                        RichTextStructBlock, SimpleRichTextBlock)
+from .rich_text import RichTextBlock
 from .seo_image_chooser import SEOImageChooserBlock
 from .video import InlineVideoBlock

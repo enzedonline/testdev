@@ -7,12 +7,12 @@ from wagtail.telepath import register
 from .choices import (BreakpointChoiceBlock, ColourThemeChoiceBlock,
                       FlexCardLayoutChoiceBlock)
 from .links import LinkBlock
-from .rich_text import SimpleRichTextBlock
+from .rich_text import RichTextBlock
 from .seo_image_chooser import SEOImageChooserBlock
 
 
 class FlexCardBlock(StructBlock):
-    text = SimpleRichTextBlock(
+    text = RichTextBlock(
         label=_("Card Body Text"),
         help_text=_("Body text for this card."),
     )

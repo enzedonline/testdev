@@ -1,32 +1,8 @@
 from django.utils.translation import gettext_lazy as _
-from wagtail.blocks import StructBlock
+from wagtail.blocks import RichTextBlock as WagtailRichTextBlock
 
-
-
-class RichTextStructBlock(StructBlock):
-    from .choices import TextAlignmentChoiceBlock
-    from wagtail.blocks import RichTextBlock
-
-    alignment = TextAlignmentChoiceBlock(default="justify", label=_("Text Alignment"))
-    content = RichTextBlock()
-
+class RichTextBlock(WagtailRichTextBlock):
     class Meta:
-        template = "blocks/simple_richtext_block.html"
+        template = "blocks/richtext_block.html"
         label = _("Rich Text Block")
-        label_format = '{content}'
-        icon = "pilcrow"
-        abstract = True
-
-
-class SimpleRichTextBlock(RichTextStructBlock):
-    pass
-
-
-class MinimalRichTextBlock(RichTextStructBlock):
-    from wagtail.blocks import RichTextBlock
-    content = RichTextBlock(editor="minimal")
-
-
-class BasicRichTextBlock(RichTextStructBlock):
-    from wagtail.blocks import RichTextBlock
-    content = RichTextBlock(editor="basic")
+        label_format = 'RTB: {content}'    
