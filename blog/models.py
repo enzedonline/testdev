@@ -18,9 +18,6 @@ from wagtail.models import Orderable, Page
 from wagtail.search import index
 
 from blocks.models import *
-from blocks.models import (CollapsibleCardBlock, CSVTableBlock,
-                           ExternalLinkEmbedBlock, FlexCardBlock, HeadingBlock,
-                           ImportTextBlock, LinkBlock, SEOImageChooserBlock, InlineVideoBlock)
 from core.forms.restricted_panels_admin_forms import \
     RestrictedPanelsAdminPageForm
 from core.panels.models import (ImportTextAreaPanel, M2MChooserPanel,
@@ -166,7 +163,7 @@ class BlogPage(Page):
             #     ('image', ImageChooserBlock())
             # ])),
             # ("table", TableBlock()),
-            ("code", CodeBlock()),
+            ("code", BlogCodeBlock()),
             ("import_text_block", ImportTextBlock()),
             ("csv_table", CSVTableBlock()),
             ("collapsible_card_block", CollapsibleCardBlock()),
@@ -178,6 +175,7 @@ class BlogPage(Page):
             ("heading", HeadingBlock()),
             ("django_template_fragment", DjangoTemplateFragmentBlock()),
             ("external_video", InlineVideoBlock()),
+            ("document", DocumentBlock()),
         ],
         verbose_name="Page Content",
         blank=True,
@@ -214,7 +212,7 @@ class BlogPage(Page):
         # RestrictedFieldPanel('some_choice_field'),
         # RestrictedFieldPanel('some_rich_text'),
         # RestrictedFieldPanel('some_image'),
-        # RestrictedFieldPanel('some_document'),
+        # FieldPanel('some_document'),
         # FieldPanel("some_product"),
         # RestrictedFieldPanel('some_page'),
         FieldPanel("content"),
