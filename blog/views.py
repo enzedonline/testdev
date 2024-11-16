@@ -2,6 +2,7 @@ from django import forms
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db.models import Q
+from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.forms.choosers import BaseFilterForm, LocaleFilterMixin
 from wagtail.admin.ui.tables import TitleColumn
@@ -77,12 +78,10 @@ class BaseUserChooseView(BaseChooseView):
             {},
         )
 
-class UserChooseView(ChooseViewMixin, CreationFormMixin,  BaseUserChooseView):
+class UserChooseView(ChooseViewMixin, CreationFormMixin, BaseUserChooseView):
     pass
 
-class UserChooseResultsView(
-    ChooseResultsViewMixin, CreationFormMixin, BaseUserChooseView
-):
+class UserChooseResultsView(ChooseResultsViewMixin, CreationFormMixin, BaseUserChooseView):
     pass
 
 class UserChooserViewSet(ChooserViewSet):
@@ -94,6 +93,14 @@ class UserChooserViewSet(ChooserViewSet):
     icon = "user"
     choose_one_text = _("Choose a user")
     choose_another_text = _("Choose another user")
-    edit_item_text = _("Edit this user")
+
+    @cached_property
+    def widget_class(self):
+        widget = super().widget_class
+        try:
+            widget.show_edit_link = False
+        except:
+            pass
+        return widget
 
 user_chooser_viewset = UserChooserViewSet("user_chooser")
