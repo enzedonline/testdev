@@ -1,9 +1,7 @@
-from bs4 import BeautifulSoup
 from django import forms
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils.functional import cached_property
-from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from wagtail.admin.panels import (FieldPanel, InlinePanel, MultiFieldPanel,
@@ -34,18 +32,10 @@ from .spacecraft import Spacecraft, ImageDetailPageSpacecraftOrderable
 
 class AuthorPanel(FieldPanel):
     class BoundPanel(FieldPanel.BoundPanel):
-        def render_html(self, parent_context=None):
-            html = super().render_html(parent_context)
-            if self.instance.id==None:
-                soup = BeautifulSoup(html, "html.parser")
-                chosen = soup.find("input")
-                chosen['value'] = self.request.user.id
-                chooser = soup.find(class_='chooser')
-                chooser['class'].remove('blank')
-                title = soup.find(class_='chooser__title')
-                title.string = self.request.user.__str__()
-                html = mark_safe(str(soup))
-            return html
+        def __init__(self, **kwargs):
+            super().__init__(**kwargs)
+            if not self.bound_field.value():
+                self.bound_field.initial=self.request.user
         
 class BlogIndex(Page):
     parent_page_types = ['home.HomePage']
@@ -189,7 +179,7 @@ class BlogPage(Page):
     )
 
     content_panels = Page.content_panels + [
-        # AuthorPanel('author'),
+        AuthorPanel('author'),
         # UtilityPanel(
         #     '<b>Word Count:</b> {{wordcount}}', {'wordcount': 'wordcount'},
         #     style = 'margin-bottom: 2em;display: block;background-color: antiquewhite;padding: 1em;border-radius: 1em;'
