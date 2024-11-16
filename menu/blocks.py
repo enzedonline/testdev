@@ -35,8 +35,13 @@ class MenuItemOptions:
     sticky: bool = False
 
 
-class MenuStructBlock(StructBlock):
-    def __init__(self, local_blocks=(), show_options: MenuItemOptions = MenuItemOptions(), _depth=1, **kwargs):
+class BaseMenuStructBlock(StructBlock):
+    def __init__(
+            self, 
+            local_blocks=(), 
+            show_options: MenuItemOptions = MenuItemOptions(), 
+            _depth=1, 
+            **kwargs):
         if type(show_options) != MenuItemOptions:
             raise ImproperlyConfigured(
                 "show_options must be declared as MenuItemOptions instance")
@@ -72,7 +77,7 @@ class MenuStructBlock(StructBlock):
         super().__init__(local_blocks, **kwargs)
 
 
-class MenulLinkBlock(MenuStructBlock):
+class MenulLinkBlock(BaseMenuStructBlock):
     link = LinkBlock(
         link_types=['page', 'url_link'],
     )
@@ -85,7 +90,7 @@ class MenulLinkBlock(MenuStructBlock):
         form_classname = "struct-block menu-link-block hide-label"
 
 
-class AutoPageLinksBlock(MenuStructBlock):
+class AutoPageLinksBlock(BaseMenuStructBlock):
     # @TODO - look at autofilling from routable pages
     title = CharBlock(
         label=_("Submenu Label"),
@@ -143,7 +148,7 @@ class SubMenuDividerBlock(StaticBlock):
         icon = 'minus'
         template = "menu/submenu-divider.html"
 
-class RecursiveSubMenuBlock(MenuStructBlock):
+class RecursiveSubMenuBlock(BaseMenuStructBlock):
     def __init__(
             self, 
             local_blocks=(), 
@@ -177,7 +182,7 @@ class RecursiveSubMenuBlock(MenuStructBlock):
         form_classname = "struct-block sub-menu-block"
 
 
-class SearchMenuBlock(MenuStructBlock):
+class SearchMenuBlock(BaseMenuStructBlock):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
@@ -193,7 +198,7 @@ class SearchMenuBlock(MenuStructBlock):
         label_format = label
 
 
-class UserMenuBlock(MenuStructBlock):
+class UserMenuBlock(BaseMenuStructBlock):
     def __init__(self, show_options=MenuItemOptions(icon=False, display_when=False), **kwargs):
         show_options.icon = False
         show_options.display_when = False
