@@ -1,63 +1,47 @@
-:root {
-    --font-family-headings: "Quicksand", sans-serif;
-    --font-family-body: "Work Sans", sans-serif;
-    --font-family-monospace: "Roboto Mono", "Courier New", monospace;
-    --font-size-1: clamp(2rem, 1.7993rem + 0.8451vw, 2.75rem);
-    --font-size-2: clamp(1.8rem, 1.6261rem + 0.7324vw, 2.45rem);
-    --font-size-3: clamp(1.6rem, 1.4662rem + 0.5634vw, 2.1rem);
-    --font-size-4: clamp(1.4rem, 1.293rem + 0.4507vw, 1.8rem);
-    --font-size-5: clamp(1.2rem, 1.1331rem + 0.2817vw, 1.45rem);
-    --font-size-6: clamp(0.9rem, 0.8732rem + 0.1127vw, 1rem);
-    --font-size-body: clamp(1rem, 0.9599rem + 0.169vw, 1.15rem);
-  }
-.fa-entity {
-    font-size: smaller;
-    font-weight: 600;
-    font-family: monospace;
-    font-style: normal;
-    color: #666;
-    background: orange;
-    padding: 0.2em 0.5em;
-    border-radius: 0.5em;
+/* Built-in style overrides */
+.Draftail-Editor .DraftEditor-root {
+    font-family: var(--font-family-body);
+    font-size: var(--font-size-body);
 }
-.fa-entity::before {
-    content: '⚐';
-    padding-right: 0.4em;
+
+div.public-DraftStyleDefault-block.public-DraftStyleDefault-ltr {
+    text-align: justify;
 }
+
+/* Custom draftail styles */
+p.Draftail-block--left-align>div.public-DraftStyleDefault-block.public-DraftStyleDefault-ltr {
+    text-align: left;
+}
+
+p.Draftail-block--centre-align>div.public-DraftStyleDefault-block.public-DraftStyleDefault-ltr {
+    text-align: center;
+}
+
+p.Draftail-block--right-align>div.public-DraftStyleDefault-block.public-DraftStyleDefault-ltr {
+    text-align: right;
+}
+
+.Draftail-block--CODE-BLOCK {
+    font-family: var(--font-family-monospace);
+    font-size: var(--font-size-6) !important;
+    text-align: left !important;
+    margin-left: 0 !important;
+    color: #f8f8f2;
+    background-color: #272822;
+    padding: 0.5em 1.2em;
+    line-height: 1.2;
+}
+
 li.Draftail-block--checklist {
     margin-left: 0 !important;
 }
-li.Draftail-block--checklist > div.public-DraftStyleDefault-block::before {
+
+li.Draftail-block--checklist>div.public-DraftStyleDefault-block::before {
     content: '🗹';
     padding-right: 1em;
     margin-left: -2em;
 }
-li.Draftail-block--checklist > div.public-DraftStyleDefault-block {
+
+li.Draftail-block--checklist>div.public-DraftStyleDefault-block {
     padding-left: 2em;
-}
-.Draftail-block--code-block {
-    font-size: var(--font-size-6);
-    font-family: var(--font-family-monospace);
-    color: floralwhite;
-    background-color: #272822;
-    padding: 0 0 0 0.5em;
-    text-align: left !important;
-    line-height: 1.6;
-    margin-left: 0 !important;
-}
-
-.Draftail-block--quoteblock {
-    font-size: var(--font-size-5);
-    font-family: var(--font-family-headings);
-    color: #272822;
-    border-inline-start: 0.5rem solid lightseagreen;
-    background-color: lightblue;
-    padding: 0 0 0 1em;
-    text-align: left !important;
-    line-height: 1.6;
-    margin-left: 0 !important;
-}
-
-.public-DraftStyleDefault-ul {
-    list-style: none;
 }

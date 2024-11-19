@@ -11,92 +11,64 @@
   --font-size-body: clamp(1rem, 0.9599rem + 0.169vw, 1.15rem);
 }
 
-html {
-  scroll-padding-bottom: 60px;
-}
-
 body {
-  margin: 0;
   font-family: var(--font-family-body);
   font-size: var(--font-size-body);
-  font-weight: 400;
-  line-height: 1.5;
 }
-
-.Draftail-block--h1_class ,
-.Draftail-block--h2_class ,
-.Draftail-block--h3_class ,
-.Draftail-block--h4_class ,
-.Draftail-block--h5_class ,
-.Draftail-block--h6_class ,
-h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
-  font-family: var(--font-family-headings);
-  margin-bottom: 0.8rem;
-  font-weight: 500;
-  line-height: 1.2;
+.h1,.h2,.h3,.h4,.h5,.h6,h1,h2,h3,h4,h5,h6 {
+  font-family: var(--font-family-headings) !important;
+  font-weight: 500 !important;
+  line-height: 1.2 !important;
 }
-
-.Draftail-block--h1_class, h1, .h1 {
+.h1,h1 {
   font-size: var(--font-size-1);
 }
-
-.Draftail-block--h2_class, h2, .h2 {
+.h2,h2 {
   font-size: var(--font-size-2);
-  padding: 0.35rem 0;
 }
-
-.Draftail-block--h3_class, h3, .h3 {
+.h3,h3 {
   font-size: var(--font-size-3);
-  padding: 0.25rem 0;
 }
-
-.Draftail-block--h4_class, h4, .h4 {
+.h4,h4 {
   font-size: var(--font-size-4);
-  padding: 0.15rem 0;
 }
-
-.Draftail-block--h5_class, h5, .h5 {
+.h5,h5 {
   font-size: var(--font-size-5);
-  padding: 0.125rem 0 !important;
 }
-
-.Draftail-block--h6_class, h6, .h6 {
+.h6,h6 {
   font-size: var(--font-size-6);
-  padding: 0.1rem 0 !important;
 }
-div.Draftail-Editor .DraftEditor-root {
-  font-size: var(--font-size-body);
-}
-div.public-DraftStyleDefault-block.public-DraftStyleDefault-ltr {
-  text-align: justify;
-}
-p.Draftail-block--left-align>div.public-DraftStyleDefault-block.public-DraftStyleDefault-ltr {
-  text-align: left;
-}
-p.Draftail-block--centre-align>div.public-DraftStyleDefault-block.public-DraftStyleDefault-ltr {
-  text-align: center;
-}
-p.Draftail-block--right-align>div.public-DraftStyleDefault-block.public-DraftStyleDefault-ltr {
-  text-align: right;
-}
-
 .p,
 p {
-  font-size: var(--font-size-body);
-  font-family: var(--font-family-body);
+  font-size: var(--font-size-body) !important;
+  font-family: var(--font-family-body) !important;
 }
-
 p:not(.help), .p {
   text-align: justify;
 }
-
 .pagination > p {
   text-align: center;
 }
+.a, 
+a {
+  color: inherit;
+}
 
+/* --------------------------------------------------------------------- */
+/* Draftail Styles */
+/* --------------------------------------------------------------------- */
+
+.Draftail-Editor .DraftEditor-root {
+  font-size: unset;
+  line-height: 1.4;
+}
 .Draftail-Toolbar {
+  background-color: var(--w-color-surface-menus) !important;
+  color: var(--w-color-text-label-menus-default) !important;
+  border-bottom: 1px solid var(--w-color-border-field-default) !important;
+  /* float toolbar so always visible */
   position: sticky !important;
-  top: calc(0.2rem + 51px) !important;
+  top: calc(0.2rem + 50px) !important;
   z-index: 2 !important;
 }
 @media screen and (max-width: 800px) {
@@ -105,25 +77,57 @@ p:not(.help), .p {
     top: calc(0.2rem + 100px) !important;
   }
 }
-.text-start,
-.Draftail-block--left-align .public-DraftStyleDefault-ltr {
-  text-align: start;
-}
-
-.text-center,
-.Draftail-block--centre-align .public-DraftStyleDefault-ltr {
-  text-align: center;
-}
-
-.text-end,
-.Draftail-block--right-align .public-DraftStyleDefault-ltr {
-  text-align: end;
-}
-
-.Draftail-ToolbarGroup, .tab-content--comments-enabled .Draftail-CommentControl {
+.Draftail-ToolbarGroup {
   /* allow toolbar button groups to wrap */
   display: contents !important;
 }
+.Draftail-ToolbarGroup.Draftail-ToolbarGroup--controls {
+  /* force comment button inline */
+  display: inline-block !important;
+}
+.Draftail-Editor .public-DraftEditor-content {
+  /* prevent v-scroll loading unnecessarily */
+  padding: 1rem 0.5rem;
+}
+.public-DraftStyleDefault-ltr {
+  text-align: justify;
+}
+.Draftail-Editor .DraftEditor-root{
+    font-family: var(--font-family-body);
+}
+.Draftail-ToolbarButton {
+  padding: 0.1rem 0.2rem 0.2rem 0.3rem !important;
+}
+.Draftail-block--blockquote {
+  border-inline-start: 0.5rem solid var(--bs-info) !important;
+  border-radius: 0.25rem;
+  background-color: var(--bs-light);
+  color: var(--bs-dark) !important;
+  font-style: normal;
+  font-family: var(--font-family-headings);
+  font-weight: 500;
+  padding: 1rem 2rem !important;
+}
+.Draftail-block--header-two {
+  font-size: var(--font-size-2) !important;
+}
+.Draftail-block--header-three {
+  font-size: var(--font-size-3) !important;
+}
+.Draftail-block--header-four {
+  font-size: var(--font-size-4) !important;
+}
+.Draftail-block--header-five {
+  font-size: var(--font-size-5) !important;
+}
+.Draftail-block--header-six {
+  font-size: var(--font-size-6) !important;
+}
+.Draftail-block--unstyled  {
+  font-size: var(--font-size-body) !important;
+  font-family: var(--font-family-body) !important;
+}
+
 
 .w-panel.title:first-child input:not(:hover, :focus, [aria-invalid=true]) {
   border-color: #5555
@@ -199,39 +203,192 @@ code {
   z-index: 1;
 }
 
-[custom-tooltip]:hover:before, [custom-tooltip]:hover:after {
-opacity: 1;
-visibility: visible;
+/* --------------------------------------------------------------------- */
+/* Admin Styles */
+/* --------------------------------------------------------------------- */
+
+.w-summary {
+  --w-summary-item-font-size: 4rem;
+  margin-bottom: .5rem;
+  padding-top: 1rem;
+}
+.sidebar--slim .sidebar-custom-branding,
+.sidebar__inner .sidebar-custom-branding {
+  padding: 0;
+  margin: 0.5em auto 0 auto;
+}
+.sidebar .icon--menuitem,
+.sidebar-menu-item__link:before  {
+  height: 1.2rem;
+  margin: 0;
+  min-width: 1rem;
+  width: 1.2rem;
+}
+.panel.nice-padding.panel-upgrade-notification {
+  display: none;
+}
+.panel.summary {
+  margin-bottom: 0;
+  padding-top: 0;
+}
+.listing td.title {
+  padding: 0.5rem 1rem 0.1rem 1rem;
+}
+.listing td, .listing th {
+  padding: 0.5rem 1rem 0.1rem 1rem;
+}
+.listing .title .title-wrapper {
+  font-weight: 500;
+  vertical-align: top;
+}
+.c-page-explorer__item__link h3 {
+  font-size: var(--font-size-5);
+  text-align: start;
+}
+.c-page-explorer__item__link {
+  padding: 1rem 1.75rem;
+}
+.sidebar-sub-menu-panel > h2 {
+  min-height: 0;
+  padding-bottom: 1rem;
+}
+.sidebar-menu-item--in-sub-menu .sidebar-menu-item__link {
+  padding: 0.4rem 0.7rem;
+}
+.field__label {
+  text-align: start;
+}
+.field-content {
+  width: 100%;
+}
+fieldset {
+  padding: 0;
+}
+.tagit,
+select {
+  font-family: var(--font-family-body);
+}
+textarea {
+  font-size: var(--font-size-body);
+  font-family: var(--font-family-body);
+  text-align: start;
+  padding-bottom: 1rem;
+  padding-top: 1rem;
+  line-height: 1.4;
+  resize:vertical !important;
+}
+.c-sf-container {
+  padding: 0.3rem 0;
+}
+.c-sf-container .help {
+  margin: 0;
+}
+label {
+  padding-top: 0;
+  font-family: var(--font-family-headings);
+}
+header {
+  font-family: var(--font-family-headings);
+}
+header.w-header {
+  margin-bottom: 1rem;
+}
+.title-wrapper {
+  font-family: var(--font-family-headings) !important;
+  font-weight: 500 !important;
+}
+.object>.title-wrapper:before {
+  line-height: 1.3em !important;
+}
+.object>.title-wrapper {
+  line-height: 1;
+  padding: .6em 0 .9em 4em !important;
+  font-size: 0.95em !important;
+} 
+.title input:not([type=submit]) {
+    font-size: var(--font-size-4) !important;
+    font-family: var(--font-family-headings) !important;
+    font-weight: 500 !important;
+    padding-inline-start: 0.8rem !important;
+    padding-inline-end: 0.5rem !important;
+    line-height: 1 !important;
+    padding-top: 0.3rem !important;
+    padding-bottom: 0.3rem !important;
+}
+.full input:not([type=submit]), .full textarea {
+    padding-top: 0;
+    padding-bottom: 0;
+    margin: 0.8rem 0;
+}
+@media screen and (min-width: 50em) {
+  .object.full input:not([type=submit]), .object.full textarea {
+    border-width: 1px !important;
+  }
+}
+.help {
+  font-size: 0.8em !important;
+  text-align: left;
+}
+.object-help {
+    line-height: 1.2;
+    padding-left: 0.8rem;
+    padding-bottom: 3rem;
+}
+.title .help {
+    padding-top: 0.1rem;
+}
+.object-help .help {
+  padding-left: 0 !important;
+}
+.object .object-help .icon-help {
+    margin-inline-start: -1.9em;
+    height: 1rem;
+}
+.page-explorer .listing .index .privacy-indicator {
+  right: 0.8em;
+}
+nav.pagination>p {
+  text-align: center;
+}
+.tab {
+  white-space: pre;
+}
+.tab::after {
+  content: "    ";
+  white-space: pre;
+}
+/* stop modals switching to 66% width when side panel open */
+.minimap-open .tab-content, .side-panel-open .tab-content {
+  width: 100%;
+}
+/* remove excess space under field */
+.w-panel--nested .w-field__wrapper {
+  padding-bottom: 0;
 }
 
-.listing--inline-actions td.title {
-  display: table-cell;
-  line-height: normal;
-}
-
-/* block menu */
+/* streamfield pop-out block menu */
 div[data-tippy-root] div.tippy-box {
   max-width: unset !important;
 }
-/* set menu width to 70vw up to max 75rem (5 columns) */
 div.tippy-content div.w-combobox {
   width: 70vw;
-  max-width: 75rem;
 }
-/* hide search box */
-div.tippy-content div.w-combobox>div.w-combobox__field>input {
+div.tippy-content div.w-combobox__optgroup-label {
+  grid-column: 1 / -1;
+  margin-bottom: 0.5rem;
+}
+div.w-combobox__field>input {
   display: none;
 }
-/* use responsive grid layout for options, reduce spacing */
-div.tippy-content div.w-combobox>div.w-combobox__menu>div.w-combobox__optgroup {
+div.tippy-content div.w-combobox div.w-combobox__menu div.w-combobox__optgroup {
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   grid-column-gap: 1rem;
   grid-row-gap: 0.5rem;
   grid-auto-flow: row
 }
-div.tippy-content div.w-combobox>div.w-combobox__menu>div.w-combobox__optgroup>div.w-combobox__option {
+div.tippy-content div.w-combobox__option {
   grid-template-columns: unset;
   grid-column: unset;
   display: flex;
@@ -241,49 +398,76 @@ div.tippy-content div.w-combobox>div.w-combobox__menu>div.w-combobox__optgroup>d
   overflow-wrap: break-word;
   line-height: normal;  
 }
-div.tippy-content div.w-combobox>div.w-combobox__menu>div.w-combobox__optgroup>div.w-combobox__option>div.w-combobox__option-text {
+div.tippy-content div.w-combobox__option div.w-combobox__option-text {
   margin-top: .2em;
 }
-/* increase icon size 20% */
-div.tippy-content div.w-combobox>div.w-combobox__menu>div.w-combobox__optgroup>div.w-combobox__option>div.w-combobox__option-icon>.icon {
+div.tippy-content div.w-combobox__option div.w-combobox__option-icon .icon {
   height: 1.2rem;
   width: 1.2rem;
   margin-right: 0.5em;
 }
-/* make sure labels occupy a full row */
-div.tippy-content div.w-combobox>div.w-combobox__menu>div.w-combobox__optgroup>div.w-combobox__optgroup-label {
-  grid-column: 1 / -1;
-  margin-bottom: 0.5rem;
-}
-/* adjust order of block menu opt groups */
-/* div.tippy-content div.w-combobox__menu {
-  display: flex;
-  flex-wrap: wrap;
-} */
-/* second child goes last */
-/* div.tippy-content div.w-combobox__menu>div.w-combobox__optgroup:nth-child(2) {
-  order: 1;
-} */
 
-/* remove excess space under field */
-.w-panel--nested .w-field__wrapper {
-  padding-bottom: 0;
+
+div.wordcount-banner {
+  background-color: var(--w-color-surface-field-inactive);
+  padding: 0.5em 1em;
+  border-radius: 1em;
+  margin-bottom: -2em;
 }
+
+/* remove root level warning box */
+form#page-reorder-form>div.nice-padding {
+display: none;
+}
+
+/* input and select font size */
 div.w-field__input>input,
 div.w-field__input>select {
   font-size: 1em;
 }
-/* common flex-box struct block styles */
-div.flex-block {
+
+/* chooser layout */
+div.chooser>div.chosen {
   flex-wrap: wrap;
-  display: flex;
-  column-gap: 2rem;
+  gap: 0.4rem;
 }
-div.flex-block>div[data-contentpath] {
+div.chooser>div.chosen>div.chooser__title {
+  order: 1;
+  flex-basis: 100px;
   flex-grow: 1;
+  font-size: 0.8em;
+}
+div.chooser>div.chosen>div.w-dropdown>button {
+  padding: 0;
+  padding-inline-start: 0;
+  padding-inline-end: 0;
+  height: 1em;
+  width: 1em;
 }
 
-/* =============== All choosers =============== */
+/* struct block help text */
+div.c-sf-help {
+  flex-basis: 100%;
+}
+div.c-sf-help>div.help {
+  margin-bottom: 0.5rem;
+}
+
+/* --------- Image Listing --------- */
+form.image-search>div.w-field-row>div.w-field__wrapper {
+  margin-bottom: 0.5rem;
+}
+ul.listing.horiz.images>li {
+  padding: 0.5em;
+  height: 100%;
+}
+ul.listing.horiz.images>li>input[type="checkbox"] {
+  margin: 0em .5em -1.5em -0.2em;
+}
+
+/* --------------------------------------------------------------------- */
+/* ---------------------------- All choosers --------------------------- */
+/* --------------------------------------------------------------------- */
 /* move up screen */
 div.modal-content:has(.w-header) {
   margin-top: 1rem;
@@ -307,7 +491,9 @@ div.modal-content div.listing>h2 {
   display: none;
 }
 
-/* =============== Image & Document Chooser =============== */
+/* ---------------------------------------------------------------------- */
+/* ---------------------- Image & Document Chooser ---------------------- */
+/* ---------------------------------------------------------------------- */
 /* search form layout */
 div.modal-content form[action="/admin/images/chooser/results/"] ul.fields,
 div.modal-content form[action="/admin/documents/chooser/results/"] ul.fields {
@@ -354,4 +540,30 @@ div.modal-content div.listing>ul.images>li {
 /* document search results */
 div.modal-content:has(form[action="/admin/documents/chooser/results/"]) .listing thead th {
   font-weight: 500;
+}
+/* -------------------------------- End Choosers ------------------------------------- */
+
+
+[custom-tooltip]:hover:before, [custom-tooltip]:hover:after {
+opacity: 1;
+visibility: visible;
+}
+
+.listing--inline-actions td.title {
+  display: table-cell;
+  line-height: normal;
+}
+
+/* --------------------------------------------------------------------- */
+/* Block Styles */
+/* --------------------------------------------------------------------- */
+
+/* common flex-box struct block styles */
+div.flex-block {
+  flex-wrap: wrap;
+  display: flex;
+  column-gap: 2rem;
+}
+div.flex-block>div[data-contentpath] {
+  flex-grow: 1;
 }
