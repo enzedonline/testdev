@@ -273,5 +273,5 @@ class UtilityPanel(Panel):
         def get_style(self):
             # add style if supplied
             if self.panel.style:
-                return self.panel.style
+                return f' style="{self.panel.style}"'
             return ""
