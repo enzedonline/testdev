@@ -282,7 +282,7 @@ class LinkBlockAdapter(StructBlockAdapter):
         structblock_media = super().media
         return forms.Media(
             js=structblock_media._js + ["js/link-block.js"],
-            css={"all": ("css/link-block.css",)},
+            css={"all": ("css/admin/link-block.css",)},
         )
 
 

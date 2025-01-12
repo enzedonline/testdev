@@ -93,7 +93,7 @@ div.link-block-tab>label>input {
 /* add horizontal padding to tab item structblocks */
 div.link-block > div[data-contentpath]:not([data-contentpath='link_type']), 
 .link-block-no-selection {
-    padding: 0 1rem;
+    padding: 0.5rem 0 0 1rem;
 }
 /* add extra space after 'no linkselected' StaticBlock */
 div.link-block > div[data-contentpath='not_selected'] {
