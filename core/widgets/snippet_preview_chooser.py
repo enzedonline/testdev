@@ -1,41 +1,55 @@
 from django import forms
-from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
 from django.utils.text import slugify
 from wagtail.admin.templatetags.wagtailadmin_tags import icon as get_icon
-from wagtail.images.models import Image
+from wagtail.images import get_image_model
 from wagtail.snippets.views.chooser import ChooserViewSet, ChosenView
 from wagtail.snippets.widgets import AdminSnippetChooser, SnippetChooserAdapter
 from wagtail.telepath import register
 
 from core.utils import is_html
 
+IMAGE_MODEL = get_image_model()
 
 class PreviewMixin:
+    """
+    Mixin class to provide a preview functionality for a snippet model instance in the subclassed ChosenView.
+    Methods:
+        get_preview(instance):
+            Generates a preview for the given instance. The preview can be:
+            - A wagtail image (or custom subclass)
+            - A rendered HTML string for the preview image
+            - A registered icon name
+            If the preview is None or does not exist, it defaults to the viewset/model icon if available, otherwise the default snippet icon.
+            Args:
+                instance: The instance of the snippet model.
+            Returns:
+                str: An HTML string representing the preview image or icon.
+    """
+
     @mark_safe
     def get_preview(self, instance):
-        """
-        Snippet model should have a 'preview' property that returns
-        - a wagtail image (or custom subclass)
-        - a rendered html string for the preview image for that instance
-        - a registered icon name
-        If preview is None or does not exist, defaults to viewset/model icon if exists, else the default snippet icon
-        """
-
         def render_icon(icon=None):
+            """
+            Render an icon using the icon name or the default snippet icon.
+            Args:
+                icon (str): The icon name to render.
+            Returns:
+                str: An HTML string representing the icon
+            """
             if not icon:
                 icon = getattr(self, "icon", getattr(instance, "get_icon", "snippet"))
-            context=get_icon(icon)
+            context = get_icon(icon)
             return f'''<svg class="icon icon-{context['name']} {context['classname']}" viewBox="0 0 24 24" height="60px" aria-hidden="true">
                         <use href="#icon-{context['name']}"></use>
                        </svg>'''
 
         preview = getattr(instance, self.preview_name, None)
         if preview:
-            if isinstance(preview, Image):
-                return preview.get_rendition('height-60').img_tag({'class':"show-transparency"})
+            if isinstance(preview, IMAGE_MODEL):  # preview is an image
+                return preview.get_rendition('height-60').img_tag({'class': "show-transparency"})
             else:
                 if is_html(preview):  # preview is html formatted string
                     return preview
@@ -63,16 +77,17 @@ class SnippetPreviewChooser(PreviewMixin, AdminSnippetChooser):
         super().__init__(model, **kwargs)
         self.preview_key = "preview"
         self.preview_name = preview_name
-        self.url_prefix = url_prefix if url_prefix else model._meta.model_name
+        self.url_prefix = url_prefix or model._meta.model_name
         if not self.icon:
             self.icon = getattr(model, "icon", "snippet")
 
     # wagtail.admin.viewsets.chooser.py: ChooserViewset.get_block_class() throws an error if widget class not callable
-    # "widget": self.widget_class() in cls definition (L209 in Wagtail 5.0)
+    # "widget": self.widget_class() in cls definition (L202 in Wagtail 6.4)
     def __call__(self, *args, **kwargs):
         return self
 
     def get_context(self, name, value_data, attrs):
+        # add preview to widget context
         context = super().get_context(name, value_data, attrs)
         context[self.preview_key] = value_data.get(self.preview_key, "")
         return context
@@ -81,9 +96,9 @@ class SnippetPreviewChooser(PreviewMixin, AdminSnippetChooser):
         value_data = super().get_value_data_from_instance(instance)
         value_data[self.preview_key] = self.get_preview(instance)
         return value_data
-
+    
     def get_chooser_modal_url(self):
-        # override snippet chooser modal url -default url overrides custom view classes
+        # override snippet chooser modal url - default url overrides custom view classes
         return reverse(f"{self.url_prefix}:choose")
 
     @cached_property
@@ -114,6 +129,10 @@ register(SnippetPreviewChooserAdapter(), SnippetPreviewChooser)
 
 
 class SnippetPreviewChosenView(PreviewMixin, ChosenView):
+    """
+    Adds preview data to the default ChosenView response.
+    Override the preview_name attribute to use a different fieldname or property for the preview image.
+    """
     # model fieldname or property used to return preview image
     preview_name = "preview"
 
