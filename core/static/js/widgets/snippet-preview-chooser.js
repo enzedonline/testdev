@@ -6,23 +6,10 @@ const declareSnippetPreviewChooser = async () => {
 
         initHTMLElements(id) {
             super.initHTMLElements(id);
+            // Find the preview element, must be defined in the chooser template
             this.previewElement = this.chooserElement.querySelector(
-                '.chooser__preview',
+                'div.chooser__preview',
             );
-        }
-
-        getPreviewStateFromHTML() {
-            if (this.previewElement && this.previewStateKey) {
-                this.state[this.previewStateKey] = this.previewElement.innerHTML || '';
-            }
-        }
-
-        getStateFromHTML() {
-            const state = super.getStateFromHTML();
-            if (this.previewElement && this.previewStateKey) {
-                state[this.previewStateKey] = this.previewElement.innerHTML || '';
-            }
-            return state;
         }
 
         renderState(newState) {
