@@ -1,6 +1,7 @@
 {% extends "wagtailadmin/widgets/chooser.html" %}
 {% block chosen_icon %}
-  <div class="chooser__preview" role="presentation" style="width: auto; height: auto; min-width: 60px;">
+{% comment %} div.chooser__preview identifies the element to take the preview widget context as inner html {% endcomment %}
+  <div class="chooser__preview" role="presentation" style="width: auto; height: 60px;">
     {{ preview }}
   </div>
 {% endblock chosen_icon %}
