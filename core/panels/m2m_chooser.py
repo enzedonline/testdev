@@ -11,7 +11,7 @@ from wagtail.admin.panels import FieldPanel
 
 class M2MChooserPanel(FieldPanel):
     """
-    FieldPanel with pop-over chooser style form to select options in ParentalManyToManyField.
+    FieldPanel with pop-over chooser style form to select items in ParentalManyToManyField.
     """
 
     def __init__(
@@ -91,6 +91,9 @@ class M2MChooserPanel(FieldPanel):
                 self.localise_choices()
 
         def localise_choices(self):
+            """
+            Filter choices based on locale_id of instance
+            """
             locale_id = getattr(self.instance, 'locale_id', False)
             if locale_id:
                 try:
@@ -103,9 +106,10 @@ class M2MChooserPanel(FieldPanel):
                     pass
 
         def get_choice_list(self, iterator):
-            choice_list = []
-            for value, label in iterator:
-                choice_list.append({'value': value.value, 'label': label})
+            """
+            Convert iterator to list of choices
+            """
+            choice_list = [{'value': value.value, 'label': label} for value, label in iterator]
             return choice_list
 
         def get_context_data(self, parent_context=None):
@@ -121,6 +125,9 @@ class M2MChooserPanel(FieldPanel):
 
         @mark_safe
         def render_html(self, parent_context=None):
+            """
+            Add rendered chooser + modal html to wrapper element
+            """
             html = super().render_html(parent_context)
             soup = BeautifulSoup(html, "html.parser")
             select = soup.find("select")
@@ -131,7 +138,6 @@ class M2MChooserPanel(FieldPanel):
             wrapper["class"] = wrapper.get("class", []) + [
                 f'm2mchooser-{self.opts["field_id"]}'
             ]
-            # add rendered chooser html to wrapper element
             chooser_html = render_to_string(
                 "panels/m2m_chooser.html", 
                 self.get_context_data()
