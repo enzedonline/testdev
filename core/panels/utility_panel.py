@@ -30,7 +30,8 @@ class UtilityPanel(Panel):
                 supply as list with first element = 'fn', second element = full path to function, optional third is kwarg dict
                 e.g. value_dict={'rnd': ['fn', 'random.randint', {'a': 1,'b': 9999}]}
                 this will swap the token {{rnd}} with the result of random.randint(a=1, b=9999)
-    style:      optional, any valid style string
+    style:      optional, any valid style string e.g. "font-size: 0.8em !important; color: var(--w-color-text-meta);"
+    class_list: optional, a space separated string of classes to add e.g. "w-panel help"
     datetime_format: optional, any valid strftime() formatting string, applied to any datetime objects returned
     """
 
@@ -39,6 +40,7 @@ class UtilityPanel(Panel):
         text,
         value_dict={},
         style=None,
+        class_list=None,
         datetime_format="%c",
         add_hidden_fields=False,
         *args,
@@ -55,6 +57,7 @@ class UtilityPanel(Panel):
         self.value_dict = value_dict
         self.text = text
         self.style = style
+        self.class_list = class_list
         self.datetime_format = datetime_format
         self.add_hidden_fields = add_hidden_fields
         super().__init__(*args, **kwargs)
@@ -64,6 +67,7 @@ class UtilityPanel(Panel):
             text=self.text,
             value_dict=self.value_dict,
             style=self.style,
+            class_list=self.class_list,
             datetime_format=self.datetime_format,
             add_hidden_fields=self.add_hidden_fields,
         )
@@ -237,7 +241,7 @@ class UtilityPanel(Panel):
             return ""
 
         def render_html(self, parent_context):
-            return mark_safe(f"<div{self.get_style()}>{self.parse_text()}</div>")
+            return mark_safe(f"<div{self.get_style()}{self.get_class_list()}>{self.parse_text()}</div>")
 
         def parse_text(self):
             # loop through the the value dictionary if present,
@@ -274,4 +278,10 @@ class UtilityPanel(Panel):
             # add style if supplied
             if self.panel.style:
                 return f' style="{self.panel.style}"'
+            return ""
+
+        def get_class_list(self):
+            # add class list if supplied
+            if self.panel.class_list:
+                return f' class="{self.panel.class_list}"'
             return ""
