@@ -177,7 +177,7 @@ def block_exists(stream_data, search_value):
                 return True
     return False
 
-class MyHTMLParser(HTMLParser):
+class IsHTMLParser(HTMLParser):
     def __init__(self):
         super().__init__()
         self.is_html = False
@@ -186,7 +186,7 @@ class MyHTMLParser(HTMLParser):
         self.is_html = True
 
 def is_html(input_string):
-    parser = MyHTMLParser()
+    parser = IsHTMLParser()
     parser.feed(input_string)
     return parser.is_html
 
@@ -300,6 +300,13 @@ def sf(number, significant_figures):
         return 0
     else:
         return round(number, significant_figures - int(math.floor(math.log10(abs(number)))) - 1)
+    
+def isfloat(value):
+    try:
+        float(value)
+        return True
+    except ValueError:
+        return False
 
 def get_custom_icons(root_folder = 'core/templates', icons_folder = 'icons', file_extension = '*.svg'):
     """ Return a list of icons found in a certain path """
