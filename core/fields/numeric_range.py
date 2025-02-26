@@ -57,7 +57,7 @@ class NumericRangeField(models.JSONField):
     
 
     
-# Version fo dbs not supporting JSONField
+# Version for db's not supporting JSONField
 
 # import ast
 
