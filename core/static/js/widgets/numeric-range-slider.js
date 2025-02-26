@@ -1,38 +1,47 @@
 class NumericRangeSlider {
-    constructor(id) {
-        this.inputElement = document.getElementById(`${id}`)
-        this.getSliderValues();
+    constructor(id, options) {
+        this.inputElement = document.getElementById(`${id}`);
+        if (!this.inputElement) {
+            throw new Error(`Element with id "${id}" not found`);
+        }
+        if (!options || typeof options !== 'object') {
+            throw new Error('Options object is required');
+        }
+        this.getSliderOptions(options);
         this.addSlider();
-        window.test = this;
     }
-    
-    getSliderValues() {
-        this.settings = { ...this.inputElement.dataset };
-        this.settings.min = parseFloat(this.settings.minValue);
-        this.settings.max = parseFloat(this.settings.maxValue);
-        this.settings.step = parseFloat(this.settings.step);
-        this.settings.pipCount = parseInt(this.settings.pipCount);
-        this.settings.pipDecimals = parseInt(this.settings.pipDecimals);
-        this.settings.density = parseInt(this.settings.minorTickDensity);
-        this.settings.verticalLabels = JSON.parse(this.settings.verticalLabels)
 
-        this.sliderElement = this.inputElement.parentElement.appendChild(document.createElement('div'));
-        this.sliderElement.classList = `numeric-range-slider${this.settings.verticalLabels ? ' vertical-labels' : ''}`;
+    getSliderOptions(options) {
+        // Parse options from the Django template
+        this.options = {};
+        this.options.min = parseFloat(options.minValue);
+        this.options.max = parseFloat(options.maxValue);
+        this.options.step = parseFloat(options.step);
+        this.options.unit = options.unit;
+        this.options.prefix = options.prefix;
+        this.options.decimalPlaces = parseInt(options.decimalPlaces);
+        this.options.majorIntervals = parseInt(options.majorIntervals);
+        this.options.minorIntervals = parseInt(options.minorIntervals);
+        this.options.verticalLabels = JSON.parse(options.verticalLabels)
 
         const initialValue = this.inputElement.value
         if (!(Array.isArray(initialValue) && initialValue.length === 0)) {
             let parsingError = false, errorMessage;
             try {
-                [this.lower, this.upper] = JSON.parse(initialValue).map(parseFloat);
-                if (isNaN(this.lower)) { this.lower = this.settings.min; parsingError = true; };
-                if (isNaN(this.upper) || this.upper === undefined) { this.upper = this.settings.max; parsingError = true; };
+                const parsed = JSON.parse(initialValue).map(parseFloat);
+                if (!(Array.isArray(parsed) && parsed.length === 2)) {
+                    throw new Error('Invalid range format: expected array of length 2');
+                }
+                [this.lower, this.upper] = parsed;
+                if (isNaN(this.lower)) { this.lower = this.options.min; parsingError = true; };
+                if (isNaN(this.upper) || this.upper === undefined) { this.upper = this.options.max; parsingError = true; };
             } catch (error) {
                 parsingError = true;
             }
             if (parsingError) {
                 errorMessage = ("There was an error reading the range values from the database.")
             } else {
-                if (this.lower < this.settings.min || this.upper > this.settings.max) {
+                if (this.lower < this.options.min || this.upper > this.options.max) {
                     errorMessage = (`The stored value ${this.inputElement.value} is outside of the bounds of the range limit.`)
                 }
             }
@@ -44,16 +53,18 @@ class NumericRangeSlider {
                 errorLabel.innerText = errorMessage
             }
         } else {
-            this.lower = this.settings.min;
-            this.upper = this.settings.max;
+            this.lower = this.options.min;
+            this.upper = this.options.max;
         }
 
         // Calculate pip value array. Ensure the last value is exactly 100 to handle rounding errors
-        this.settings.pipValues = [];
-        for (let i = 0; i < this.settings.pipCount - 1; i++) {
-            this.settings.pipValues.push((100 * i) / (this.settings.pipCount - 1));
+        this.options.pipValues = new Array(this.options.majorIntervals + 1);
+        for (let i = 0; i < this.options.majorIntervals; i++) {
+            this.options.pipValues.push((100 * i) / (this.options.majorIntervals));
         }
-        this.settings.pipValues.push(100);
+        this.options.pipValues.push(100);
+        // Calculate minor tick density based on the number of major & minor intervals to ensure the pips are evenly spaced
+        this.options.density = 100 / (this.options.majorIntervals * this.options.minorIntervals);
 
     }
 
@@ -62,33 +73,39 @@ class NumericRangeSlider {
     }
 
     addSlider(callback) {
+        this.sliderWrapper = this.inputElement.parentElement.insertAdjacentElement('afterend', document.createElement('div'));
+        this.sliderElement = this.sliderWrapper.appendChild(document.createElement('div'));
+        this.sliderElement.classList = `numeric-range-slider${this.options.verticalLabels ? ' vertical-labels' : ''}`;
+
         noUiSlider.create(this.sliderElement, {
             start: [this.lower, this.upper],
-            step: this.settings.step,
+            step: this.options.step,
             connect: true,
             tooltips: wNumb({
-                decimals: this.settings.pipDecimals,
-                prefix: this.settings.pipPrefix,
-                suffix: this.settings.unit
+                decimals: this.options.decimalPlaces,
+                prefix: this.options.prefix,
+                suffix: this.options.unit
             }),
             range: {
-                'min': [this.settings.min],
-                'max': [this.settings.max]
+                'min': [this.options.min],
+                'max': [this.options.max]
             },
             pips: {
                 mode: 'positions',
-                values: this.settings.pipValues,
-                density: this.settings.density,
+                values: this.options.pipValues,
+                density: this.options.density,
                 stepped: true,
                 format: wNumb({
-                    decimals: this.settings.pipDecimals,
-                    prefix: this.settings.pipPrefix,
-                    suffix: this.settings.unit
+                    decimals: this.options.decimalPlaces,
+                    prefix: this.options.prefix,
+                    suffix: this.options.unit
                 })
             }
         });
-        this.sliderElement.parentElement.style.height = `${this.sliderElement.scrollHeight}px`;
-        this.sliderElement.noUiSlider.on('set', () => { this.setInputValue() })
+        // Set the height of the slider wrapper to the height of the slider including the pips & labels
+        this.sliderWrapper.style.height = `${this.sliderElement.scrollHeight}px`;
+        // update input value on slider change
+        this.sliderElement.noUiSlider.on('set', () => this.setInputValue());
     }
 
 }
