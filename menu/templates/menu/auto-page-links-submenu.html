@@ -1,5 +1,6 @@
 {% load wagtailcore_tags wagtailimages_tags menu_tags %}
 {% get_autofill_pages as links %}
+{% if links %}
 <li class="{% if link_type == 'nav-item' %}nav-item dropdown{% else %}dropdown-item submenu dropinline{% endif %}">
     <a role="button"
        title="{{ self.title }}"
@@ -27,3 +28,4 @@
         {% endfor %}
     </ul>
 </li>
+{% endif %}
