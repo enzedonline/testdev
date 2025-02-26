@@ -1,4 +1,5 @@
 
+import json
 from dataclasses import asdict, dataclass
 
 from django import forms
@@ -9,33 +10,40 @@ from django.utils.translation import gettext_lazy as _
 
 @dataclass
 class NumericRangeScaleOptions:
-    min_value: float = 0
-    max_value: float = 100
-    step: bool = 10
+    """
+    Data class for numeric range slider options.
+    minValue: float = 0
+    maxValue: float = 100
+    step: float = 0 # Step size, use this value to restrict the slider to multiples of the step value.
+    unit: str = '' # Unit of the slider values.
+    prefix: str = '' # Prefix to be displayed before the value.
+    decimalPlaces: int = 0 # Number of decimal places to display.
+    majorIntervals: int = 10 # Number of major intervals (ticks - 1).
+    minorIntervals: int = 10 # Number of minor intervals to display per major interval (pips + 1).
+    verticalLabels: bool = False # Display major tick labels vertically.
+    """
+    minValue: float = 0
+    maxValue: float = 100
+    step: bool = 0
     unit: str = ''
-    pip_count: int = 6
-    pip_prefix: str = ''
-    pip_decimals: int = 0
-    minor_tick_density: int = 4
-    vertical_labels: bool = False
+    prefix: str = ''
+    decimalPlaces: int = 0
+    majorIntervals: int = 10
+    minorIntervals: int = 10
+    verticalLabels: bool = False
 
     @property
     def dict(self):
         return asdict(self)
     
     @property
+    def json(self):
+        return json.dumps(self.dict)
+    
+    @property
     def items(self):
         return self.dict.items()
 
-    @property
-    def attrs(self):
-        modified_values = {}
-        for key, value in self.items:
-            modified_key = 'data-' + key.replace('_', '-')
-            if isinstance(value, bool):
-                value = 'true' if value else 'false'
-            modified_values[modified_key] = value
-        return modified_values
 
 class NumericRangeSlider(forms.Widget):
     def __init__(self, options: NumericRangeScaleOptions = NumericRangeScaleOptions()):
@@ -44,27 +52,19 @@ class NumericRangeSlider(forms.Widget):
 
     @mark_safe
     def render(self, name, value, attrs={}, renderer=None):
-        # Create data attributes for min_value, max_value, and step
-        attrs.update(self.options.attrs)
-        # Render a hidden input field with data attributes
-        hidden_input = forms.HiddenInput().render(name, value, attrs)
-        # Add the script tag to initialize the NumericRangeSlider
-        return f'<div>{hidden_input}</div>{self.js(attrs["id"])}'
+        html = f'<div>{forms.HiddenInput().render(name, value, attrs)}</div>'
+        html += f'<script>new NumericRangeSlider("{attrs["id"]}", {self.options.json});</script>'
+        return html
 
-    def js(self, id):
-        return f"""
-        <script>
-            Promise.all([
-                include_css("{static('css/widgets/nouislider.min.css')}"),
-                include_css("{static('css/widgets/numeric-range-slider.css')}"),
-                include_js("{static('js/widgets/nouislider.js')}"),
-                include_js("{static('js/widgets/numeric-range-slider.js')}"),
-                include_js("{static('js/wNumb.js')}"),
-            ]).then(() => {{
-                new NumericRangeSlider("{id}");
-            }})
-            .catch(error => {{
-                console.error('Error loading scripts:', error);
-            }});
-        </script>
-        """
+    class Media:
+        js = [
+            'js/widgets/nouislider.js',
+            'js/widgets/numeric-range-slider.js',
+            'js/wNumb.js',
+        ]
+        css = {
+            'all': [
+                'css/widgets/nouislider.min.css',
+                'css/widgets/numeric-range-slider.css',
+            ]
+        }
