@@ -47,7 +47,6 @@ div.numeric-range-slider .noUi-handle:hover {
     padding: 1px 6px;
 }
 /* hide || on handle */
-/* div.numeric-range-slider .noUi-handle::before, */
 div.numeric-range-slider .noUi-handle::after {
     background: unset;
 }
