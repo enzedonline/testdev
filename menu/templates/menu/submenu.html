@@ -15,8 +15,9 @@
     </a>
     <ul class="dropdown-menu dropdown-menu-end{% if self.sticky %} position-absolute{% endif %}">
         {% for item in self.items %}
-            {% if item.value|show_on_menu:request %}
-                {% include_block item with link_type="dropdown-item" %}
+            {% show_on_menu item.value as show_item %}
+            {% if show_item %}
+                  {% include_block item with link_type="dropdown-item" %}
             {% endif %}
         {% endfor %}
     </ul>

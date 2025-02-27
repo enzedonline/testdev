@@ -1,6 +1,0 @@
-{% load static menu_tags %}
-{% block extra_css %}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/menu.css' %}" />
-{% endblock extra_css %}
-{% load_menu menu_slug as menu %}
-{% include "menu/navbar.html" with menu=menu %}

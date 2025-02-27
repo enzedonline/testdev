@@ -29,7 +29,8 @@
             </li>
         {% endif %}
         {% for item in self.items %}
-            {% if item.value|show_on_menu:request %}
+            {% show_on_menu item as show_item %}
+            {% if show_item %}
                 {% include_block item with link_type="dropdown-item" %}
             {% endif %}
         {% endfor %}
