@@ -113,7 +113,7 @@ class NumericRange(models.Model):
     from core.fields.numeric_range import NumericRangeField, NumericRangeScaleOptions
     minmax = NumericRangeField(
         options=NumericRangeScaleOptions(
-            min_value=-2, max_value=2, step=0.1, pip_count=11, pip_decimals=2, minor_tick_density=2, pip_prefix='$', unit='c', vertical_labels=True
+            minValue=0, maxValue=2000, step=10, decimalPlaces=0, majorIntervals=10, minorIntervals=10, prefix='€', unit='', verticalLabels=True
             )
         )
     title = models.CharField()
