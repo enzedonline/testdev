@@ -1,4 +1,4 @@
-{% load static wagtailcore_tags wagtailuserbar %}
+{% load static wagtailcore_tags menu_tags %}
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -39,8 +39,7 @@
         {% endblock extra_css %}
     </head>
     <body class="{% block body_class %}{% endblock body_class %}">
-        {% comment %} {% wagtailuserbar %} {% endcomment %}
-        {% include "menu/menu.html" with menu_slug="main-menu" %}
+        {% load_menu "main-menu" %}
         {% block content %}
         {% endblock content %}
         {% block extra_js %}
