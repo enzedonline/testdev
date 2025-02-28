@@ -13,6 +13,10 @@
             "jinja": true,
             "justMyCode": false,
             "console": "internalConsole",
+            "subProcess": true,
+            "env": {
+                "DJANGO_DEBUG": "True"
+            }
         },
     ]
 }
