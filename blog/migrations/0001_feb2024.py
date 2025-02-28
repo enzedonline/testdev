@@ -38,7 +38,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("wagtaildocs", "0012_uploadeddocument"),
-        ("wagtailcore", "0091_alter_querydailyhits_unique_together_and_more"),
+        # ("wagtailcore", "0091_alter_querydailyhits_unique_together_and_more"),
         # ("product", "0001_feb2024"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ("wagtailcore", "0078_referenceindex"),

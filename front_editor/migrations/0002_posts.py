@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("front_editor", "0001_initial"),
-        ("wagtailcore", "0095_merge_0093_uploadedfile_0094_merge_20240323_1110"),
+        # ("wagtailcore", "0095_merge_0093_uploadedfile_0094_merge_20240323_1110"),
     ]
 
     operations = [

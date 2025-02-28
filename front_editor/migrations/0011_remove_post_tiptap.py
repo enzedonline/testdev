@@ -9,9 +9,9 @@ class Migration(migrations.Migration):
         ("front_editor", "0010_alter_post_content"),
     ]
 
-    operations = [
-        migrations.RemoveField(
-            model_name="post",
-            name="tiptap",
-        ),
-    ]
+    # operations = [
+    #     migrations.RemoveField(
+    #         model_name="post",
+    #         name="tiptap",
+    #     ),
+    # ]

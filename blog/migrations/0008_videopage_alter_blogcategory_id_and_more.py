@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("blog", "0007_delete_simplevideoorderable"),
-        ("wagtailcore", "0094_merge_20240323_1110"),
+        # ("wagtailcore", "0094_merge_20240323_1110"),
     ]
 
     operations = [

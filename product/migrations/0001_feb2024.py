@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ("wagtailcore", "0091_alter_querydailyhits_unique_together_and_more"),
+        # ("wagtailcore", "0091_alter_querydailyhits_unique_together_and_more"),
         ("wagtailimages", "0025_alter_image_file_alter_rendition_file"),
     ]
   

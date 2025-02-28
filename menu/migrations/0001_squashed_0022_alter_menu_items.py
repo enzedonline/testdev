@@ -39,7 +39,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("wagtailcore", "0083_workflowcontenttype"),
-        ("wagtailcore", "0090_merge_20230906_1218"),
+        # ("wagtailcore", "0090_merge_20230906_1218"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ("wagtailimages", "0025_alter_image_file_alter_rendition_file"),
         ("svg", "0001_initial"),
