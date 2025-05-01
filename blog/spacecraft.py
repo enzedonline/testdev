@@ -30,45 +30,45 @@ def check_min_pixels(value):
             _(f"Image too small ({image.width} x {image.height}px). Required: {min_width} x {min_height}px.")
         )
 
-@register_snippet
-class Spacecraft(index.Indexed, models.Model):
-    title = models.CharField(max_length=255, unique=True)
-    uuid = models.CharField(max_length=12, default=generate_uuid, unique=True, null=False, blank=False)
-    image = models.ForeignKey(
-        "wagtailimages.Image",
-        null=True,
-        blank=True,
-        related_name="+",
-        on_delete=models.SET_NULL,
-        validators = [check_min_pixels]
-    )
+# @register_snippet
+# class Spacecraft(index.Indexed, models.Model):
+#     title = models.CharField(max_length=255, unique=True)
+#     uuid = models.CharField(max_length=12, default=generate_uuid, unique=True, null=False, blank=False)
+#     image = models.ForeignKey(
+#         "wagtailimages.Image",
+#         null=True,
+#         blank=True,
+#         related_name="+",
+#         on_delete=models.SET_NULL,
+#         validators = [check_min_pixels]
+#     )
 
-    panels = [
-        UtilityPanel("UUID: {{uuid}}", {'uuid': 'uuid'}),
-        FieldPanel("title"),
-        FieldPanel("image"),
-    ]
+#     panels = [
+#         UtilityPanel("UUID: {{uuid}}", {'uuid': 'uuid'}),
+#         FieldPanel("title"),
+#         FieldPanel("image"),
+#     ]
 
-    def __str__(self):
-        return self.title
+#     def __str__(self):
+#         return self.title
     
 
 
 
-class ImageDetailPageSpacecraftOrderable(Orderable):
-    page = ParentalKey("blog.BlogPage", related_name="spacecrafts")
-    spacecraft = models.ForeignKey(
-        "blog.Spacecraft", on_delete=models.CASCADE, related_name="spacecraft"
-    )
+# class ImageDetailPageSpacecraftOrderable(Orderable):
+#     page = ParentalKey("blog.BlogPage", related_name="spacecrafts")
+#     spacecraft = models.ForeignKey(
+#         "blog.Spacecraft", on_delete=models.CASCADE, related_name="spacecraft"
+#     )
 
-    @property
-    def spacecraft_title(self):
-        return self.spacecraft.title
+#     @property
+#     def spacecraft_title(self):
+#         return self.spacecraft.title
 
-    api_fields = [
-        APIField("spacecraft_title"),
-    ]
+#     api_fields = [
+#         APIField("spacecraft_title"),
+#     ]
 
-    panels = [
-        FieldPanel("spacecraft"),
-    ]
+#     panels = [
+#         FieldPanel("spacecraft"),
+#     ]
