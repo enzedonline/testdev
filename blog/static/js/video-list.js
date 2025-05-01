@@ -165,7 +165,7 @@ class VideoList {
                 try {
                     // triggers fade in/out effect on thumbnail via css
                     this.videoListContainer.dataset.cardsLoading = true;
-                    // fetch data for next page from api
+                    // increment current_page and fetch data for next page from api
                     const url = `${window.location.href}api/page/${++this.pagination.current_page}/`;
                     const response = await fetch(url);
                     if (!response.ok) {
