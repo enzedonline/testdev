@@ -1,4 +1,6 @@
+from bs4 import BeautifulSoup
 from wagtail.blocks import RichTextBlock
+
 
 class ParsedRichTextBlock(RichTextBlock):
     pass
@@ -8,7 +10,6 @@ class ParsedRichTextBlock(RichTextBlock):
         label = "Parsed Rich Text"
 
     def clean(self, value):
-        from bs4 import BeautifulSoup
 
         soup = BeautifulSoup(value.source, "html.parser")
         for item in soup.find_all():
