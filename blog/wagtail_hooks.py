@@ -12,15 +12,15 @@ from blog.models import BlogPage
 from .views import user_chooser_viewset
 
 
-@hooks.register('construct_image_chooser_queryset')
-def show_min_size_images_only(images, request):
-    min_width = 350
-    min_height = 250
-    http_referrer = request.META.get('HTTP_REFERER', None) or '/'
-    match = resolve(urlparse(http_referrer)[2])
-    if (match.app_name == 'wagtailsnippets_blog_spacecraft') and (match.url_name == 'edit'):
-        return images.filter(width__gte=min_width, height__gte=min_height)
-    return images
+# @hooks.register('construct_image_chooser_queryset')
+# def show_min_size_images_only(images, request):
+#     min_width = 350
+#     min_height = 250
+#     http_referrer = request.META.get('HTTP_REFERER', None) or '/'
+#     match = resolve(urlparse(http_referrer)[2])
+#     if (match.app_name == 'wagtailsnippets_blog_spacecraft') and (match.url_name == 'edit'):
+#         return images.filter(width__gte=min_width, height__gte=min_height)
+#     return images
 
 @hooks.register("after_edit_page")
 @hooks.register("after_create_page")
