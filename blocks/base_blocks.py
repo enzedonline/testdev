@@ -2,6 +2,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from wagtail.blocks import CharBlock, ChoiceBlock, PageChooserBlock
 from wagtail.images.blocks import ImageChooserBlock
+from wagtail.snippets.blocks import SnippetChooserBlock
 
 from .validators import is_valid_href
 
@@ -88,3 +89,7 @@ class CustomImageChooserBlock(CustomChooserMixin, ImageChooserBlock):
 
 class CustomPageChooserBlock(CustomChooserMixin, PageChooserBlock):
     pass
+
+class CustomSnippetChooserBlock(CustomChooserMixin, PageChooserBlock):
+    pass
+
