@@ -7,7 +7,7 @@ from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from wagtail.admin.panels import (FieldPanel, InlinePanel, MultiFieldPanel,
                                   MultipleChooserPanel)
 from wagtail.admin.widgets.slug import SlugInput
-from wagtail.blocks import CharBlock, FloatBlock, RichTextBlock
+from wagtail.blocks import CharBlock, FloatBlock, RichTextBlock, ListBlock
 from wagtail.contrib.table_block.blocks import TableBlock
 from wagtail.contrib.typed_table_block.blocks import TypedTableBlock
 from wagtail.fields import RichTextField, StreamField
@@ -18,17 +18,17 @@ from wagtail.search import index
 from blocks.models import *
 from core.forms.restricted_panels_admin_forms import \
     RestrictedPanelsAdminPageForm
-from core.panels.models import (ImportTextAreaPanel, M2MChooserPanel,
+from core.panels.models import (ImportTextAreaPanel, M2MChooserPanel, PrepopulatePanel,
                                 RegexPanel, RestrictedFieldPanel,
                                 RestrictedInlinePanel, UtilityPanel)
 from core.utils import count_words, get_streamfield_text
 from core.widgets.import_textarea_widget import ImportTextAreaWidget
 from core.widgets.input_char_limit import CharLimitTextArea, CharLimitTextInput
+from core.widgets.ordered_choices import OrderedCheckboxSelectMultiple
 from product.blocks import ProductChooserBlock
 
 from .categories import BlogCategory
 from .partners import Partnership
-from .spacecraft import Spacecraft, ImageDetailPageSpacecraftOrderable
 
 class AuthorPanel(FieldPanel):
     class BoundPanel(FieldPanel.BoundPanel):
@@ -83,9 +83,26 @@ class CarouselImages(Orderable):
     class Meta(Orderable.Meta):
         verbose_name = "Carousel Image"
 
-
 class BlogPage(Page):
     base_form_class = RestrictedPanelsAdminPageForm
+
+    # def get_form(self, request, *args, **kwargs):
+    #     form = super().get_form(request, *args, **kwargs)
+
+    #     if not form.instance.some_date:
+    #         value = request.GET.get('start_date')
+    #         if value:
+    #             from dateutil.parser import parse
+    #             try:
+    #                 parsed = parse(value)
+    #                 formatted = parsed.strftime("%Y-%m-%d %H:%M")
+
+    #                 # Inject into form.initial
+    #                 form.initial['some_date'] = formatted
+    #             except (ValueError, TypeError):
+    #                 pass
+
+    #     return form
 
     parent_page_types = ['blog.BlogIndex']
     subpage_types = []
@@ -166,6 +183,8 @@ class BlogPage(Page):
             ("django_template_fragment", DjangoTemplateFragmentBlock()),
             ("external_video", InlineVideoBlock()),
             ("document", DocumentBlock()),
+            ("link_list", ListBlock(LinkBlock())),
+            ("map", MapBlock()),
         ],
         verbose_name="Page Content",
         blank=True,
@@ -173,7 +192,7 @@ class BlogPage(Page):
         # block_counts={'heading': {'min_num': 1, 'max_num': 1},}
     )
     categories = ParentalManyToManyField(
-        BlogCategory,
+        "blog.BlogCategory",
         verbose_name=_("Categories"),
         related_name="categories",
     )
@@ -191,11 +210,7 @@ class BlogPage(Page):
         #     [RestrictedInlinePanel("carousel_images", max_num=5, min_num=1)],
         #     heading="Carousel Images",
         # ),
-        # MultiFieldPanel(
-        #     [InlinePanel("spacecrafts", max_num=5, min_num=1)],
-        #     heading="Spacecraft",
-        # ),
-        # RestrictedFieldPanel('some_date'),
+        PrepopulatePanel('some_date', 'start_date'),
         # FieldPanel('some_text', widget=CharLimitTextInput(min=10, max=20, enforced=True)),
         # FieldPanel('some_text_area', widget=CharLimitTextArea(min=10, max=20)),
         # ImportTextAreaPanel('some_text_area', file_type_filter='.csv'),
@@ -275,6 +290,7 @@ class BlogPage(Page):
         #     }
         # ),
         M2MChooserPanel("categories"),
+        
     ]
 
     promote_panels = [
@@ -285,23 +301,6 @@ class BlogPage(Page):
         ], _('For search engines')),
     ]
 
-    api_fields = [
-        'spacecrafts',
-    ]
-
-    search_fields = Page.search_fields + [
-        index.RelatedFields(
-            "spacecrafts", 
-            [
-                index.RelatedFields(
-                    "spacecraft", 
-                    [
-                        index.AutocompleteField("title"),
-                    ]
-                ),
-            ]
-        ),
-    ]
 
     class Meta:
         verbose_name = "Blog Page"
