@@ -380,7 +380,7 @@ div.tippy-content div.w-combobox-container {
   grid-template-columns: min(70vw,80vw) 1fr;
 }
 /* --hide search field */
-div.tippy-content input {
+div[data-streamfield-stream-container] div.tippy-content input {
   display: none;
 }
 /* --set grid to fill horizontally and dynamic column count */
