@@ -154,7 +154,6 @@ class VideoPage(RoutablePageMixin, Page):
     def paginated_video_json_response(self, request, page):
         """ Endless scroll json response """
         return JsonResponse(
-            self.video_range(page=page), 
-            safe=False
+            self.video_range(page=page)
         )
     
