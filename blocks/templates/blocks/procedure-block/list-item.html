@@ -1,0 +1,8 @@
+{% load wagtailcore_tags %}
+<li>
+{% for block in self.content %}
+    {% if block.block_type == "nested_list_item" %}<{{ list_type }}>{% endif %}
+    {% include_block block %}
+    {% if block.block_type == "nested_list_item" %}</{{ list_type }}>{% endif %}
+{% endfor %}
+</li>

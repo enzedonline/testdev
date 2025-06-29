@@ -1,0 +1,70 @@
+$max-depth: 3;
+$line-height: 1.3;
+
+
+.procedure-block {
+    counter-reset: c1;
+
+    ol {
+        list-style: none;
+        padding-left: 2em;
+    }
+
+    li {
+        position: relative;
+    }
+
+    li p {
+        margin-bottom: 0.25rem;
+        line-height: $line-height;
+        text-align: start;
+    }
+
+    li::before {
+        top: 0;
+        line-height: $line-height;
+        position: absolute;
+        text-align: right;
+        padding-right: 0.5em;
+    }
+
+    // Loop to generate styles per depth level
+    @for $i from 1 through $max-depth {
+        // Build selector for this depth, e.g.:
+        // & > ol > li for level 1
+        // & > ol > li > ol > li for level 2
+        // etc.
+        $selector: '&';
+
+        @for $j from 1 through $i {
+            $selector: '#{$selector} > ol > li';
+        }
+
+        #{$selector} {
+            // Increment this level's counter
+            counter-increment: c#{$i};
+
+            // Reset next level's counter, if any
+            @if $i < $max-depth {
+                counter-reset: c#{$i + 1};
+            }
+
+            &::before {
+                // Compose content string: counter(c1).counter(c2)...counter(c{i})
+                $content: '';
+
+                @for $k from 1 through $i {
+                    $content: $content + 'counter(c#{$k})';
+
+                    @if $k < $i {
+                        $content: $content + ' "." ';
+                    }
+                }
+
+                content: unquote('#{$content} "."');
+                left: -#{2em + ($i - 1) * 0.5em};
+                width: #{2em + ($i - 1) * 0.5em};
+            }
+        }
+    }
+}
