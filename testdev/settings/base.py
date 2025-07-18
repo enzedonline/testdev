@@ -204,7 +204,7 @@ WAGTAILADMIN_RICH_TEXT_EDITORS = {
                 'h2', 'h3', 'h4', 'h5', 'h6', 'bold', 'italic', 'ol', 'ul',
                 'link', 'hr', 'document-link', 'help-text',
                 'underline', 'small', 'code', 'fa', 'checklist',
-                'quoteblock', 'left-align', 'centre-align', 'right-align', 'code-block'
+                'quoteblock', 'left-align', 'centre-align', 'right-align', 'code-block', 'image'
             ]
         }
     },
@@ -218,6 +218,16 @@ WAGTAILADMIN_RICH_TEXT_EDITORS = {
         'WIDGET': 'wagtail.admin.rich_text.DraftailRichTextArea',
         'OPTIONS': {
             'features': ['h2', 'h3', 'h4', 'bold', 'italic', 'link', 'ol', 'ul', 'hr']
+        }
+    },
+    'procedure': {
+        'WIDGET': 'wagtail.admin.rich_text.DraftailRichTextArea',
+        'OPTIONS': {
+            'features': [
+                'bold', 'italic', 
+                'link', 'hr', 'document-link', 'help-text',
+                'quoteblock', 'image'
+            ]
         }
     },
 }

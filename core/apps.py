@@ -7,3 +7,4 @@ class CoreConfig(AppConfig):
 
     def ready(self):
         from .acyclic import Category, Word
+        from .news_item import NewsPost

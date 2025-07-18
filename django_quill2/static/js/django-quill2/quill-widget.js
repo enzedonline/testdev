@@ -29,7 +29,7 @@ class QuillWrapper {
         window.quill = this.quill;
 
         // toolbar config
-        this.toolbarContainer = this.targetDiv.parentElement.querySelector('div[role="toolbar"]')
+        this.toolbarContainer = this.targetDiv.parentElement.querySelector('div[role="toolbar"]');
         if (this.toolbarContainer) {
             this.addTooltips(tooltips);
             this.replaceLabels(labels);

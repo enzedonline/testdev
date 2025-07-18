@@ -104,6 +104,11 @@ div.quill-rich-text [class^="ql-image-align-"] {
   width: var(--resize-width);
   max-width: 100%;
 }
+/* remove text decoration on caption when image linked */
+div.quill-rich-text a:has([class^="ql-image-align-"]>img) {
+  text-decoration: none !important;
+}
+// alignments
 div.quill-rich-text [class^="ql-image-align-"]>img {
   flex: 1;
 }
@@ -137,6 +142,10 @@ div.quill-rich-text [class^="ql-image-align-"][data-title]::after {
   line-height: 1.1;
   background-color: white;
   width: 100%;
+}
+/* remove text decoration on caption when image linked */
+a:has([class^="ql-image-align-"]>img) {
+  text-decoration: none !important;
 }
 /* left */
 div.quill-rich-text .ql-image-align-left[data-title]::after {

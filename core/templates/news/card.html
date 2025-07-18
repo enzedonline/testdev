@@ -1,0 +1,14 @@
+{% load wagtailcore_tags wagtailimages_tags %}
+{% image object.card_image fill-500x250 as card_image %}
+<div class="card news-card">
+    <div class="card-img-top news-card-image">
+        <img class="card-img-top" src="{{ card_image.url }}" alt="{{ object.title }}">
+    </div>
+    <div class="card-body">
+        <h3 class="card-title">{{ object.title }}</h3>
+        {% for block in object.body %}
+            {% include_block block %}
+        {% endfor %}
+        <div class="card-date text-end">{{ object.first_published_at|date:'Y-m-d' }}</div>
+    </div>
+</div>

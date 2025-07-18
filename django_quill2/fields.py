@@ -1,12 +1,5 @@
-import copy
-import html
 import json
-import logging
-import re
 
-import execjs
-from bs4 import BeautifulSoup, NavigableString
-from django.contrib.staticfiles import finders
 from django.db import models
 
 from .forms import QuillFormField
