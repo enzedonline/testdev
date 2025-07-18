@@ -1,3 +1,4 @@
+import logging
 import os
 import threading
 
@@ -40,42 +41,47 @@ class SiteMap:
         Look for <url> element with <loc> child that has value=location
         Add <url> element with passed parameters if not found, otherwise amend existing element
         """
-        url_entry = self.find_url_entry(location)
-        if url_entry:
-            url_entry.clear()
-        else:
-            url_entry = self.soup.new_tag("url")
-            self.soup.urlset.insert(0, url_entry)
+        try:
+            url_entry = self.find_url_entry(location)
+            if url_entry:
+                url_entry.clear()
+            else:
+                url_entry = self.soup.new_tag("url")
+                self.soup.urlset.insert(0, url_entry)
 
-        # Populate the <url> element with the supplied values
-        loc_tag = self.soup.new_tag("loc")
-        loc_tag.string = location
-        url_entry.append(loc_tag)
+            # Populate the <url> element with the supplied values
+            loc_tag = self.soup.new_tag("loc")
+            loc_tag.string = location
+            url_entry.append(loc_tag)
 
-        lastmod_tag = self.soup.new_tag("lastmod")
-        lastmod_tag.string = (
-            lastmod if type(lastmod) == "str" else lastmod.date().isoformat()
-        )
-        url_entry.append(lastmod_tag)
+            lastmod_tag = self.soup.new_tag("lastmod")
+            lastmod_tag.string = (
+                lastmod if type(lastmod) == "str" else lastmod.date().isoformat()
+            )
+            url_entry.append(lastmod_tag)
 
-        if alternates:
-            for alternate in alternates:
-                alternate_tag = self.soup.new_tag(
-                    "xhtml:link", hreflang=alternate["hreflang"], href=alternate["href"]
-                )
-                url_entry.append(alternate_tag)
+            if alternates:
+                for alternate in alternates:
+                    alternate_tag = self.soup.new_tag(
+                        "xhtml:link", hreflang=alternate["hreflang"], href=alternate["href"]
+                    )
+                    url_entry.append(alternate_tag)
 
-        if changefreq:
-            changefreq_tag = self.soup.new_tag("changefreq")
-            changefreq_tag.string = changefreq
-            url_entry.append(changefreq_tag)
+            if changefreq:
+                changefreq_tag = self.soup.new_tag("changefreq")
+                changefreq_tag.string = changefreq
+                url_entry.append(changefreq_tag)
 
-        if priority:
-            priority_tag = self.soup.new_tag("priority")
-            priority_tag.string = priority
-            url_entry.append(priority_tag)
+            if priority:
+                priority_tag = self.soup.new_tag("priority")
+                priority_tag.string = priority
+                url_entry.append(priority_tag)
 
-        self.save()
+            self.save()
+        except Exception as e:
+            err = f"{type(e).__name__} at line {e.__traceback__.tb_lineno} of {__file__}: {e}"
+            logging.error(err)
+            print(err)
 
     def add_page(self, page, thread=True):
         """
