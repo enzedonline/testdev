@@ -9,6 +9,8 @@ from wagtail.snippets.models import register_snippet
 from wagtail.blocks import StreamBlock, CharBlock, StructBlock, TextBlock
 from wagtail.fields import StreamField
 
+from core.panels.labelled_inline_panel import LabelledInlinePanel
+
 @register_setting(icon='password')
 class Tokens(BaseGenericSetting):
     mapbox = models.CharField(
@@ -62,7 +64,10 @@ class TemplateText(ClusterableModel):
         FieldPanel("template_set"),
         MultiFieldPanel(
             [
-                InlinePanel("templatetext_items"),
+                LabelledInlinePanel(
+                    "templatetext_items",
+                    # child_label="template_tag",
+                ),
             ],
             heading=_("Text Items"),
         ),
@@ -92,6 +97,10 @@ class TemplateTextSetItem(Orderable):
         blank=True,
         help_text=_("The text to be inserted in the template.")
     )
+
+    @property
+    def panel_label(self):
+        return self.template_tag
 
     panels = [
         FieldPanel('template_tag'),
