@@ -1,5 +1,5 @@
 QUILL_CONFIGS = {
-    'default':{
+    'default': {
         'theme': 'snow',
         'modules': {
             'syntax': True,
