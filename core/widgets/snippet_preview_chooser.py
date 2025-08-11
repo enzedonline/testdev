@@ -7,7 +7,7 @@ from wagtail.admin.templatetags.wagtailadmin_tags import icon as get_icon
 from wagtail.images import get_image_model
 from wagtail.snippets.views.chooser import ChooserViewSet, ChosenView
 from wagtail.snippets.widgets import AdminSnippetChooser, SnippetChooserAdapter
-from wagtail.telepath import register
+from wagtail.admin.telepath import register
 
 from core.utils import is_html
 
