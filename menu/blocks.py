@@ -7,7 +7,7 @@ from django.utils.translation import gettext_lazy as _
 from wagtail.blocks import (BooleanBlock, CharBlock, ChoiceBlock, IntegerBlock,
                             ListBlock, StaticBlock, StreamBlock, StructBlock)
 from wagtail.blocks.stream_block import StreamBlockAdapter
-from wagtail.telepath import register
+from wagtail.admin.telepath import register
 
 from blocks.base_blocks import CustomImageChooserBlock, CustomPageChooserBlock
 from blocks.models import LinkBlock
