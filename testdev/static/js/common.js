@@ -46,11 +46,37 @@ const localiseDates = (
   });
 }
 
-// set all external links to open in new tab
+// // set all external links to open in new tab
+// document.addEventListener('DOMContentLoaded', () => {
+//   document.querySelectorAll('a[href^="http"], a[href^="/documents/"]').forEach(link => {
+//     link.setAttribute('target', '_blank');
+//     link.setAttribute('rel', 'nofollow noopener');
+//   });
+// });
+
+// set external links (cross-origin) and /documents/ to open in new tab
 document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('a[href^="http"], a[href^="/documents/"]').forEach(link => {
-    link.setAttribute('target', '_blank');
-    link.setAttribute('rel', 'nofollow noopener');
+  const isHttp = (url) => url.protocol === 'http:' || url.protocol === 'https:';
+
+  document.querySelectorAll('a[href]').forEach(link => {
+    try {
+      const href = link.getAttribute('href');
+      const url = new URL(href, document.baseURI);
+
+      const isDocumentLink = url.pathname.startsWith('/documents/');
+      const isExternal = isHttp(url) && url.origin !== window.location.origin;
+
+      if (isExternal || isDocumentLink) {
+        if (!link.target) link.setAttribute('target', '_blank');
+        // preserve any existing rel values, add nofollow+noopener if not present
+        const currentRel = (link.getAttribute('rel') || '').split(/\s+/).filter(Boolean);
+        const needed = ['nofollow', 'noopener'];
+        const rel = Array.from(new Set([...currentRel, ...needed])).join(' ');
+        link.setAttribute('rel', rel);
+      }
+    } catch (e) {
+      // Ignore invalid URLs (e.g., javascript:, malformed, etc.)
+    }
   });
 });
 
