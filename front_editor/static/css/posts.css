@@ -17,7 +17,7 @@ ul.errorlist {
     padding-left: 0.5rem;
     margin-bottom: 0;
 }
-form.post-form label {
+form.post-form label.post-form-label {
     position: absolute !important;
     width: 1px !important;
     height: 1px !important;
