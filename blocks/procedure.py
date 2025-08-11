@@ -15,7 +15,7 @@ from wagtail.blocks import (BooleanBlock, CharBlock, ChoiceBlock, ListBlock,
 from wagtail.blocks.struct_block import (StructBlockAdapter,
                                          StructBlockValidationError)
 from wagtail.images.blocks import ImageBlock
-from wagtail.telepath import register
+from wagtail.admin.telepath import register
 
 from blocks.video import InlineVideoBlock
 
@@ -26,7 +26,8 @@ class HeadingSizeChoiceBlock(ChoiceBlock):
     Attributes:
         default_choices (list): List of available heading size choices as (value, label) tuples.
     Args:
-        heading_range (tuple, optional): A tuple specifying the start and end heading tags (inclusive) to be included as choices. Defaults to ('h2', 'h4').
+        heading_range (tuple, optional): A tuple specifying the start and end heading tags (inclusive) 
+        to be included as choices. Defaults to ('h2', 'h4').
         default (str, optional): The default selected heading size. Defaults to None.
         required (bool, optional): Whether selection is required. Defaults to True.
         **kwargs: Additional keyword arguments passed to the parent ChoiceBlock.

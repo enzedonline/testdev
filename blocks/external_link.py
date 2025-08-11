@@ -3,7 +3,7 @@ from django.utils.translation import gettext_lazy as _
 from wagtail.blocks import CharBlock, RichTextBlock, StructBlock
 from wagtail.blocks.field_block import URLBlock
 from wagtail.blocks.struct_block import StructBlockAdapter
-from wagtail.telepath import register
+from wagtail.admin.telepath import register
 
 
 class ExternalLinkEmbedBlock(StructBlock):

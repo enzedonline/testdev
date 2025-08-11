@@ -11,7 +11,7 @@ from wagtail.blocks import (CharBlock, ChoiceBlock, StaticBlock, StructBlock,
                             StructValue)
 from wagtail.blocks.struct_block import (StructBlockAdapter,
                                          StructBlockValidationError)
-from wagtail.telepath import register
+from wagtail.admin.telepath import register
 
 from blocks.data_blocks import (DataCharBlock, DataDocumentChooserBlock,
                                 DataExtendedURLBlock, DataPageChooserBlock, DataProductChooserBlock)

@@ -7,7 +7,7 @@ from wagtail.blocks import (BooleanBlock, CharBlock, ChoiceBlock, ListBlock,
 from wagtail.blocks.field_block import IntegerBlock
 from wagtail.blocks.struct_block import (StructBlockAdapter,
                                          StructBlockValidationError)
-from wagtail.telepath import register
+from wagtail.admin.telepath import register
 from django.utils.safestring import mark_safe
 
 from core.utils import isfloat
