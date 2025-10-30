@@ -4,6 +4,7 @@ from .csv_table import CSVTableBlock
 from .django_html import DjangoTemplateFragmentBlock
 from .documents import DocumentBlock
 from .external_link import ExternalLinkEmbedBlock
+from .filesystem import FolderItemBlock
 from .flex_card import FlexCardBlock
 from .heading import HeadingBlock
 from .hidden import HiddenCharBlock, HiddenTextBlock

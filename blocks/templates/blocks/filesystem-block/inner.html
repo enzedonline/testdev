@@ -1,0 +1,10 @@
+<div>{{ node.label }}</div>
+<ul style="list-style-type: none;">
+    {% for child in node.content %}
+        {% if child.block_type == "folder" %}
+            {% include "blocks/filesystem-block/inner.html" with node=child.value only %}
+        {% else %}
+        <li>{{ child.value.label }}</li>
+        {% endif %}
+    {% endfor %}
+</ul>
