@@ -1,0 +1,68 @@
+// Styles for Draftail rich text
+
+// check list styles
+.check-list-wrapper {
+  list-style: none;
+}
+
+.check-list {
+  margin-bottom: 0.1em;
+}
+
+.check-list::marker {
+  content: '🗹';
+  letter-spacing: 0.5em;
+}
+
+// Inline code
+code {
+  font-family: var(--font-family-monospace);
+  font-size: var(--font-size-6);
+  text-align: left !important;
+  background-color: rgb(28, 27, 27);
+  color: ghostwhite;
+  padding: 0.06rem 0.3rem;
+  border-radius: 0.3rem;
+  white-space: pre !important;
+}
+
+// Rich text code block
+.code-block {
+  font-size: var(--font-size-6);
+  font-family: var(--font-family-monospace);
+  color: floralwhite;
+  background-color: #272822;
+  padding: 0;
+  text-align: left !important;
+  line-height: 1.6;
+}
+
+.code-block-wrapper {
+  background-color: #272822;
+  padding: 0.8em 1em;
+  margin-bottom: 0.8em;
+  border-radius: 0.4em;
+  list-style: none;
+}
+
+// Quote block
+
+.quoteblock {
+  font-size: var(--font-size-5);
+  font-family: var(--font-family-headings);
+  color: #272822;
+  background-color: lightblue;
+  padding: 0;
+  text-align: left !important;
+  line-height: 1.6;
+}
+
+.quoteblock-wrapper {
+  border-inline-start: 0.5rem solid lightseagreen;
+  background-color: lightblue;
+  padding: 0.8em 1em;
+  margin-bottom: 0.8em;
+  border-radius: 0.4em;
+  list-style: none;
+}
+

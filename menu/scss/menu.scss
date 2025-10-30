@@ -1,10 +1,10 @@
 $menustream-font-family: "Quicksand", sans-serif;
-$menustream-brand-height: clamp(26px, calc(26px + (55 - 26) * ((100vw - 375px) / (1500 - 375))), 55px);
+$menustream-brand-height: clamp(3rem, 1.9rem + 2.22vw, 4rem);
 $menustream-navbar-brand-font-size: clamp(1.4rem, 1.293rem + 0.4507vw, 1.8rem);
 $menustream-navbar-brand-font-weight: 600 !important;
 $menustream-navbar-item-font-size: clamp(1.2rem, 1.075rem + 0.3571vw, 1.45rem);
 $menustream-navbar-item-font-weight: 500 !important;
-$menustream-navbar-background-color: var(--bs-body-bg);
+$menustream-navbar-background-color: rgb(58, 75, 61);
 $menustream-navbar-active-color: var(--bs-navbar-active-color);
 $menustream-navbar-nav-max-width: 12rem;
 $menustream-nav-link-color: var(--bs-nav-link-color);
@@ -41,12 +41,13 @@ nav.navbar.menustream {
   top: 0;
   z-index: 1020;
   width: 100%;
-  padding: 0.25rem;
+  padding: 0;
   position: fixed !important;
 
   >div.menustream-container {
     row-gap: clamp(0.2rem, 2%, 2rem);
     column-gap: 0.5em;
+    padding-left: 0;
     padding-right: 0.25rem !important;
     justify-content: space-evenly !important;
     max-height: 95vh;
@@ -56,6 +57,7 @@ nav.navbar.menustream {
       font-weight: $menustream-navbar-brand-font-weight;
       display: flex;
       align-items: center;
+      padding: 0;
 
       >img,
       >svg {

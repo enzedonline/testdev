@@ -1,0 +1,29 @@
+// Styles to extend Bootstrap
+
+// negative top margin
+.mt-n2 {
+  margin-top: -0.5rem
+}
+
+
+
+// set font colours according to background
+.bg-black {
+  background-color: rgb(0, 0, 0) !important;
+  color: white !important;
+}
+
+.bg-transparent,
+.bg-light {
+  color: black !important;
+}
+
+.bg-primary,
+.bg-secondary,
+.bg-success,
+.bg-info,
+.bg-warning,
+.bg-danger,
+.bg-dark {
+  color: white !important;
+}

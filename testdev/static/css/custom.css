@@ -1,4 +1,4 @@
-:root {
+/* :root {
   --font-family-headings: "Quicksand", sans-serif;
   --font-family-body: "Work Sans", sans-serif;
   --font-family-monospace: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
@@ -13,7 +13,7 @@
 }
 
 /* ======= Scrolling ======= */
-html {
+/* html {
   scroll-behavior: smooth;
   scroll-padding-top: 5rem;
 }
@@ -95,7 +95,7 @@ p {
   font-size: var(--font-size-body);
   font-family: var(--font-family-body);
   text-align: justify;
-}
+} */ */
 
 .mt-n2 {
   margin-top: -0.5rem
