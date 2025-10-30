@@ -216,7 +216,6 @@ class ProcedureBlock(StructBlock):
 
         return super().clean(value)
 
-ProcedureBlock.MAX_DEPTH = 4
 class ProcedureBlockAdapter(StructBlockAdapter):
     """
     Adapter to add the styling to the admin form

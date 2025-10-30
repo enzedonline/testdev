@@ -1,12 +1,12 @@
 div.struct-block.procedure-block {
     display: grid;
     grid-template-columns: 1fr 6rem;
+    column-gap: 2rem;
     grid-template-areas:
         "one   two"
         "three four"
         "five  five"
         "six   six";
-    column-gap: 2rem;
 
     >div[data-contentpath="title"] {grid-area: one;}
     >div[data-contentpath="heading_size"] {grid-area: two;}
