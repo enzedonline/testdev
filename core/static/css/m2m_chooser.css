@@ -10,8 +10,9 @@ ul.m2m-chooser-chosen {
     row-gap: 0.4rem;
     column-gap: 0.6em;
 }
+
 ul.m2m-chooser-chosen>li {
-    font-size: large;
+    font-size: medium;
     border-radius: 0.5rem;
     background-color: var(--w-color-surface-button-default);
     color: var(--w-color-text-button);
@@ -19,21 +20,29 @@ ul.m2m-chooser-chosen>li {
     display: flex;
     align-items: center;
 }
+
 ul.m2m-chooser-chosen>li>span {
     padding-right: 0.4em;
 }
+
 a.clear-choice-button {
     color: var(--w-color-text-label-menus-default);
     cursor: pointer;
-    height: 1em; /* allows the svg to centre vertically */
+    height: 1em;
+    display: flex;
+    align-items: center;
 }
+
 a.clear-choice-button:hover {
     color: var(--w-color-text-label-menus-active);
 }
+
 a.clear-choice-button>svg {
     height: 1em;
     width: 1em;
+    display: block;
 }
+
 /* action buttons */
 div.m2m-chooser-button-container {
     text-align: right;
@@ -61,6 +70,7 @@ div.m2m-chooser-modal div.modal-form {
     flex-direction: column;
     padding-bottom: 0;
 }
+
 /* modal title bar */
 div.m2m-chooser-modal div.modal-banner {
     color: var(--w-color-text-label-menus-active);
@@ -68,22 +78,28 @@ div.m2m-chooser-modal div.modal-banner {
     align-items: center;
     margin-inline-start: 2em;
 }
+
 div.m2m-chooser-modal .modal-heading {
     padding: 1rem;
     display: inline;
 }
-div.m2m-chooser-modal header.w-header div.left { /* wagtail bug fix - stop dismiss button wrapping on mobile */
+
+div.m2m-chooser-modal header.w-header div.left {
+    /* wagtail bug fix - stop dismiss button wrapping on mobile */
     max-width: 80%;
 }
+
 div.m2m-chooser-modal svg.modal-icon {
     display: inline;
     max-width: 1.4em;
     max-height: 1.4em;
 }
+
 div.m2m-chooser-modal div.modal-dismiss-container {
     padding: .7em .7em 0 0;
     opacity: .7;
 }
+
 div.m2m-chooser-modal button.modal-dismiss {
     color: var(--w-color-text-label-menus-default) !important;
     border-color: var(--w-color-text-label-menus-default) !important;
@@ -92,6 +108,7 @@ div.m2m-chooser-modal button.modal-dismiss {
     border-radius: 5px;
     background-color: transparent !important;
 }
+
 div.m2m-chooser-modal button.modal-dismiss:hover {
     color: var(--w-color-text-label-menus-active) !important;
     border-color: var(--w-color-text-label-menus-active) !important;
@@ -113,11 +130,13 @@ div.m2m-chooser-modal div.modal-search-container {
     position: relative;
     display: flex;
 }
+
 div.m2m-chooser-modal input.modal-search {
     margin-bottom: 0.6rem;
     flex-grow: 1;
     padding-right: 2em;
 }
+
 div.m2m-chooser-modal svg.modal-search-dismiss {
     color: var(--w-color-text-label);
     height: 1em;
@@ -129,9 +148,11 @@ div.m2m-chooser-modal svg.modal-search-dismiss {
     cursor: pointer;
     opacity: .7;
 }
+
 div.m2m-chooser-modal svg.modal-search-dismiss:hover {
     color: var(--w-color-text-context);
 }
+
 div.no-results-text {
     padding: 0 2em;
     font-style: italic;
@@ -167,6 +188,7 @@ div.m2m-chooser-modal ul.modal-select-list {
     column-gap: 1em;
     padding: 0 1rem;
 }
+
 /* option li list item */
 div.m2m-chooser-modal li.modal-select-item {
     cursor: pointer;
@@ -181,4 +203,3 @@ div.m2m-chooser-modal li.modal-select-item {
     text-align: left;
     margin-inline-start: 0 !important;
 }
-
