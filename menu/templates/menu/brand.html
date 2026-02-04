@@ -2,7 +2,7 @@
 {% if menu.brand_logo or menu.brand_title %}
   <a class="navbar-brand me-auto" href="/">
     {% if menu.brand_logo %}
-      {% image menu.brand_logo original as logo %}
+      {% image menu.brand_logo height-64 as logo %}
       <img src="{{ logo.url }}" alt="{{ logo.alt }}">
     {% endif %}
     {% if menu.brand_title %}<span>{{ menu.brand_title }}</span>{% endif %}
