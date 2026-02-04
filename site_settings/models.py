@@ -49,7 +49,6 @@ class Tokens(BaseGenericSetting):
         verbose_name=_("Gmail Service Account Details")
     )
 
-
 @register_snippet
 class TemplateText(ClusterableModel):
     template_set = models.CharField(
