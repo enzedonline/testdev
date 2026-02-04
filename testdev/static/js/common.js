@@ -83,19 +83,21 @@ document.addEventListener('DOMContentLoaded', () => {
 // change rich text <fa> font awesome tags: 
 // <fa style="display:none;">something</fa> -> <fa class="something">&nbsp;&nbsp;&nbsp;&nbsp;</fa>
 document.addEventListener('DOMContentLoaded', () => {
-  fa_icons = document.getElementsByTagName('fa');
-  for (let i = 0; i < fa_icons.length; i++) {
-    const fa_class = fa_icons[i].innerText;
-    if (fa_class) {
-      fa_icons[i].className = fa_icons[i].innerText;
-      fa_icons[i].innerHTML = "&nbsp;".repeat(4);
-      fa_icons[i].removeAttribute('style');
+  let faIcons = [...document.getElementsByClassName('fa-icon')];
+  document.querySelectorAll('template').forEach(template => {
+    faIcons.push(...template.content.querySelectorAll('.fa-icon'));
+  });
+  faIcons.forEach(faIcon => {
+    const faClass = faIcon.innerText;
+    if (faClass) {
+      faIcon.innerHTML = "&nbsp;".repeat(4);
+      faIcon.className = faClass;
     }
-  }
+  });
 });
 
 // include js script only if not already included
-const include_js = (js, options={}) => {
+const include_js = (js, options = {}) => {
   return new Promise((resolve, reject) => {
     let script_tag = document.querySelector(`script[src="${js}"]`);
     if (!script_tag) {
@@ -141,7 +143,7 @@ const include_css = (css, options = {}) => {
       link_tag.type = options.type || "text/css";
       if (options.media) link_tag.media = options.media;
       if (options.integrity) link_tag.integrity = options.integrity;
-      if (options.crossorigin) link_tag.crossOrigin = options.crossorigin; 
+      if (options.crossorigin) link_tag.crossOrigin = options.crossorigin;
       head.appendChild(link_tag);
     } catch (error) {
       console.error(`Failed to load ${css}:`, error);
@@ -149,4 +151,22 @@ const include_css = (css, options = {}) => {
   }
 };
 
-
+const deepMergeJSON = (target, source) => {
+  const output = { ...target };
+  for (const key in source) {
+    if (
+      Object.prototype.hasOwnProperty.call(source, key) &&
+      typeof source[key] === 'object' &&
+      source[key] !== null &&
+      !Array.isArray(source[key])
+    ) {
+      output[key] = deepMergeJSON(
+        output[key] ?? {},
+        source[key]
+      );
+    } else {
+      output[key] = source[key];
+    }
+  }
+  return output;
+}
