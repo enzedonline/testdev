@@ -146,6 +146,9 @@ div.modal-content:has(form[action="/admin/documents/chooser/results/"]) {
     }
 }
 
+// ---------------------------------------------------------------------- 
+// ---------------------------- Page Chooser ----------------------------
+// ---------------------------------------------------------------------- 
 div.modal-content:has(form[action^="/admin/choose-page/"]) {
     header.w-header {
         div.left {
