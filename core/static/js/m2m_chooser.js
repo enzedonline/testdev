@@ -18,6 +18,10 @@ class M2MChooser {
         this.chooser.openModalBtn = this.chooser.wrapper.querySelector('button[data-button-role="open-modal"]');
         this.chooser.clearChosenBtn = this.chooser.wrapper.querySelector('button[data-button-role="clear-chosen"]');
 
+        // Build a map of option value -> option element for fast lookup =======================
+        this.chooser.optionsMap = new Map();
+        Array.from(this.chooser.formSelect.options).forEach(opt => this.chooser.optionsMap.set(opt.value, opt));
+
         // modal form elements ====================================================================
         this.chooser.modal = this.chooser.wrapper.querySelector('div.m2m-chooser-modal');
         this.chooser.modalForm = this.chooser.modal.querySelector('div.modal-form');
@@ -41,6 +45,8 @@ class M2MChooser {
     addEventListeners() {
 
     // admin form event listeners ===========================================================================
+        // Debounce helper used for search input
+        this._filterTimeout = null;
 
         // clear all chosen values ================================================================
         this.chooser.clearChosenBtn.addEventListener('click', () => {
@@ -68,35 +74,40 @@ class M2MChooser {
 
         //  click events ==========================================================================
         this.chooser.modal.addEventListener('click', event => {
-            const clickedItem = event.target;
+            const clickedListItem = event.target.closest('li.modal-select-item');
+            const submitBtn = event.target.closest('button[data-button-role="submit-modal"]');
+            const clearFilterBtn = event.target.closest('a[data-button-role="clear-filter"]');
+            const cancelBtn = event.target.closest('button[data-button-role="cancel-modal"]');
 
             // toggle modal list items selected status on click ==============================
-            if (clickedItem.matches('li.modal-select-item')) {
-                clickedItem.setAttribute('data-selected', clickedItem.getAttribute('data-selected')==='true' ? 'false' : 'true');
-                clickedItem.classList.toggle('button-secondary');
+            if (clickedListItem) {
+                const selected = clickedListItem.dataset.selected === 'true' ? 'false' : 'true';
+                clickedListItem.dataset.selected = selected;
+                clickedListItem.classList.toggle('button-secondary');
             }
             // modal submit ==================================================================
             // get selected values from modal form, rebuild displayed selected items on underlying admin form, hide modal
-            else if (clickedItem.matches('button[data-button-role="submit-modal"]')) {
+            else if (submitBtn) {
                 event.preventDefault();
                 this.getSelectedModalItems();
                 this.setChosenItems();
                 this.dismissModal();
             }
             // clear search filter ===========================================================
-            else if (clickedItem.closest('a[data-button-role="clear-filter"]')) {
+            else if (clearFilterBtn) {
                 this.clearFilter();
                 this.chooser.searchInput.focus();
             }
             // dismiss button or area outside of modal clicked ===============================
-            else if (clickedItem.closest('button[data-button-role="cancel-modal"]') || !this.chooser.modalForm.contains(clickedItem)) {
+            else if (cancelBtn || !this.chooser.modalForm.contains(event.target)) {
                 this.dismissModal();
             }
         });
 
-        // search form input ======================================================================
+        // search form input (debounced) =========================================================
         this.chooser.searchInput.addEventListener('input', () => {
-            this.filterItems();
+            clearTimeout(this._filterTimeout);
+            this._filterTimeout = setTimeout(() => this.filterItems(), 150);
         });
 
     }
@@ -128,12 +139,10 @@ class M2MChooser {
     // used after modal form submit
     setChosenItems() {
         this.chooser.formSelect.selectedIndex = -1;
-        Object.keys(this.chooser.selectedItems).forEach(value => {
-            const option = this.chooser.formSelect.querySelector(`option[value="${value}"]`);
-            if (option) {
-                option.selected = true;
-            }
-        });
+        for (const value of Object.keys(this.chooser.selectedItems)) {
+            const option = this.chooser.optionsMap.get(value);
+            if (option) option.selected = true;
+        }
         this.showChosenItems();
     }
 
@@ -142,32 +151,35 @@ class M2MChooser {
     showSelectedModalItems() {
         this.chooser.listItems.forEach(li => {
             const key = li.getAttribute('value');
-            if (this.chooser.selectedItems.hasOwnProperty(key)) {
-                li.setAttribute('data-selected', 'true');
-                li.classList.remove('button-secondary');
-            } else {
-                li.setAttribute('data-selected', 'false');
-                li.classList.add('button-secondary');
+            const shouldSelect = Object.prototype.hasOwnProperty.call(this.chooser.selectedItems, key);
+            if (li.dataset.selected !== String(shouldSelect)) {
+                li.dataset.selected = String(shouldSelect);
+                li.classList.toggle('button-secondary', !shouldSelect);
             }
         });
     }
 
     // update selectedItems dictionary from modal form selected values =======================================
     getSelectedModalItems() {
-        const selectedListItems = Array.from(this.chooser.listItems).filter(li => li.getAttribute('data-selected') === 'true');
         this.chooser.selectedItems = {};
-        selectedListItems.forEach(li => {
-            // Retrieve the key name from the value attribute and the key value from the text content
-            const key = li.getAttribute('value');
-            const value = li.textContent.trim();
-            this.chooser.selectedItems[key] = value;
-        });        
+        this.chooser.listItems.forEach(li => {
+            if (li.dataset.selected === 'true') {
+                const key = li.getAttribute('value');
+                const value = li.textContent.trim();
+                this.chooser.selectedItems[key] = value;
+            }
+        });
     }
 
     // clear all selected items from admin form button ======================================================
-    handleClearChosenItemsClick() {
-        this.chooser.selectedItems = {};
-        this.setChosenItems();
+    handleClearChoiceClick(button) {
+        const chosenListItem = button.closest('li');
+        const chosenListItemValue = chosenListItem.getAttribute('data-chosen-value');
+        delete this.chooser.selectedItems[chosenListItemValue]
+        // use cached map to find the corresponding option
+        const opt = this.chooser.optionsMap.get(chosenListItemValue);
+        if (opt) opt.selected = false;
+        chosenListItem.remove();
     }
 
     // handle chosen item delete button =====================================================================
