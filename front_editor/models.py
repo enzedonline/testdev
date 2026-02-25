@@ -5,6 +5,7 @@ from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.http import HttpResponseForbidden, HttpResponseNotFound
 from django.shortcuts import redirect
 from django.utils.decorators import method_decorator
+from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 from wagtail.contrib.routable_page.models import RoutablePageMixin, path
 from wagtail.models import Page
@@ -91,7 +92,9 @@ class PostsPage(RoutablePageMixin, Page):
                     form.instance.page = self
                     form.instance.save()
                 form.instance.save_revision().publish(user=request.user)
-                return redirect(f'{self.url}with/{form.instance.id}/') 
+                return redirect(
+                    format_html('{}with/{}/', self.url, form.instance.id)
+                )
         except Exception as e:
             print(e)
 
@@ -120,7 +123,9 @@ class PostsPage(RoutablePageMixin, Page):
             form = PostForm(request.POST or None)
             if form.data['confirm'] == 'true':
                 post.delete()
-                return redirect(f'{self.url}with/{id}/') 
+                return redirect(
+                    format_html('{}with/{}/', self.url, id)
+                )
             
         return self.render(
             request, 
