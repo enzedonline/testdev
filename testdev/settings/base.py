@@ -205,6 +205,10 @@ WAGTAILSEARCH_BACKENDS = {
     }
 }
 
+# WAGTAIL AUTOSAVE AND PREVIEW SETTINGS
+WAGTAIL_AUTOSAVE_INTERVAL = 2000
+WAGTAIL_AUTO_UPDATE_PREVIEW_INTERVAL = 0
+
 # Base URL to use when referring to full URLs within the Wagtail admin backend -
 # e.g. in notification emails. Don't include '/admin' or a trailing slash
 WAGTAILADMIN_BASE_URL = "http://example.com"
