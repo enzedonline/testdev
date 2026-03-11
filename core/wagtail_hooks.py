@@ -1,8 +1,11 @@
+import json
 import wagtail.admin.rich_text.editors.draftail.features as draftail_features
+from django.conf import settings
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.templatetags.static import static
 from django.urls import path, reverse
+from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.menu import AdminOnlyMenuItem
@@ -211,13 +214,26 @@ def check_page_permissions(request, page, page_class=None):
                 referer = '/admin/'
             return HttpResponseRedirect(referer)
 
+@hooks.register("insert_global_admin_js")
+def inject_site_name():
+    return format_html(
+        """
+        <script>
+            window.wagtailConfig = window.wagtailConfig || {{}};
+            window.wagtailConfig.SITE_NAME = {}
+        </script>
+        """,
+        mark_safe(json.dumps(settings.WAGTAIL_SITE_NAME)),
+    )
 
 @hooks.register('insert_global_admin_js')
 def register_admin_js():
     admin_js = static('js/admin.js')
+    collapsed_panels_js = static('js/collapsed-panels.js')
     m2m_chooser_js = static('js/m2m_chooser.js')
     return mark_safe(
         f'<script src="{admin_js}"></script>' +
+        f'<script src="{collapsed_panels_js}"></script>' +
         f'<script src="{m2m_chooser_js}"></script>'
     )
 
