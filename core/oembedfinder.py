@@ -3,7 +3,7 @@ from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 from django.core.exceptions import ImproperlyConfigured
 
 from bs4 import BeautifulSoup
-from wagtail.embeds.finders.oembed import OEmbedFinder
+from wagtail.embeds.finders.oembed import EmbedNotFoundException, OEmbedFinder
 from wagtail.embeds.oembed_providers import youtube
 import requests
 
@@ -74,6 +74,7 @@ class YouTubeResponsiveFinder(OEmbedFinder):
             embed = super().find_embed(url, max_width)
         except:
             response = requests.get('https://www.youtube.com/oembed/?url=' + url)   
+            if response.status_code != 200: raise EmbedNotFoundException(f"Unable to retrieve oEmbed data for {url}")
             result = response.json()
             embed = {
                 'title': result['title'], 
