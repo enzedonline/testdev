@@ -1,10 +1,11 @@
 from io import StringIO
 
+import minify_html
 import pandas as pd
 from bs4 import BeautifulSoup
 from django.http import HttpResponse
 from django.views import View
-from htmlmin import minify
+
 
 def is_currency_column(column):
     # Ignore empty values
@@ -92,8 +93,8 @@ class RenderCSVTableProxy(View):
                 'compact': (data.get("compact", False)=='true')
             }
             # Process the data and generate minified HTML table
-            html_table = render_html_table(table_block)
-            return HttpResponse(minify(html_table.replace('\n','')).replace('> <', '><'))
+            html_table = render_html_table(table_block).replace('\n','').replace('> <', '><')
+            return HttpResponse(minify_html.minify(html_table, minify_js=True, minify_css=True))
         except Exception as e:
             # print(str(e))
             return HttpResponse(str(e), status=400)
