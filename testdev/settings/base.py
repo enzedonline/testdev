@@ -27,7 +27,6 @@ INSTALLED_APPS = [
     "blocks",
     "blog",
     "core",
-    "chatbot",
     # "custom_user",
     "front_editor",
     "home",
