@@ -3,8 +3,6 @@ from .views import SVGImageChooserViewSet
 from wagtail.snippets.models import register_snippet
 from .models import SVGImage
 from .views import SVGViewSet
-from django.templatetags.static import static
-from django.utils.safestring import mark_safe
 
 @hooks.register('register_admin_viewset')
 def register_svg_image_chooser_viewset():
