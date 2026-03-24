@@ -7,7 +7,7 @@ class BlogConfig(AppConfig):
     def ready(self):
         from wagtail.models.reference_index import ReferenceIndex
         # Import the model here to ensure it's registered with the app
-        from .video_page import VideoPage
+        from .video_page import VideoPage  # noqa: F401
         from .categories import BlogCategory
         ReferenceIndex.register_model(BlogCategory)
 

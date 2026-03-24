@@ -83,8 +83,10 @@ class CarouselImages(Orderable):
     class Meta(Orderable.Meta):
         verbose_name = "Carousel Image"
 
+
 class BlogPage(Page):
     base_form_class = RestrictedPanelsAdminPageForm
+    info_panel_message = "Some custom message to display"
 
     # def get_form(self, request, *args, **kwargs):
     #     form = super().get_form(request, *args, **kwargs)
@@ -308,12 +310,10 @@ class BlogPage(Page):
 
     @cached_property
     def corpus(self):
-        from core.utils import get_streamfield_text
         return get_streamfield_text(self.content)
 
     @cached_property
     def words(self, corpus=None):
-        from core.utils import count_words
         if not corpus:
             corpus = self.corpus
         return count_words(corpus)

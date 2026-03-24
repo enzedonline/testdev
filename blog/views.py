@@ -99,7 +99,7 @@ class UserChooserViewSet(ChooserViewSet):
         widget = super().widget_class
         try:
             widget.show_edit_link = False
-        except:
+        except Exception:
             pass
         return widget
 
