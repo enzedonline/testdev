@@ -1,5 +1,5 @@
 def is_in_group(user, group_name):
-    if user.id==None:
+    if user.id is None:
         return False
     else:
         return user.groups.get_queryset().filter(name=group_name).exists() 

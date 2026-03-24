@@ -1,7 +1,6 @@
 from bs4 import BeautifulSoup
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import FieldPanel
 from wagtail.admin.ui.tables import UpdatedAtColumn, UserColumn
 from wagtail.models import DraftStateMixin, PreviewableMixin, RevisionMixin
@@ -38,13 +37,13 @@ class Post(PreviewableMixin, DraftStateMixin, RevisionMixin, index.Indexed, mode
     def username(self):
         try:
             return self.author.username
-        except:
+        except Exception:
             return ''
         
     def page_title(self):
         try:
             return self.page.title
-        except:
+        except Exception:
             return ''
             
     panels = [

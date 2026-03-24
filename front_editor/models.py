@@ -6,7 +6,6 @@ from django.http import HttpResponseForbidden, HttpResponseNotFound
 from django.shortcuts import redirect
 from django.utils.decorators import method_decorator
 from django.utils.html import format_html
-from django.utils.translation import gettext_lazy as _
 from wagtail.contrib.routable_page.models import RoutablePageMixin, path
 from wagtail.models import Page
 from wagtail.search.backends import get_search_backend
@@ -34,11 +33,11 @@ class PostsPage(RoutablePageMixin, Page):
             try:
                 id_list = list(posts.values_list('id', flat=True))
                 idx = id_list.index(post_id)
-            except:
+            except Exception:
                 try:
                     post_id = posts.filter(id__gt=post_id).last().id
                     idx = id_list.index(post_id)
-                except:
+                except Exception:
                     pass
             if idx:
                 page_num = math.ceil((id_list.index(post_id) + 1)/ self.page_size)
