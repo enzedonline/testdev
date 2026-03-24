@@ -42,7 +42,7 @@ class BaseMenuStructBlock(StructBlock):
             show_options: MenuItemOptions = MenuItemOptions(), 
             _depth=1, 
             **kwargs):
-        if type(show_options) != MenuItemOptions:
+        if type(show_options) is not MenuItemOptions:
             raise ImproperlyConfigured(
                 "show_options must be declared as MenuItemOptions instance")
 
