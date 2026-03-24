@@ -14,7 +14,6 @@ from wagtail.snippets.models import register_snippet
 from core.forms.restricted_panels_admin_forms import \
     RestrictedPanelsAdminModelForm
 from core.panels.models import SubcategoryChooser
-from django.utils.html import format_html
 
 Image = get_image_model()
 
@@ -163,7 +162,7 @@ class ProductPage(RoutablePageMixin, Page):
         if sort:
             try:
                 products = products.order_by(sort)
-            except Exception as e:
+            except Exception:
                 pass
         return self.render(
             request,
