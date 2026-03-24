@@ -1,9 +1,5 @@
-from django.db import models
 from django.templatetags.static import static
-from django.utils.translation import gettext_lazy as _
-from wagtail.admin.panels import FieldPanel
 from wagtail.contrib.routable_page.models import RoutablePageMixin, path
-from wagtail.fields import RichTextField, StreamField
 from wagtail.models import Page
 
 from .settings import MapboxAssistConfigs, MapboxSettings
@@ -39,7 +35,7 @@ class HikingPlannerPage(RoutablePageMixin, Page):
         for style in mapbox_assist_config.mapbox_styles.all():
             try:
                 img = style.tile_image.get_rendition('fill-50x50').img_tag()
-            except:
+            except Exception:
                 img = ''
             map_styles.append({
                 "title": style.title,
