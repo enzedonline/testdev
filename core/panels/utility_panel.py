@@ -47,12 +47,12 @@ class UtilityPanel(Panel):
         **kwargs,
     ):
         # make sure text is a string
-        if type(text) == "str":
+        if isinstance(text, str):
             self.text = text
         else:
             try:
                 self.text = str(text)
-            except:
+            except Exception:
                 pass
         self.value_dict = value_dict
         self.text = text
@@ -259,7 +259,7 @@ class UtilityPanel(Panel):
                     try:
                         if type(value) in [date, datetime, time]:
                             value = value.strftime(self.panel.datetime_format)
-                    except:
+                    except Exception:
                         pass
                     parsed_text = parsed_text.replace("{{" + item + "}}", str(value))
                     hidden_fields[item] = str(value)

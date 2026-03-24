@@ -3,9 +3,7 @@ import json
 from dataclasses import asdict, dataclass
 
 from django import forms
-from django.templatetags.static import static
 from django.utils.safestring import mark_safe
-from django.utils.translation import gettext_lazy as _
 
 
 @dataclass

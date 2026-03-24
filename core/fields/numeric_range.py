@@ -20,7 +20,7 @@ class NumericRangeField(models.JSONField):
     
     def get_default(self):
         default = super().get_default()
-        if default == None:
+        if default is None:
             return list 
         return default
 

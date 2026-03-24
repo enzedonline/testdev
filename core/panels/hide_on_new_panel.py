@@ -1,4 +1,3 @@
-from django.utils.safestring import mark_safe
 from wagtail.admin.panels import FieldPanel
 
 class HideOnNewPanel(FieldPanel):    

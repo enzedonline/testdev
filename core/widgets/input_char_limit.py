@@ -13,11 +13,12 @@ class CharLimitMixin:
         self.maximum = max
         self.enforced = enforced
         self.requirements = f'{_("Characters Required")}: {self.minimum}'
-        if self.maximum: self.requirements += f' - {self.maximum}'
+        if self.maximum: 
+            self.requirements += f' - {self.maximum}'
 
     def render(self, name, value, attrs, renderer=None):
         rendered_field = super().render(name, value, attrs, renderer)
-        if self.minimum > 0 or self.maximum != None:
+        if self.minimum > 0 or self.maximum is not None:
             context = {
                 "id": f'{attrs.get("id")}',
                 "min": self.minimum,

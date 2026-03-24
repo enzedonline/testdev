@@ -22,7 +22,7 @@ class LocalizedSelectPanel(FieldPanel):
     def __init__(
         self, field_name, widget_class=None, typed_choice_field=False, *args, **kwargs
     ):
-        if not widget_class in [
+        if widget_class not in [
             None,
             CheckboxSelectMultiple,
             RadioSelect,

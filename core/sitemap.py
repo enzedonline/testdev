@@ -56,7 +56,7 @@ class SiteMap:
 
             lastmod_tag = self.soup.new_tag("lastmod")
             lastmod_tag.string = (
-                lastmod if type(lastmod) == "str" else lastmod.date().isoformat()
+                lastmod if isinstance(lastmod, str) else lastmod.date().isoformat()
             )
             url_entry.append(lastmod_tag)
 
@@ -159,7 +159,7 @@ class SiteMap:
             urlset.append(child_page.get_sitemap_urls()[0])
         try:
             urlset.remove([])
-        except:
+        except Exception:
             pass
 
         template = get_template("sitemap.xml")

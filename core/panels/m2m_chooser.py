@@ -102,7 +102,7 @@ class M2MChooserPanel(FieldPanel):
                     form_field.widget = SelectMultiple(
                         choices=ModelChoiceIterator(form_field)
                     )
-                except:
+                except Exception:
                     pass
 
         def get_choice_list(self, iterator):

@@ -1,4 +1,4 @@
-from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
+from urllib.parse import parse_qs, urlparse
 
 from django.core.exceptions import ImproperlyConfigured
 
@@ -72,9 +72,10 @@ class YouTubeResponsiveFinder(OEmbedFinder):
     def find_embed(self, url, max_width=None):
         try:
             embed = super().find_embed(url, max_width)
-        except:
+        except EmbedNotFoundException:
             response = requests.get('https://www.youtube.com/oembed/?url=' + url)   
-            if response.status_code != 200: raise EmbedNotFoundException(f"Unable to retrieve oEmbed data for {url}")
+            if response.status_code != 200: 
+                raise EmbedNotFoundException(f"Unable to retrieve oEmbed data for {url}")
             result = response.json()
             embed = {
                 'title': result['title'], 
@@ -97,7 +98,7 @@ class YouTubeResponsiveFinder(OEmbedFinder):
                 iframe.attrs['style'] = f'aspect-ratio: {aspect_ratio};'
                 iframe.attrs['class'] = ['youtube-responsive-item']
             embed['html'] = str(soup)
-        except:
+        except Exception:
             pass
 
         # Prefer a larger thumbnail, without assuming aspect ratio

@@ -1,9 +1,9 @@
 from wagtail.admin.rich_text.converters.html_to_contentstate import (
-    BlockElementHandler, InlineStyleElementHandler)
-from wagtail.admin.rich_text.editors.draftail import \
-    features as draftail_features
-from wagtail.admin.rich_text.editors.draftail.features import \
-    InlineStyleFeature
+    BlockElementHandler,
+    InlineStyleElementHandler,
+)
+from wagtail.admin.rich_text.editors.draftail import features as draftail_features
+from wagtail.admin.rich_text.editors.draftail.features import InlineStyleFeature
 
 
 def register_inline_styling(
@@ -11,11 +11,11 @@ def register_inline_styling(
     feature_name,
     description,
     type_,
-    tag='span',
+    tag="span",
     format=None,
     editor_style=None,
     label=None,
-    icon=None
+    icon=None,
 ):
     control = {"type": type_, "description": description}
     if label:
@@ -31,8 +31,8 @@ def register_inline_styling(
         style_map = {"element": tag}
         markup_map = tag
     else:
-        style_map = f'{tag} {format}'
-        markup_map = f'{tag}[{format}]'
+        style_map = f"{tag} {format}"
+        markup_map = f"{tag}[{format}]"
 
     features.register_editor_plugin(
         "draftail", feature_name, InlineStyleFeature(control)
@@ -42,7 +42,8 @@ def register_inline_styling(
         "to_database_format": {"style_map": {type_: style_map}},
     }
     features.register_converter_rule("contentstate", feature_name, db_conversion)
-    
+
+
 def register_block_feature(
     features,
     feature_name,
@@ -86,18 +87,14 @@ def register_block_feature(
             "from_database_format": {
                 f"{element}[class={css_class}]": BlockElementHandler(type_)
             },
-            "to_database_format": {
-                "block_map": {
-                    type_: block_map
-                }
-            },
+            "to_database_format": {"block_map": {type_: block_map}},
         },
     )
 
-    
-#--------------------------------------------------------------------------------------------------    
+
+# --------------------------------------------------------------------------------------------------
 # SVG icons
-#--------------------------------------------------------------------------------------------------  
+# --------------------------------------------------------------------------------------------------
 class DRAFTAIL_ICONS:
     left_align = [
         "M 584.19821,168.76226 H 73.024776 C 32.701407,168.76226 0,137.69252 0,99.38113 0,\
@@ -141,7 +138,7 @@ class DRAFTAIL_ICONS:
         820.84976 72.889826,820.84976 H 947.56774 c 40.31718,0 72.88986,29.37644 72.88986,65.73748 0,\
         36.36105 -32.57268,65.73748 -72.88986,65.73748 z"
     ]
-    
+
     underline = [
         "m 38.444913,116.09067 c 0,-38.152504 32.572641,-68.976279 72.889827,-68.976279 h 218.66948 c 40.31718,\
         0 72.88982,30.823775 72.88982,68.976279 0,38.15251 -32.57264,68.97628 -72.88982,\
@@ -170,7 +167,7 @@ class DRAFTAIL_ICONS:
         38.377438 c 141.65438,0 195.09354,72.754872 336.92846,72.754872 84.85272,0 131.56685,\
         -23.076933 269.67821,-72.754872 z"
     ]
-    
+
     decrease_font = [
         "m 69.321184,1023.9321 c -3.246191,-0.2568 -8.463758,-0.9914 -11.372242,-1.6012 -4.252165,\
         -0.8916 -11.697404,-3.2628 -15.752689,-5.0172 C 21.597637,1008.4025 6.4800537,990.82981 1.5848171,\
@@ -203,8 +200,9 @@ class DRAFTAIL_ICONS:
         104.002823 -174.49718,106.460743 -5.44713,2.88062 -12.53875,5.14997 -18.92593,6.05637 -2.95697,\
         0.41961 -10.56408,0.71692 -12.96563,0.50674 z"
     ]
-    
-    highlighter = ["m 592.83219,630.12307 298.10994,-430.084 -55.14282,-58.81149 -404.8197,316.8619 z \
+
+    highlighter = [
+        "m 592.83219,630.12307 298.10994,-430.084 -55.14282,-58.81149 -404.8197,316.8619 z \
         m -351.9353,10.00197 v 0 V 496.697 c 0,-30.60597 13.55045,-59.21155 36.69913,\
         -77.21507 L 791.57214,16.803282 C 805.49899,5.801133 822.43706,0 839.75152,0 861.2064,\
         0 881.90848,9.0017582 897.15274,25.204923 L 1000.2867,134.82633 C 1015.531,151.0295 1024,\

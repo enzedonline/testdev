@@ -228,7 +228,8 @@ class RestrictedFieldPanel(FieldPanel):
                 # add default display for empty choosers
                 if not getattr(self.form.instance, self.field_name, False):
                     chooser = self.render_soup.find("div", class_="chooser")
-                    if chooser: self.render_empty_chooser(chooser)
+                    if chooser: 
+                        self.render_empty_chooser(chooser)
 
                 # look for input, textarea or select field
                 inputs = self.render_soup(["input", "textarea", "select"])
@@ -537,7 +538,7 @@ class RestrictedInlinePanel(InlinePanel):
             svg["class"] = "icon"
             use = self.render_soup.new_tag("use")
             svg.append(use)
-            use["href"] = f"#icon-placeholder"
+            use["href"] = "#icon-placeholder"
 
             chooser_title = self.render_soup.new_tag("span")
             container.append(chooser_title)

@@ -1,6 +1,6 @@
 import random
-from datetime import datetime, timedelta
-from bs4 import BeautifulSoup
+from datetime import timedelta
+from django.utils import timezone
 from .sitemap import SiteMap
 from .views import SitemapView
 import time
@@ -14,12 +14,12 @@ def generate_test_sitemap():
         f.write('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n')
 
         for loc in locs:
-            lastmod = datetime.utcnow() - timedelta(days=random.randint(0, 365))
+            lastmod = timezone.now() - timedelta(days=random.randint(0, 365))
             lastmod_str = lastmod.strftime("%Y-%m-%d")
-            f.write(f'  <url>\n')
+            f.write('  <url>\n')
             f.write(f'    <loc>{loc}</loc>\n')
             f.write(f'    <lastmod>{lastmod_str}</lastmod>\n')
-            f.write(f'  </url>\n')
+            f.write('  </url>\n')
 
         f.write('</urlset>\n')
 
@@ -55,6 +55,6 @@ def test_sitemap_view():
 
 def test_init_sitemap():
     start_time = time.time()
-    sm = SiteMap()
+    SiteMap()
     print(f"Elapsed time: {time.time() - start_time:.6f} seconds")
 

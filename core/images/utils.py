@@ -34,7 +34,8 @@ def reduce_image_file_size(image_path, max_file_size_kb = 1024, min_quality = 75
 
         # Reduce the quality
         quality = int(reduce_ratio * quality)
-        if quality < min_quality: quality = min_quality
+        if quality < min_quality: 
+            quality = min_quality
 
         try:
             # Resize the image using ANTIALIAS and save to resized_buffer with the current quality
@@ -44,7 +45,7 @@ def reduce_image_file_size(image_path, max_file_size_kb = 1024, min_quality = 75
             # Calculate the file size of the resized image
             resized_buffer.seek(0)
             current_file_size = len(resized_buffer.getvalue())
-        except:
+        except Exception:
             # file type does not support quality attribute
             break
 
@@ -83,7 +84,7 @@ def check_image_size(image, max_file_size_kb = 1024, min_quality = 75):
         try:
             rnd=image.find_existing_rendition(flt)
             rnd.delete()
-        except:
+        except Exception:
             pass
         return False
 

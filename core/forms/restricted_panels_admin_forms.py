@@ -59,7 +59,8 @@ class RestrictedPanelsAdminFormMixin:
             # TODO: popping formset on new page/model causes key error
             if self.instance.id:
                 formset = self.formsets.pop(relation_name, None)  
-                if formset: formset.forms = []
+                if formset: 
+                    formset.forms = []
         return cleaned_data
 
     def _authorise_field_panels(self):        
@@ -75,7 +76,7 @@ class RestrictedPanelsAdminFormMixin:
                     self.no_default_errors.append(field_name)
                     # don't use add_error() here as it requires form.cleaned_data instance
                     self.errors[field_name] = [self.ERROR_NO_DEFAULT]
-                if hide_if_restricted and not field_name in self.no_default_errors:
+                if hide_if_restricted and field_name not in self.no_default_errors:
                     # remove from form fields
                     # don't hide if field has error due to new instance with no default value
                     self.fields.pop(field_name, None)

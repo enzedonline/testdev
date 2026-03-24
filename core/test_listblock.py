@@ -1,5 +1,5 @@
 from wagtail.rich_text import RichText
-from blocks.collapsible_card import CollapsibleCard, CollapsibleCardBlock
+from blocks.collapsible_card import CollapsibleCard
 from wagtail.blocks import ListBlock
 from wagtail.blocks.list_block import ListValue
 from wagtail.models import Page

@@ -1,5 +1,7 @@
 import logging
+
 from django.conf import settings
+from django.forms.widgets import CheckboxSelectMultiple
 
 
 class OrderedChoicesMixin:
@@ -52,8 +54,6 @@ class OrderedChoicesMixin:
         self._set_choices(value)
 
 # Define choices widgets here
-
-from django.forms.widgets import CheckboxSelectMultiple
 
 class OrderedCheckboxSelectMultiple(OrderedChoicesMixin, CheckboxSelectMultiple):
     pass

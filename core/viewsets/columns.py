@@ -10,7 +10,7 @@ class ImageColumn(TitleColumn):
                 context['value'].get_rendition(
                     'height-50').img_tag({'class': "show-transparency"})
             )
-        except:
+        except Exception:
             context['value'] = mark_safe(
                 '''
                 <svg class="icon icon-image" height="50px" 
