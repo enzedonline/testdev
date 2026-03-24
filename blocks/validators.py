@@ -131,7 +131,7 @@ def is_valid_href(
                     # path matches phone number, assume tel link
                     parsed_uri.scheme = "tel"
                     uri = parsed_uri.unparse
-                elif parsed_uri.scheme and not parsed_uri.scheme in protocols:
+                elif parsed_uri.scheme and parsed_uri.scheme not in protocols:
                     raise ParsedError(_(f"{parsed_uri.scheme}: Link type not permitted."))
                 else:
                     raise ParsedError(

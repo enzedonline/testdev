@@ -16,7 +16,8 @@ class ExternalContentProxy(View):
             return JsonResponse({"error": "Missing URL parameter"})
 
         # Validate the URL format
-        if not urlsplit(url).scheme: url = f'https://{url}'
+        if not urlsplit(url).scheme: 
+            url = f'https://{url}'
         if not validators.url(url):
             return JsonResponse({"error": "Invalid URL format"})
 

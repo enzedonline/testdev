@@ -1,4 +1,3 @@
-from django.forms.utils import ErrorList
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from wagtail.blocks import BooleanBlock, RichTextBlock, StructBlock

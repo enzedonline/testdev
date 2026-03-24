@@ -1,5 +1,3 @@
-from django.utils.functional import cached_property
-from django.forms.widgets import HiddenInput, Textarea
 from wagtail.blocks import CharBlock, TextBlock, BooleanBlock
 
 class HiddenBlockMixin:

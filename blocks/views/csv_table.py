@@ -55,9 +55,12 @@ def render_html_table(table_block):
 
         # Add table classes and styles
         classes = "csv-table table table-striped table-hover"
-        if table_block["compact"]: classes += " table-sm"
-        if table_block["column_headers"]: classes += " csv-table-column-headers"
-        if table_block["row_headers"]: classes += " csv-table-row-headers"
+        if table_block["compact"]: 
+            classes += " table-sm"
+        if table_block["column_headers"]: 
+            classes += " csv-table-column-headers"
+        if table_block["row_headers"]: 
+            classes += " csv-table-row-headers"
         dfs = dfs.set_table_attributes(f'class="{classes}"')
 
         # render table
