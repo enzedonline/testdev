@@ -15,7 +15,7 @@ from crequest.middleware import CrequestMiddleware
 from django.utils.encoding import force_str
 from django.utils.translation import gettext_lazy as _
 from lxml import etree
-from PIL.ExifTags import GPSTAGS, TAGS
+from PIL.ExifTags import TAGS
 from wagtail.blocks import ListBlock
 from wagtail.blocks.stream_block import StreamValue
 from wagtail.models import Page
@@ -76,8 +76,8 @@ def count_words(text):
     try:
         word_break_chars='[\n|\r|\t|\f| ]'
         ignore_words = ['', '-', '−', '–', '/']
-        return len([x for x in re.split(word_break_chars, text) if not x in ignore_words])
-    except:
+        return len([x for x in re.split(word_break_chars, text) if x not in ignore_words])
+    except Exception:
         return -1
 
 def plt_to_png_string(plt):
@@ -103,14 +103,6 @@ def has_role(user, groups):
         print(f"{type(e).__name__} at line {e.__traceback__.tb_lineno} of {__file__}: {e}")       
         return False
 
-def count_words(text):
-    try:
-        word_break_chars='[\n|\r|\t|\f| ]'
-        ignore_words = ['', '-', '−', '–', '/']
-        return len([x for x in re.split(word_break_chars, text) if not x in ignore_words])
-    except:
-        return -1
-
 def find_all_streamfields_with_css_class(css_class):
     
     found_pages = []
@@ -120,14 +112,15 @@ def find_all_streamfields_with_css_class(css_class):
 
         for item in page.__dict__.items():
             if item[1].__class__ == StreamValue:
-                if stream_has_css_class(item[1], css_class): found_pages.append((page, item[0]))
+                if stream_has_css_class(item[1], css_class): 
+                    found_pages.append((page, item[0]))
                 print(page.title)
     
     return [*set(found_pages)]
 
 def stream_has_css_class(streamvalue, css_class):
     render = BeautifulSoup(streamvalue.render_as_block(), 'html.parser')
-    return (render.select_one(f'.{css_class}') != None) if render else False
+    return (render.select_one(f'.{css_class}') is not None) if render else False
 
 def import_text_field_button(field):
     return '''
@@ -241,7 +234,8 @@ def list_block_instances(streamfield):
                     list += [item]
         return list
     
-    if streamfield.is_lazy: r = streamfield.render_as_block() # force lazy object to load
+    if streamfield.is_lazy: 
+        streamfield.render_as_block() # force lazy object to load
     return list_bound_blocks(streamfield)
 
 def block_instances_by_class(streamfield, block_class):
@@ -263,18 +257,20 @@ def block_instances_by_class(streamfield, block_class):
             bound_blocks = bound_blocks.values()
     
         for bound_block in bound_blocks:
-            if type(bound_block.block) is block_class: list += [bound_block]
+            if type(bound_block.block) is block_class: 
+                list += [bound_block]
             list += find_blocks(bound_block, block_class)
         return list
 
-    if type(block_class)==str:
+    if isinstance(block_class, str):
         try:
             module_name, class_name = block_class.rsplit('.', 1)
             module = importlib.import_module(module_name)
             block_class = getattr(module, class_name)().__class__
-        except:
+        except Exception:
             return ['Unable to parse class path. Try passing the class object instead.']    
-    if streamfield.is_lazy: r = streamfield.render_as_block() # force lazy object to load
+    if streamfield.is_lazy: 
+        streamfield.render_as_block() # force lazy object to load
 
     return find_blocks(streamfield, block_class)
 
